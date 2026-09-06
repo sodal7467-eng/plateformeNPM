@@ -1,276 +1,327 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Accueil - NPM Quincaillerie</title>
+    <title>À propos - NPM Quincaillerie</title>
 
     <!-- Bootstrap -->
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
-    <!-- Ton CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- Bootstrap Icons -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
+    <!-- CSS du projet -->
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
 <body>
 
-    <?php include 'includes/navbar.php'; ?>
-    <?php
-// includes/navbar.php
-?>
+<?php require_once("includes/navbar.php"); ?>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container">
 
-        <!-- Logo -->
-        <a class="navbar-brand fw-bold" href="index.php">
-            <span class="text-warning">NPM</span> Quincaillerie
-        </a>
+<!-- =========================================================
+     HERO
+========================================================= -->
 
-        <!-- Bouton mobile -->
-        <button 
-            class="navbar-toggler" 
-            type="button" 
-            data-bs-toggle="collapse" 
-            data-bs-target="#navbarNPM"
-            aria-controls="navbarNPM"
-            aria-expanded="false"
-            aria-label="Menu"
-        >
-            <span class="navbar-toggler-icon"></span>
-        </button>
+<section class="py-5 bg-dark text-white">
+    <div class="container py-5">
 
-        <!-- Menu -->
-        <div class="collapse navbar-collapse" id="navbarNPM">
+        <div class="row align-items-center g-5">
 
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+            <div class="col-lg-7">
 
-                <li class="nav-item">
-                    <a class="nav-link" href="index.php">
-                        Accueil
-                    </a>
-                </li>
+                <span class="badge bg-warning text-dark px-3 py-2 mb-3">
+                    À PROPOS DE NPM
+                </span>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="produits.php">
-                        Produits
-                    </a>
-                </li>
+                <h1 class="display-4 fw-bold mb-4">
+                    Votre partenaire pour
+                    <span class="text-warning">vos projets</span>
+                </h1>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="categories.php">
-                        Catégories
-                    </a>
-                </li>
+                <p class="lead text-light mb-0">
+                    Bienvenue chez NPM Quincaillerie, votre partenaire
+                    pour trouver des outils, matériaux et équipements
+                    adaptés à vos besoins.
+                </p>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="a-propos.php">
-                        À propos
-                    </a>
-                </li>
+            </div>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="contact.php">
-                        Contact
-                    </a>
-                </li>
+            <div class="col-lg-5">
 
-            </ul>
+                <div class="bg-white text-dark rounded-4 p-4 shadow-lg">
 
-            <!-- Recherche -->
-            <form class="d-flex me-3" action="recherche.php" method="GET">
-                <input 
-                    class="form-control form-control-sm" 
-                    type="search" 
-                    name="q"
-                    placeholder="Rechercher..."
-                    aria-label="Rechercher"
-                >
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-warning rounded-circle p-3 me-3">
+                            <i class="bi bi-tools fs-3"></i>
+                        </div>
 
-                <button class="btn btn-warning btn-sm ms-1" type="submit">
-                    🔍
-                </button>
-            </form>
+                        <div>
+                            <h4 class="fw-bold mb-1">
+                                NPM Quincaillerie
+                            </h4>
 
-            <!-- Panier -->
-            <a href="panier.php" class="btn btn-outline-warning me-2">
-                🛒 Panier
-            </a>
+                            <small class="text-muted">
+                                Qualité & confiance
+                            </small>
+                        </div>
+                    </div>
 
-            <!-- Compte -->
-            <a href="connexion.php" class="btn btn-warning">
-                👤 Compte
-            </a>
+                    <p class="text-muted mb-0">
+                        Des produits sélectionnés pour accompagner
+                        les professionnels et les particuliers dans
+                        leurs différents projets.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
+
     </div>
-</nav>
+</section>
 
 
-   
+<!-- =========================================================
+     PRESENTATION
+========================================================= -->
 
-    <main>
+<section class="py-5">
 
-        <h1 class="text-center mt-5">
-            Bienvenue chez NPM Quincaillerie
-        </h1>
+    <div class="container py-4">
 
-    </main>
+        <div class="row align-items-center g-5">
+
+            <div class="col-lg-6">
+
+                <span class="text-warning fw-bold">
+                    QUI SOMMES-NOUS ?
+                </span>
+
+                <h2 class="display-6 fw-bold mt-2 mb-4">
+                    Une quincaillerie pensée pour vos besoins
+                </h2>
+
+                <p class="text-muted">
+                    NPM Quincaillerie est une plateforme dédiée à la
+                    vente de produits et équipements de quincaillerie.
+                    Notre objectif est de permettre à chaque client
+                    de trouver facilement les produits dont il a besoin.
+                </p>
+
+                <p class="text-muted">
+                    Que vous soyez professionnel, artisan ou particulier,
+                    nous souhaitons vous proposer une expérience simple,
+                    rapide et fiable pour vos achats.
+                </p>
+
+                <p class="text-muted mb-0">
+                    Grâce à notre plateforme en ligne, vous pouvez
+                    consulter nos produits, découvrir nos catégories
+                    et passer vos commandes facilement.
+                </p>
+
+            </div>
 
 
-    <?php include 'includes/footer.php'; ?>
-      <?php
-// includes/footer.php
-?>
+            <div class="col-lg-6">
 
-<footer class="bg-dark text-white mt-5">
+                <div class="row g-4">
 
-    <div class="container py-5">
+                    <div class="col-6">
+
+                        <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                            <div class="mb-3">
+                                <i class="bi bi-award-fill text-warning fs-1"></i>
+                            </div>
+
+                            <h5 class="fw-bold">
+                                Qualité
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Des produits sélectionnés
+                                avec attention.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                            <div class="mb-3">
+                                <i class="bi bi-shield-check text-warning fs-1"></i>
+                            </div>
+
+                            <h5 class="fw-bold">
+                                Confiance
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Une expérience d'achat
+                                simple et fiable.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                            <div class="mb-3">
+                                <i class="bi bi-lightning-charge-fill text-warning fs-1"></i>
+                            </div>
+
+                            <h5 class="fw-bold">
+                                Rapidité
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Trouvez rapidement
+                                les produits recherchés.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-6">
+
+                        <div class="card border-0 shadow-sm h-100 text-center p-4">
+
+                            <div class="mb-3">
+                                <i class="bi bi-people-fill text-warning fs-1"></i>
+                            </div>
+
+                            <h5 class="fw-bold">
+                                Service
+                            </h5>
+
+                            <p class="text-muted small mb-0">
+                                Une plateforme pensée
+                                pour nos clients.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     NOS VALEURS
+========================================================= -->
+
+<section class="py-5 bg-light">
+
+    <div class="container py-4">
+
+        <div class="text-center mb-5">
+
+            <span class="text-warning fw-bold">
+                NOS ENGAGEMENTS
+            </span>
+
+            <h2 class="fw-bold mt-2">
+                Ce qui nous guide
+            </h2>
+
+            <p class="text-muted">
+                Des valeurs simples pour vous offrir une meilleure
+                expérience.
+            </p>
+
+        </div>
+
 
         <div class="row g-4">
 
-            <!-- À propos -->
-            <div class="col-lg-4 col-md-6">
+            <div class="col-md-4">
 
-                <h4 class="fw-bold">
-                    <span class="text-warning">NPM</span> Quincaillerie
-                </h4>
+                <div class="card border-0 shadow-sm h-100 p-4">
 
-                <p class="text-secondary">
-                    Votre partenaire pour tous vos besoins en outils,
-                    matériaux de construction, plomberie, électricité
-                    et équipements.
-                </p>
+                    <i class="bi bi-check-circle-fill text-warning fs-1 mb-3"></i>
 
-                <p class="mb-1">
-                    📍 Dakar, Sénégal
-                </p>
+                    <h4 class="fw-bold">
+                        Simplicité
+                    </h4>
 
-                <p class="mb-1">
-                    📞 +221 77 000 00 00
-                </p>
+                    <p class="text-muted mb-0">
+                        Nous souhaitons rendre la recherche et l'achat
+                        de vos produits aussi simples que possible.
+                    </p>
 
-                <p>
-                    ✉️ contact@npm-quincaillerie.com
-                </p>
+                </div>
 
             </div>
 
 
-            <!-- Liens rapides -->
-            <div class="col-lg-2 col-md-6">
+            <div class="col-md-4">
 
-                <h5 class="fw-bold text-warning">
-                    Liens rapides
-                </h5>
+                <div class="card border-0 shadow-sm h-100 p-4">
 
-                <ul class="list-unstyled">
+                    <i class="bi bi-heart-fill text-warning fs-1 mb-3"></i>
 
-                    <li class="mb-2">
-                        <a href="index.php" class="text-secondary text-decoration-none">
-                            Accueil
-                        </a>
-                    </li>
+                    <h4 class="fw-bold">
+                        Satisfaction
+                    </h4>
 
-                    <li class="mb-2">
-                        <a href="produits.php" class="text-secondary text-decoration-none">
-                            Produits
-                        </a>
-                    </li>
+                    <p class="text-muted mb-0">
+                        La satisfaction de nos clients est au cœur
+                        de notre démarche.
+                    </p>
 
-                    <li class="mb-2">
-                        <a href="categories.php" class="text-secondary text-decoration-none">
-                            Catégories
-                        </a>
-                    </li>
-
-                    <li class="mb-2">
-                        <a href="a-propos.php" class="text-secondary text-decoration-none">
-                            À propos
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="contact.php" class="text-secondary text-decoration-none">
-                            Contact
-                        </a>
-                    </li>
-
-                </ul>
+                </div>
 
             </div>
 
 
-            <!-- Service client -->
-            <div class="col-lg-3 col-md-6">
+            <div class="col-md-4">
 
-                <h5 class="fw-bold text-warning">
-                    Service client
-                </h5>
+                <div class="card border-0 shadow-sm h-100 p-4">
 
-                <ul class="list-unstyled">
+                    <i class="bi bi-graph-up-arrow text-warning fs-1 mb-3"></i>
 
-                    <li class="mb-2">
-                        <a href="mes-commandes.php" class="text-secondary text-decoration-none">
-                            Mes commandes
-                        </a>
-                    </li>
+                    <h4 class="fw-bold">
+                        Évolution
+                    </h4>
 
-                    <li class="mb-2">
-                        <a href="faq.php" class="text-secondary text-decoration-none">
-                            FAQ
-                        </a>
-                    </li>
-
-                    <li class="mb-2">
-                        <a href="conditions.php" class="text-secondary text-decoration-none">
-                            Conditions générales
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="confidentialite.php" class="text-secondary text-decoration-none">
-                            Confidentialité
-                        </a>
-                    </li>
-
-                </ul>
-
-            </div>
-
-
-            <!-- Réseaux sociaux -->
-            <div class="col-lg-3 col-md-6">
-
-                <h5 class="fw-bold text-warning">
-                    Suivez-nous
-                </h5>
-
-                <p class="text-secondary">
-                    Retrouvez-nous sur les réseaux sociaux.
-                </p>
-
-                <div class="d-flex gap-2">
-
-                    <a href="#" class="btn btn-outline-light">
-                        Facebook
-                    </a>
-
-                    <a href="#" class="btn btn-outline-light">
-                        Instagram
-                    </a>
-
-                    <a href="#" class="btn btn-outline-light">
-                        WhatsApp
-                    </a>
+                    <p class="text-muted mb-0">
+                        Nous améliorons progressivement notre plateforme
+                        afin de répondre aux besoins de nos clients.
+                    </p>
 
                 </div>
 
@@ -280,27 +331,136 @@
 
     </div>
 
+</section>
 
-    <!-- Copyright -->
-    <div class="border-top border-secondary">
 
-        <div class="container py-3">
+<!-- =========================================================
+     POURQUOI NPM ?
+========================================================= -->
 
-            <div class="row">
+<section class="py-5">
 
-                <div class="col-md-6 text-center text-md-start">
+    <div class="container py-4">
 
-                    <small class="text-secondary">
-                        © 2026 NPM Quincaillerie. Tous droits réservés.
-                    </small>
+        <div class="row align-items-center g-5">
 
-                </div>
+            <div class="col-lg-5">
 
-                <div class="col-md-6 text-center text-md-end">
+                <span class="text-warning fw-bold">
+                    POURQUOI NPM ?
+                </span>
 
-                    <small class="text-secondary">
-                        Développé avec ❤️ au Sénégal
-                    </small>
+                <h2 class="fw-bold mt-2 mb-4">
+                    Une expérience simple et professionnelle
+                </h2>
+
+                <p class="text-muted">
+                    Notre plateforme vous permet de parcourir
+                    facilement nos produits et de gérer vos commandes
+                    depuis votre espace personnel.
+                </p>
+
+            </div>
+
+
+            <div class="col-lg-7">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex gap-3">
+
+                            <div>
+                                <i class="bi bi-box-seam-fill text-warning fs-3"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold">
+                                    Large choix
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Des produits organisés par catégories
+                                    pour faciliter votre recherche.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex gap-3">
+
+                            <div>
+                                <i class="bi bi-cart-check-fill text-warning fs-3"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold">
+                                    Commande en ligne
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Ajoutez vos produits au panier
+                                    et passez votre commande facilement.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex gap-3">
+
+                            <div>
+                                <i class="bi bi-person-check-fill text-warning fs-3"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold">
+                                    Espace client
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Gérez votre compte et retrouvez
+                                    vos informations personnelles.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex gap-3">
+
+                            <div>
+                                <i class="bi bi-headset text-warning fs-3"></i>
+                            </div>
+
+                            <div>
+                                <h5 class="fw-bold">
+                                    À votre écoute
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Une page contact est disponible
+                                    pour nous faire parvenir vos demandes.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -310,13 +470,46 @@
 
     </div>
 
-</footer>
+</section>
 
-   
-    <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
+
+<!-- =========================================================
+     CALL TO ACTION
+========================================================= -->
+
+<section class="py-5 bg-dark text-white">
+
+    <div class="container text-center py-4">
+
+        <h2 class="fw-bold mb-3">
+            Prêt à découvrir nos produits ?
+        </h2>
+
+        <p class="text-light mb-4">
+            Explorez notre catalogue et trouvez les équipements
+            adaptés à vos projets.
+        </p>
+
+        <a href="produits.php" class="btn btn-warning btn-lg px-4">
+            <i class="bi bi-box-seam me-2"></i>
+            Découvrir nos produits
+        </a>
+
+        <a href="contact.php" class="btn btn-outline-light btn-lg px-4 ms-2">
+            <i class="bi bi-envelope me-2"></i>
+            Nous contacter
+        </a>
+
+    </div>
+
+</section>
+
+
+<?php require_once("includes/footer.php"); ?>
+
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-
 </html>

@@ -5,25 +5,24 @@ require_once "../config/database.php";
 
 /*
 |--------------------------------------------------------------------------
-| Vérifier l'ID
+| VÉRIFIER L'ID
 |--------------------------------------------------------------------------
 */
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
 
     header("Location: produits.php");
     exit;
 
 }
 
-$id = (int) $_GET['id'];
+$id = (int) $_GET["id"];
 
 
 /*
 |--------------------------------------------------------------------------
-| Récupérer le produit avant suppression
+| RÉCUPÉRER LE PRODUIT
 |--------------------------------------------------------------------------
-| Cela nous permet de récupérer son image.
 */
 
 $requete = $pdo->prepare("
@@ -39,7 +38,7 @@ $produit = $requete->fetch(PDO::FETCH_ASSOC);
 
 /*
 |--------------------------------------------------------------------------
-| Vérifier que le produit existe
+| VÉRIFIER QUE LE PRODUIT EXISTE
 |--------------------------------------------------------------------------
 */
 
@@ -53,7 +52,7 @@ if (!$produit) {
 
 /*
 |--------------------------------------------------------------------------
-| Supprimer le produit
+| SUPPRIMER LE PRODUIT
 |--------------------------------------------------------------------------
 */
 
@@ -67,13 +66,13 @@ $requete->execute([$id]);
 
 /*
 |--------------------------------------------------------------------------
-| Supprimer également l'image
+| SUPPRIMER L'IMAGE
 |--------------------------------------------------------------------------
 */
 
-if (!empty($produit['image'])) {
+if (!empty($produit["image"])) {
 
-    $cheminImage = "../assets/images/" . $produit['image'];
+    $cheminImage = "../uploads/" . $produit["image"];
 
     if (file_exists($cheminImage)) {
 
@@ -86,7 +85,7 @@ if (!empty($produit['image'])) {
 
 /*
 |--------------------------------------------------------------------------
-| Retour à la liste des produits
+| RETOUR À LA LISTE
 |--------------------------------------------------------------------------
 */
 

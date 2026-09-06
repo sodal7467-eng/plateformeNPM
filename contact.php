@@ -1,3 +1,91 @@
+<?php
+
+session_start();
+
+require_once "config/database.php";
+
+$messageSucces = "";
+$messageErreur = "";
+
+$nom = "";
+$email = "";
+$sujet = "";
+$message = "";
+
+
+// =========================================================
+// TRAITEMENT DU FORMULAIRE
+// =========================================================
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $nom = trim($_POST["nom"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $sujet = trim($_POST["sujet"] ?? "");
+    $message = trim($_POST["message"] ?? "");
+
+
+    // Vérification des champs
+    if (
+        empty($nom) ||
+        empty($email) ||
+        empty($sujet) ||
+        empty($message)
+    ) {
+
+        $messageErreur = "Veuillez remplir tous les champs.";
+
+    }
+
+    // Vérification de l'email
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+        $messageErreur = "Veuillez entrer une adresse email valide.";
+
+    }
+
+    else {
+
+        try {
+
+            // Enregistrer le message dans la base de données
+            $requete = $pdo->prepare("
+                INSERT INTO messages
+                (nom, email, sujet, message)
+                VALUES (?, ?, ?, ?)
+            ");
+
+            $requete->execute([
+                $nom,
+                $email,
+                $sujet,
+                $message
+            ]);
+
+
+            // Message de confirmation
+            $messageSucces =
+                "Merci " . $nom .
+                " ! Votre message a bien été envoyé.";
+
+            // Vider les champs
+            $nom = "";
+            $email = "";
+            $sujet = "";
+            $message = "";
+
+        } catch (PDOException $e) {
+
+            $messageErreur =
+                "Une erreur est survenue lors de l'envoi du message.";
+        }
+    }
+}
+
+?>
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -7,19 +95,21 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Contact - Quincaillerie NPM</title>
+    <title>Contact - NPM Quincaillerie</title>
 
     <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
     <!-- Bootstrap Icons -->
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
-    <!-- CSS -->
+    <!-- CSS du projet -->
     <link rel="stylesheet" href="assets/css/style.css">
 
 </head>
@@ -27,336 +117,336 @@
 <body>
 
 
-    <!-- ================= NAVBAR ================= -->
-
-    <?php include 'includes/navbar.php'; ?>
+<?php require_once("includes/navbar.php"); ?>
 
 
-    <!-- ================= CONTENU ================= -->
+<!-- =========================================================
+     HERO
+========================================================= -->
 
-    <main>
+<section class="py-5 bg-dark text-white">
+
+    <div class="container py-5 text-center">
+
+        <span class="badge bg-warning text-dark px-3 py-2 mb-3">
+            CONTACT
+        </span>
+
+        <h1 class="display-5 fw-bold mb-3">
+            Contactez <span class="text-warning">NPM</span>
+        </h1>
+
+        <p class="lead text-light mx-auto" style="max-width: 700px;">
+            Une question concernant nos produits ou votre commande ?
+            Notre équipe est à votre écoute.
+        </p>
+
+    </div>
+
+</section>
 
 
-        <!-- ================= TITRE ================= -->
+<!-- =========================================================
+     CONTACT
+========================================================= -->
 
-        <section class="contact-header py-5">
+<section class="py-5">
 
-            <div class="container">
+    <div class="container py-4">
 
-                <div class="text-center">
+        <div class="row g-5">
 
-                    <span class="text-orange fw-bold">
-                        CONTACTEZ-NOUS
-                    </span>
 
-                    <h1 class="fw-bold mt-2">
-                        Nous sommes à votre écoute
-                    </h1>
+            <!-- =================================================
+                 INFORMATIONS
+            ================================================== -->
 
-                    <p class="text-muted">
-                        Une question concernant un produit ou une commande ?
-                        Contactez l'équipe NPM.
-                    </p>
+            <div class="col-lg-5">
+
+                <span class="text-warning fw-bold">
+                    PARLONS-NOUS
+                </span>
+
+                <h2 class="fw-bold mt-2 mb-4">
+                    Nous sommes à votre écoute
+                </h2>
+
+                <p class="text-muted mb-5">
+                    N'hésitez pas à nous contacter pour toute question
+                    concernant nos produits, vos commandes ou nos services.
+                </p>
+
+
+                <!-- Adresse -->
+
+                <div class="d-flex align-items-start mb-4">
+
+                    <div
+                        class="bg-dark text-warning rounded-circle d-flex
+                        align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; min-width: 50px;"
+                    >
+
+                        <i class="bi bi-geo-alt-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Adresse
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                           parcelle unite 26 <br> en face marche unite 23
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Téléphone -->
+
+                <div class="d-flex align-items-start mb-4">
+
+                    <div
+                        class="bg-dark text-warning rounded-circle d-flex
+                        align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; min-width: 50px;"
+                    >
+
+                        <i class="bi bi-telephone-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Téléphone
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                           77 640 58 26
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Email -->
+
+                <div class="d-flex align-items-start mb-4">
+
+                    <div
+                        class="bg-dark text-warning rounded-circle d-flex
+                        align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; min-width: 50px;"
+                    >
+
+                        <i class="bi bi-envelope-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Email
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Email de la Quincaillerie NPM
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Horaires -->
+
+                <div class="d-flex align-items-start">
+
+                    <div
+                        class="bg-dark text-warning rounded-circle d-flex
+                        align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; min-width: 50px;"
+                    >
+
+                        <i class="bi bi-clock-fill fs-5"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="fw-bold mb-1">
+                            Horaires
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Lundi - Samedi : 08h00 - 18h00
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
-        </section>
 
+            <!-- =================================================
+                 FORMULAIRE
+            ================================================== -->
 
-        <!-- ================= CONTACT ================= -->
+            <div class="col-lg-7">
 
-        <section class="py-5">
+                <div class="card border-0 shadow-sm rounded-4">
 
-            <div class="container">
+                    <div class="card-body p-4 p-lg-5">
 
-                <div class="row g-5">
+                        <h3 class="fw-bold mb-2">
+                            Envoyez-nous un message
+                        </h3>
 
-
-                    <!-- ================= INFORMATIONS ================= -->
-
-                    <div class="col-lg-5">
-
-                        <h2 class="fw-bold mb-4">
-                            Parlons de votre projet
-                        </h2>
-
-                        <p class="text-muted mb-5">
-
-                            Notre équipe est disponible pour répondre
-                            à vos questions et vous accompagner dans
-                            vos achats.
-
+                        <p class="text-muted mb-4">
+                            Remplissez le formulaire ci-dessous et
+                            nous vous répondrons dès que possible.
                         </p>
 
 
-                        <!-- Téléphone -->
+                        <!-- Message succès -->
 
-                        <div class="contact-info">
+                        <?php if (!empty($messageSucces)): ?>
 
-                            <div class="contact-icon">
+                            <div class="alert alert-success">
 
-                                <i class="bi bi-telephone"></i>
+                                <i class="bi bi-check-circle-fill me-2"></i>
 
-                            </div>
-
-                            <div>
-
-                                <h5 class="fw-bold mb-1">
-                                    Téléphone
-                                </h5>
-
-                                <p class="text-muted mb-0">
-                                    +221 77 640 58 26
-                                </p>
+                                <?= htmlspecialchars($messageSucces) ?>
 
                             </div>
 
-                        </div>
+                        <?php endif; ?>
 
 
-                        <!-- Email -->
+                        <!-- Message erreur -->
 
-                        <div class="contact-info">
+                        <?php if (!empty($messageErreur)): ?>
 
-                            <div class="contact-icon">
+                            <div class="alert alert-danger">
 
-                                <i class="bi bi-envelope"></i>
+                                <i class="bi bi-exclamation-circle-fill me-2"></i>
 
-                            </div>
-
-                            <div>
-
-                                <h5 class="fw-bold mb-1">
-                                    Email
-                                </h5>
-
-                                <p class="text-muted mb-0">
-                                    contact@npm.com
-                                </p>
+                                <?= htmlspecialchars($messageErreur) ?>
 
                             </div>
 
-                        </div>
+                        <?php endif; ?>
 
 
-                        <!-- Adresse -->
+                        <!-- Formulaire -->
 
-                        <div class="contact-info">
-
-                            <div class="contact-icon">
-
-                                <i class="bi bi-geo-alt"></i>
-
-                            </div>
-
-                            <div>
-
-                                <h5 class="fw-bold mb-1">
-                                    Adresse
-                                </h5>
-
-                                <p class="text-muted mb-0">
-                                    Dakar, PAU 26 , Sénégal
-                                </p>
-
-                            </div>
-
-                        </div>
+                        <form action="contact.php" method="POST">
 
 
-                        <!-- Horaires -->
+                            <!-- Nom -->
 
-                        <div class="contact-info">
+                            <div class="mb-3">
 
-                            <div class="contact-icon">
+                                <label for="nom" class="form-label fw-semibold">
+                                    Nom complet
+                                </label>
 
-                                <i class="bi bi-clock"></i>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    id="nom"
+                                    name="nom"
+                                    value="<?= htmlspecialchars($nom ?? "") ?>"
+                                    placeholder="Votre nom"
+                                    required
+                                >
 
                             </div>
 
-                            <div>
 
-                                <h5 class="fw-bold mb-1">
-                                    Horaires
-                                </h5>
+                            <!-- Email -->
 
-                                <p class="text-muted mb-0">
-                                    Lundi - Dimache : 08h00 - 19h00 <br>
-                                    les Dimache : 09H00 - 14h00
-                                </p>
+                            <div class="mb-3">
+
+                                <label for="email" class="form-label fw-semibold">
+                                    Adresse email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    class="form-control form-control-lg"
+                                    id="email"
+                                    name="email"
+                                    value="<?= htmlspecialchars($email ?? "") ?>"
+                                    placeholder="exemple@email.com"
+                                    required
+                                >
 
                             </div>
 
-                        </div>
 
-                    </div>
+                            <!-- Sujet -->
 
+                            <div class="mb-3">
 
-                    <!-- ================= FORMULAIRE ================= -->
+                                <label for="sujet" class="form-label fw-semibold">
+                                    Sujet
+                                </label>
 
-                    <div class="col-lg-7">
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    id="sujet"
+                                    name="sujet"
+                                    value="<?= htmlspecialchars($sujet ?? "") ?>"
+                                    placeholder="Sujet de votre message"
+                                    required
+                                >
 
-                        <div class="contact-card">
-
-                            <h3 class="fw-bold mb-4">
-                                Envoyez-nous un message
-                            </h3>
-
-
-                            <form action="#" method="POST">
-
-
-                                <!-- Nom -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="nom"
-                                        class="form-label fw-bold">
-
-                                        Nom complet
-
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        name="nom"
-                                        id="nom"
-                                        class="form-control"
-                                        placeholder="Votre nom complet"
-                                        required>
-
-                                </div>
+                            </div>
 
 
-                                <!-- Email -->
+                            <!-- Message -->
 
-                                <div class="mb-3">
+                            <div class="mb-4">
 
-                                    <label
-                                        for="email"
-                                        class="form-label fw-bold">
+                                <label for="message" class="form-label fw-semibold">
+                                    Message
+                                </label>
 
-                                        Adresse email
+                                <textarea
+                                    class="form-control"
+                                    id="message"
+                                    name="message"
+                                    rows="6"
+                                    placeholder="Écrivez votre message..."
+                                    required
+                                ><?= htmlspecialchars($message ?? "") ?></textarea>
 
-                                    </label>
-
-                                    <input
-                                        type="email"
-                                        name="email"
-                                        id="email"
-                                        class="form-control"
-                                        placeholder="exemple@email.com"
-                                        required>
-
-                                </div>
+                            </div>
 
 
-                                <!-- Téléphone -->
+                            <!-- Bouton -->
 
-                                <div class="mb-3">
+                            <button
+                                type="submit"
+                                class="btn btn-warning btn-lg w-100"
+                            >
 
-                                    <label
-                                        for="telephone"
-                                        class="form-label fw-bold">
+                                <i class="bi bi-send-fill me-2"></i>
 
-                                        Téléphone
+                                Envoyer le message
 
-                                    </label>
+                            </button>
 
-                                    <input
-                                        type="tel"
-                                        name="telephone"
-                                        id="telephone"
-                                        class="form-control"
-                                        placeholder="77 000 00 00">
-
-                                </div>
-
-
-                                <!-- Sujet -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="sujet"
-                                        class="form-label fw-bold">
-
-                                        Sujet
-
-                                    </label>
-
-                                    <select
-                                        name="sujet"
-                                        id="sujet"
-                                        class="form-select"
-                                        required>
-
-                                        <option value="" selected disabled>
-                                            Choisissez un sujet
-                                        </option>
-
-                                        <option value="produit">
-                                            Question sur un produit
-                                        </option>
-
-                                        <option value="commande">
-                                            Question sur une commande
-                                        </option>
-
-                                        <option value="livraison">
-                                            Livraison
-                                        </option>
-
-                                        <option value="autre">
-                                            Autre
-                                        </option>
-
-                                    </select>
-
-                                </div>
-
-
-                                <!-- Message -->
-
-                                <div class="mb-4">
-
-                                    <label
-                                        for="message"
-                                        class="form-label fw-bold">
-
-                                        Message
-
-                                    </label>
-
-                                    <textarea
-                                        name="message"
-                                        id="message"
-                                        class="form-control"
-                                        rows="6"
-                                        placeholder="Écrivez votre message..."
-                                        required></textarea>
-
-                                </div>
-
-
-                                <!-- Bouton -->
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-dark btn-lg w-100">
-
-                                    <i class="bi bi-send"></i>
-
-                                    Envoyer le message
-
-                                </button>
-
-                            </form>
-
-                        </div>
+                        </form>
 
                     </div>
 
@@ -364,156 +454,53 @@
 
             </div>
 
-        </section>
+        </div>
+
+    </div>
+
+</section>
 
 
-        <!-- ================= FAQ ================= -->
+<!-- =========================================================
+     CTA
+========================================================= -->
 
-        <section class="py-5 bg-light">
+<section class="py-5 bg-light">
 
-            <div class="container">
+    <div class="container text-center py-4">
 
-                <div class="text-center mb-5">
+        <h2 class="fw-bold mb-3">
+            Vous cherchez un produit ?
+        </h2>
 
-                    <span class="text-orange fw-bold">
-                        QUESTIONS
-                    </span>
+        <p class="text-muted mb-4">
+            Découvrez notre catalogue de produits de quincaillerie.
+        </p>
 
-                    <h2 class="fw-bold mt-2">
-                        Questions fréquentes
-                    </h2>
+        <a
+            href="produits.php"
+            class="btn btn-dark btn-lg px-4"
+        >
 
-                </div>
+            <i class="bi bi-box-seam me-2"></i>
 
+            Voir nos produits
 
-                <div class="accordion" id="faq">
+        </a>
 
+    </div>
 
-                    <!-- Question 1 -->
-
-                    <div class="accordion-item">
-
-                        <h2 class="accordion-header">
-
-                            <button
-                                class="accordion-button"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#question1">
-
-                                Comment passer une commande ?
-
-                            </button>
-
-                        </h2>
-
-                        <div
-                            id="question1"
-                            class="accordion-collapse collapse show"
-                            data-bs-parent="#faq">
-
-                            <div class="accordion-body">
-
-                                Choisissez un produit, ajoutez-le à votre
-                                panier puis cliquez sur « Passer la commande »
-                                pour renseigner vos informations.
-
-                            </div>
-
-                        </div>
-
-                    </div>
+</section>
 
 
-                    <!-- Question 2 -->
-
-                    <div class="accordion-item">
-
-                        <h2 class="accordion-header">
-
-                            <button
-                                class="accordion-button collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#question2">
-
-                                Quels sont les moyens de paiement ?
-
-                            </button>
-
-                        </h2>
-
-                        <div
-                            id="question2"
-                            class="accordion-collapse collapse"
-                            data-bs-parent="#faq">
-
-                            <div class="accordion-body">
-
-                                Nous prévoyons notamment le paiement
-                                à la livraison, Wave et Orange Money.
-
-                            </div>
-
-                        </div>
-
-                    </div>
+<?php require_once("includes/footer.php"); ?>
 
 
-                    <!-- Question 3 -->
+<!-- Bootstrap JS -->
 
-                    <div class="accordion-item">
-
-                        <h2 class="accordion-header">
-
-                            <button
-                                class="accordion-button collapsed"
-                                type="button"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#question3">
-
-                                Comment suivre ma commande ?
-
-                            </button>
-
-                        </h2>
-
-                        <div
-                            id="question3"
-                            class="accordion-collapse collapse"
-                            data-bs-parent="#faq">
-
-                            <div class="accordion-body">
-
-                                Les fonctionnalités de suivi seront
-                                ajoutées lorsque nous mettrons en place
-                                le système de commandes.
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- ================= FOOTER ================= -->
-
-    <?php include 'includes/footer.php'; ?>
-
-
-    <!-- Bootstrap JS -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
 
 </body>
 

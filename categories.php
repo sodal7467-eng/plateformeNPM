@@ -1,3 +1,19 @@
+<?php
+
+require_once "config/database.php";
+
+
+// Récupérer toutes les catégories
+$requete = $pdo->query("
+    SELECT *
+    FROM categories
+    ORDER BY id DESC
+");
+
+$categories = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,30 +21,42 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Catégories - Quincaillerie NPM</title>
 
+
     <!-- Bootstrap -->
+
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
+
     <!-- Bootstrap Icons -->
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css">
 
 </head>
 
+
 <body>
+
 
     <!-- ================= NAVBAR ================= -->
 
-    <?php include 'includes/navbar.php'; ?>
+    <?php require_once "includes/navbar.php"; ?>
 
 
     <!-- ================= TITRE ================= -->
@@ -65,261 +93,107 @@
 
         <div class="container">
 
-            <div class="row g-4">
+            <?php if (empty($categories)): ?>
 
+                <!-- AUCUNE CATÉGORIE -->
 
-                <!-- ================= OUTILS ================= -->
+                <div class="text-center py-5">
 
-                <div class="col-md-6 col-lg-4">
+                    <i class="bi bi-tags fs-1 text-muted"></i>
 
-                    <div class="category-large-card">
+                    <h3 class="mt-3">
+                        Aucune catégorie disponible
+                    </h3>
 
-                        <div class="category-large-icon">
-
-                            <i class="bi bi-tools"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
-
-                            <h3 class="fw-bold mt-2">
-                                Outils
-                            </h3>
-
-                            <p class="text-muted">
-                                Retrouvez tous les outils nécessaires
-                                pour vos travaux de bricolage et de construction.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
+                    <p class="text-muted">
+                        Les catégories seront bientôt disponibles.
+                    </p>
 
                 </div>
 
 
-                <!-- ================= PLOMBERIE ================= -->
+            <?php else: ?>
 
-                <div class="col-md-6 col-lg-4">
 
-                    <div class="category-large-card">
+                <div class="row g-4">
 
-                        <div class="category-large-icon">
 
-                            <i class="bi bi-droplet"></i>
+                    <?php foreach ($categories as $categorie): ?>
+
+
+                        <!-- ================= CATÉGORIE ================= -->
+
+                        <div class="col-md-6 col-lg-4">
+
+                            <div class="category-large-card">
+
+
+                                <!-- ICÔNE -->
+
+                                <div class="category-large-icon">
+
+                                    <i class="bi bi-tag"></i>
+
+                                </div>
+
+
+                                <div>
+
+
+                                    <span class="text-orange">
+                                        CATÉGORIE
+                                    </span>
+
+
+                                    <!-- NOM -->
+
+                                    <h3 class="fw-bold mt-2">
+
+                                        <?= htmlspecialchars(
+                                            $categorie["nom"]
+                                        ) ?>
+
+                                    </h3>
+
+
+                                    <!-- DESCRIPTION -->
+
+                                    <p class="text-muted">
+
+                                        <?= htmlspecialchars(
+                                            $categorie["description"] ?? ""
+                                        ) ?>
+
+                                    </p>
+
+
+                                    <!-- BOUTON -->
+
+                                    <a
+                                        href="produits.php?categorie=<?= $categorie["id"] ?>"
+                                        class="btn btn-dark">
+
+                                        Voir les produits
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </a>
+
+
+                                </div>
+
+                            </div>
 
                         </div>
 
-                        <div>
 
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
+                    <?php endforeach; ?>
 
-                            <h3 class="fw-bold mt-2">
-                                Plomberie
-                            </h3>
-
-                            <p class="text-muted">
-                                Tuyaux, robinets, raccords et accessoires
-                                pour vos installations de plomberie.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
 
                 </div>
 
 
-                <!-- ================= ELECTRICITE ================= -->
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="category-large-card">
-
-                        <div class="category-large-icon">
-
-                            <i class="bi bi-lightbulb"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
-
-                            <h3 class="fw-bold mt-2">
-                                Électricité
-                            </h3>
-
-                            <p class="text-muted">
-                                Câbles, prises, interrupteurs, ampoules
-                                et matériel électrique.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================= PEINTURE ================= -->
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="category-large-card">
-
-                        <div class="category-large-icon">
-
-                            <i class="bi bi-brush"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
-
-                            <h3 class="fw-bold mt-2">
-                                Peinture
-                            </h3>
-
-                            <p class="text-muted">
-                                Peintures, pinceaux, rouleaux et accessoires
-                                pour donner vie à vos projets.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================= SERRURERIE ================= -->
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="category-large-card">
-
-                        <div class="category-large-icon">
-
-                            <i class="bi bi-lock"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
-
-                            <h3 class="fw-bold mt-2">
-                                Serrurerie
-                            </h3>
-
-                            <p class="text-muted">
-                                Serrures, cadenas, poignées et accessoires
-                                pour sécuriser vos espaces.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ================= CONSTRUCTION ================= -->
-
-                <div class="col-md-6 col-lg-4">
-
-                    <div class="category-large-card">
-
-                        <div class="category-large-icon">
-
-                            <i class="bi bi-building"></i>
-
-                        </div>
-
-                        <div>
-
-                            <span class="text-orange">
-                                CATÉGORIE
-                            </span>
-
-                            <h3 class="fw-bold mt-2">
-                                Construction
-                            </h3>
-
-                            <p class="text-muted">
-                                Matériaux et accessoires indispensables
-                                pour vos projets de construction.
-                            </p>
-
-                            <a href="produits.php"
-                               class="btn btn-dark">
-
-                                Voir les produits
-                                <i class="bi bi-arrow-right"></i>
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
+            <?php endif; ?>
 
         </div>
 
@@ -328,7 +202,7 @@
 
     <!-- ================= FOOTER ================= -->
 
-    <?php include 'includes/footer.php'; ?>
+    <?php require_once "includes/footer.php"; ?>
 
 
     <!-- Bootstrap JS -->
@@ -336,6 +210,7 @@
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
+
 
 </body>
 

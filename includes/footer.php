@@ -1,53 +1,60 @@
-<footer class="bg-dark text-white mt-5">
 
-    <div class="container py-5">
+<footer class="footer-npm">
 
-        <div class="row g-4">
+    <div class="container">
 
-            <!-- Présentation -->
+        <div class="row gy-5">
+
+            <!-- NPM -->
             <div class="col-lg-4 col-md-6">
 
-                <h4 class="fw-bold">
-                    NPM
+                <h4 class="footer-logo">
+                    <span>NPM</span> Quincaillerie
                 </h4>
 
-                <p class="text-white-50">
-                    Votre quincaillerie de confiance pour tous
-                    vos besoins en construction, rénovation et bricolage.
+                <p>
+                    Votre partenaire pour vos besoins en outils,
+                    matériaux et équipements de quincaillerie.
                 </p>
 
             </div>
 
 
-            <!-- Liens rapides -->
+            <!-- Navigation -->
             <div class="col-lg-2 col-md-6">
 
-                <h5 class="fw-bold">
+                <h5>
                     Navigation
                 </h5>
 
-                <ul class="list-unstyled">
+                <ul class="footer-links">
 
-                    <li class="mb-2">
-                        <a href="index.php" class="text-white-50 text-decoration-none">
+                    <li>
+                        <a href="index.php">
                             Accueil
                         </a>
                     </li>
 
-                    <li class="mb-2">
-                        <a href="produits.php" class="text-white-50 text-decoration-none">
+                    <li>
+                        <a href="produits.php">
                             Produits
                         </a>
                     </li>
 
-                    <li class="mb-2">
-                        <a href="categories.php" class="text-white-50 text-decoration-none">
+                    <li>
+                        <a href="categories.php">
                             Catégories
                         </a>
                     </li>
 
                     <li>
-                        <a href="contact.php" class="text-white-50 text-decoration-none">
+                        <a href="a-propos.php">
+                            À propos
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="contact.php">
                             Contact
                         </a>
                     </li>
@@ -57,29 +64,25 @@
             </div>
 
 
-            <!-- Services -->
+            <!-- NPM -->
             <div class="col-lg-3 col-md-6">
 
-                <h5 class="fw-bold">
-                    Nos services
+                <h5>
+                    Quincaillerie NPM
                 </h5>
 
-                <ul class="list-unstyled text-white-50">
+                <ul class="footer-contact">
 
-                    <li class="mb-2">
-                        Livraison
-                    </li>
-
-                    <li class="mb-2">
-                        Commande en ligne
-                    </li>
-
-                    <li class="mb-2">
-                        Assistance client
+                    <li>
+                        📍 Notre adresse
                     </li>
 
                     <li>
-                        Produits de qualité
+                        📞 Notre téléphone
+                    </li>
+
+                    <li>
+                        🕐 Nos horaires
                     </li>
 
                 </ul>
@@ -87,35 +90,52 @@
             </div>
 
 
-            <!-- Contact -->
+            <!-- Développeuse -->
             <div class="col-lg-3 col-md-6">
 
-                <h5 class="fw-bold">
-                    Contact
+                <h5>
+                    Création du site
                 </h5>
 
-                <p class="text-white-50 mb-2">
-                    📍 Dakar, Sénégal
+                <p class="developer-text">
+                    Site conçu & développé avec passion par
                 </p>
 
-                <p class="text-white-50 mb-2">
-                    📞 +221 77 640 58 26
+                <p class="developer-name">
+                    Soda Lô
                 </p>
 
-                <p class="text-white-50">
-                    ✉️ contact@npm.com
+                <p class="developer-job">
+                    Développeuse Web
                 </p>
+
+                <a
+                    href="mailto:sodal7467@gmail.com"
+                    class="developer-mail"
+                >
+                    ✉️ sodal7467@gmail.com
+                </a>
 
             </div>
 
         </div>
 
-        <hr class="border-secondary">
 
-        <div class="text-center text-white-50">
+        <hr>
 
-            <p class="mb-0">
-                © 2026 NPM Quincaillerie. Tous droits réservés.
+
+        <!-- Bas du footer -->
+
+        <div class="footer-bottom">
+
+            <p>
+                © <?= date("Y") ?> NPM Quincaillerie.
+                Tous droits réservés.
+            </p>
+
+            <p>
+                Conçu & développé par
+                <strong>Soda Lô — Développeuse Web</strong>
             </p>
 
         </div>
@@ -123,3 +143,4 @@
     </div>
 
 </footer>
+

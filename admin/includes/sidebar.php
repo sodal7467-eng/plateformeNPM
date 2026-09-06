@@ -1,223 +1,127 @@
-<!-- Sidebar administrateur -->
+<?php
 
-<div class="bg-dark text-white min-vh-100 p-3">
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-    <!-- Titre -->
-    <div class="mb-4">
+?>
 
-        <h5 class="fw-bold">
-            <i class="bi bi-speedometer2"></i>
-            Administration
-        </h5>
+<aside class="admin-sidebar">
 
-        <hr>
 
-    </div>
+<!-- Logo -->
 
+<!-- <div class="sidebar-logo">
 
-    <!-- Menu -->
+    <a href="produits.php">
 
-    <ul class="nav nav-pills flex-column gap-2">
+        <span class="logo-npm">
+            NPM
+        </span>
 
-
-        <!-- Tableau de bord -->
-
-        <li class="nav-item">
-
-            <a href="index.php" class="nav-link text-white">
-
-                <i class="bi bi-speedometer2 me-2"></i>
-
-                Tableau de bord
-
-            </a>
-
-        </li>
-
-
-        <!-- Produits -->
-
-        <li class="nav-item">
-
-            <a href="produits.php" class="nav-link text-white">
-
-                <i class="bi bi-box-seam me-2"></i>
-
-                Produits
-
-            </a>
-
-        </li>
-
-
-        <!-- Catégories -->
-
-        <li class="nav-item">
-
-            <a href="categories.php" class="nav-link text-white">
-
-                <i class="bi bi-grid me-2"></i>
-
-                Catégories
-
-            </a>
-
-        </li>
-
-
-        <!-- Commandes -->
-
-        <li class="nav-item">
-
-            <a href="commandes.php" class="nav-link text-white">
-
-                <i class="bi bi-cart-check me-2"></i>
-
-                Commandes
-
-            </a>
-
-        </li>
-
-
-        <!-- Ventes -->
-
-        <li class="nav-item">
-
-            <a href="ventes.php" class="nav-link text-white">
-
-                <i class="bi bi-cash-stack me-2"></i>
-
-                Ventes
-
-            </a>
-
-        </li>
-
-
-        <!-- Reçus -->
-
-        <li class="nav-item">
-
-            <a href="recus.php" class="nav-link text-white">
-
-                <i class="bi bi-receipt me-2"></i>
-
-                Reçus
-
-            </a>
-
-        </li>
-
-
-        <hr>
-
-
-        <!-- Clients -->
-
-        <li class="nav-item">
-
-            <a href="clients.php" class="nav-link text-white">
-
-                <i class="bi bi-people me-2"></i>
-
-                Clients
-
-            </a>
-
-        </li>
-
-
-        <!-- Fournisseurs -->
-
-        <li class="nav-item">
-
-            <a href="fournisseurs.php" class="nav-link text-white">
-
-                <i class="bi bi-truck me-2"></i>
-
-                Fournisseurs
-
-            </a>
-
-        </li>
-
-
-        <!-- Achats -->
-
-        <li class="nav-item">
-
-            <a href="achats.php" class="nav-link text-white">
-
-                <i class="bi bi-bag-plus me-2"></i>
-
-                Achats
-
-            </a>
-
-        </li>
-
-
-        <!-- Stock -->
-
-        <li class="nav-item">
-
-            <a href="stock.php" class="nav-link text-white">
-
-                <i class="bi bi-boxes me-2"></i>
-
-                Stock
-
-            </a>
-
-        </li>
-
-
-        <!-- Dépenses -->
-
-        <li class="nav-item">
-
-            <a href="depenses.php" class="nav-link text-white">
-
-                <i class="bi bi-wallet2 me-2"></i>
-
-                Dépenses
-
-            </a>
-
-        </li>
-
-
-        <!-- Rapports -->
-
-        <li class="nav-item">
-
-            <a href="rapports.php" class="nav-link text-white">
-
-                <i class="bi bi-bar-chart-line me-2"></i>
-
-                Rapports
-
-            </a>
-
-        </li>
-
-
-    </ul>
-
-
-    <!-- Retour au site -->
-
-    <hr>
-
-    <a
-        href="../index.php"
-        class="btn btn-outline-light w-100">
-
-        <i class="bi bi-house me-2"></i>
-
-        Retour au site
+        <span class="logo-admin">
+            ADMIN
+        </span>
 
     </a>
 
-</div>
+</div> -->
+
+
+<!-- Menu -->
+
+<nav class="sidebar-menu">
+
+    <p class="sidebar-title">
+        MENU PRINCIPAL
+    </p>
+
+
+    <!-- Produits -->
+
+    <a href="produits.php" class="sidebar-link">
+
+        <span class="sidebar-icon">📦</span>
+
+        <span>Produits</span>
+
+    </a>
+
+
+    <!-- Catégories -->
+
+    <a href="categories.php" class="sidebar-link">
+
+        <span class="sidebar-icon">🏷️</span>
+
+        <span>Catégories</span>
+
+    </a>
+
+
+    <!-- Clients -->
+
+    <a href="clients.php" class="sidebar-link">
+
+        <span class="sidebar-icon">👥</span>
+
+        <span>Clients</span>
+
+    </a>
+
+
+    <!-- Commandes -->
+
+    <a href="commandes.php" class="sidebar-link">
+
+        <span class="sidebar-icon">🛒</span>
+
+        <span>Commandes</span>
+
+    </a>
+
+
+    <!-- Messages -->
+
+    <a href="messages.php" class="sidebar-link">
+
+        <span class="sidebar-icon">✉️</span>
+
+        <span>Messages</span>
+
+    </a>
+
+
+    <div class="sidebar-separator"></div>
+
+
+    <p class="sidebar-title">
+        SITE
+    </p>
+
+
+    <!-- Voir le site -->
+
+    <a href="../index.php" class="sidebar-link">
+
+        <span class="sidebar-icon">🌐</span>
+
+        <span>Voir le site</span>
+
+    </a>
+
+
+    <!-- Déconnexion -->
+
+    <a href="../deconnexion.php" class="sidebar-link sidebar-logout">
+
+        <span class="sidebar-icon">↪</span>
+
+        <span>Déconnexion</span>
+
+    </a>
+
+</nav>
+
+
+</aside>

@@ -1,21 +1,24 @@
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
 
         <!-- Logo -->
         <a class="navbar-brand fw-bold" href="index.php">
-            <span class="logo-npm">NPM</span>
-            <small class="d-block text-muted">Quincaillerie</small>
+            <span class="text-warning">NPM</span>
+            <small class="d-block text-light" style="font-size: 10px;">
+                QUINCAILLERIE
+            </small>
         </a>
 
         <!-- Bouton mobile -->
         <button 
             class="navbar-toggler" 
             type="button" 
-            data-bs-toggle="collapse"
+            data-bs-toggle="collapse" 
             data-bs-target="#navbarNPM"
             aria-controls="navbarNPM"
             aria-expanded="false"
-            aria-label="Menu">
+            aria-label="Menu"
+        >
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -43,6 +46,12 @@
                 </li>
 
                 <li class="nav-item">
+                    <a class="nav-link" href="a-propos.php">
+                        À propos
+                    </a>
+                </li>
+
+                <li class="nav-item">
                     <a class="nav-link" href="contact.php">
                         Contact
                     </a>
@@ -50,25 +59,29 @@
 
             </ul>
 
-            <!-- Actions -->
+            <!-- Partie droite -->
             <div class="d-flex align-items-center gap-2">
 
-                <a href="connexion.php" 
-                   class="btn btn-outline-dark">
-                    Connexion
+                <a href="panier.php" class="btn btn-outline-light position-relative">
+                    🛒 Panier
                 </a>
 
-                <a href="panier.php" 
-                   class="btn btn-dark position-relative">
-                    🛒 Panier
-                    <span class="badge bg-danger rounded-pill">
-                        0
-                    </span>
-                </a>
+                <?php if (isset($_SESSION["id"])): ?>
+
+                    <a href="profil.php" class="btn btn-warning">
+                        Mon compte
+                    </a>
+
+                <?php else: ?>
+
+                    <a href="connexion.php" class="btn btn-warning">
+                        Connexion
+                    </a>
+
+                <?php endif; ?>
 
             </div>
 
         </div>
-
     </div>
 </nav>

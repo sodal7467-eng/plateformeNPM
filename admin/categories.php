@@ -14,8 +14,8 @@ $erreur = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $nom = trim($_POST["nom"]);
-    $description = trim($_POST["description"]);
+    $nom = trim($_POST["nom"] ?? "");
+    $description = trim($_POST["description"] ?? "");
 
 
     if (empty($nom)) {
@@ -54,6 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ]);
 
             $message = "Catégorie ajoutée avec succès.";
+
+            // Vider les champs après ajout
+            $nom = "";
+            $description = "";
         }
     }
 }
@@ -75,8 +79,8 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="fr">
 
 <head>
@@ -85,34 +89,30 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
     <meta
         name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+        content="width=device-width, initial-scale=1.0">
 
-    <title>Catégories - Administration NPM</title>
+    <title>Catégories - NPM Admin</title>
 
 
     <!-- Bootstrap -->
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
 
 
     <!-- Bootstrap Icons -->
 
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    >
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
 
-    <!-- CSS -->
+    <!-- CSS NPM -->
 
     <link
         rel="stylesheet"
-        href="../assets/css/style.css"
-    >
+        href="../assets/css/style.css">
 
 </head>
 
@@ -120,28 +120,21 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 <body>
 
 
-<!-- HEADER -->
+    <!-- NAVBAR ADMIN -->
 
-<?php include "includes/header.php"; ?>
-
-
-<div class="container-fluid">
-
-    <div class="row">
+    <?php require_once("includes/navbar.php"); ?>
 
 
-        <!-- SIDEBAR -->
+    <!-- SIDEBAR ADMIN -->
 
-        <div class="col-md-3 col-lg-2 p-0">
-
-            <?php include "includes/sidebar.php"; ?>
-
-        </div>
+    <?php require_once("includes/sidebar.php"); ?>
 
 
-        <!-- CONTENU -->
+    <!-- CONTENU ADMIN -->
 
-        <main class="col-md-9 col-lg-10 p-4">
+    <main class="admin-content">
+
+        <div class="container-fluid py-5 px-4">
 
 
             <!-- TITRE -->
@@ -149,15 +142,11 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
             <div class="mb-4">
 
                 <h1 class="fw-bold">
-
-                    Catégories
-
+                    Gestion des catégories
                 </h1>
 
                 <p class="text-muted">
-
-                    Gérez les catégories de votre quincaillerie.
-
+                    Gérez les catégories de votre quincaillerie NPM.
                 </p>
 
             </div>
@@ -169,8 +158,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                 <div
                     class="alert alert-success"
-                    role="alert"
-                >
+                    role="alert">
 
                     <i class="bi bi-check-circle me-2"></i>
 
@@ -187,8 +175,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                 <div
                     class="alert alert-danger"
-                    role="alert"
-                >
+                    role="alert">
 
                     <i class="bi bi-exclamation-triangle me-2"></i>
 
@@ -221,8 +208,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
                         </div>
 
 
-                        <div class="card-body">
-
+                        <div class="card-body p-4">
 
                             <form method="POST">
 
@@ -233,22 +219,23 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                     <label
                                         for="nom"
-                                        class="form-label fw-semibold"
-                                    >
+                                        class="form-label fw-semibold">
 
                                         Nom de la catégorie
+
                                         <span class="text-danger">*</span>
 
                                     </label>
+
 
                                     <input
                                         type="text"
                                         name="nom"
                                         id="nom"
                                         class="form-control"
+                                        value="<?= htmlspecialchars($nom ?? "") ?>"
                                         placeholder="Ex : Outillage"
-                                        required
-                                    >
+                                        required>
 
                                 </div>
 
@@ -259,28 +246,28 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                     <label
                                         for="description"
-                                        class="form-label fw-semibold"
-                                    >
+                                        class="form-label fw-semibold">
 
                                         Description
 
                                     </label>
+
 
                                     <textarea
                                         name="description"
                                         id="description"
                                         class="form-control"
                                         rows="4"
-                                        placeholder="Description de la catégorie..."
-                                    ></textarea>
+                                        placeholder="Description de la catégorie..."><?= htmlspecialchars($description ?? "") ?></textarea>
 
                                 </div>
 
 
+                                <!-- BOUTON -->
+
                                 <button
                                     type="submit"
-                                    class="btn btn-dark w-100"
-                                >
+                                    class="btn btn-warning w-100 fw-semibold">
 
                                     <i class="bi bi-plus-circle me-1"></i>
 
@@ -304,7 +291,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white">
+                        <div class="card-header bg-white py-3">
 
                             <h5 class="fw-bold mb-0">
 
@@ -325,8 +312,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="text-center p-5">
 
                                     <i
-                                        class="bi bi-tags fs-1 text-muted"
-                                    ></i>
+                                        class="bi bi-tags fs-1 text-muted"></i>
 
                                     <p class="text-muted mt-3">
 
@@ -336,15 +322,14 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                 </div>
 
+
                             <?php else: ?>
 
 
                                 <div class="table-responsive">
 
                                     <table
-                                        class="table table-hover
-                                               align-middle mb-0"
-                                    >
+                                        class="table table-hover align-middle mb-0">
 
                                         <thead class="table-dark">
 
@@ -358,6 +343,10 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                                 <th>Date</th>
 
+                                                <th class="text-center">
+                                                    Actions
+                                                </th>
+
                                             </tr>
 
                                         </thead>
@@ -365,19 +354,18 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                         <tbody>
 
-                                            <?php foreach (
-                                                $categories
-                                                as $categorie
-                                            ): ?>
+                                            <?php foreach ($categories as $categorie): ?>
 
                                                 <tr>
 
+                                                    <!-- ID -->
+
                                                     <td>
-
                                                         <?= $categorie["id"] ?>
-
                                                     </td>
 
+
+                                                    <!-- NOM -->
 
                                                     <td>
 
@@ -392,27 +380,74 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
                                                     </td>
 
 
+                                                    <!-- DESCRIPTION -->
+
                                                     <td>
 
                                                         <?= htmlspecialchars(
-                                                            $categorie[
-                                                                "description"
-                                                            ] ?? ""
+                                                            $categorie["description"] ?? ""
                                                         ) ?>
 
                                                     </td>
 
 
+                                                    <!-- DATE -->
+
                                                     <td>
 
-                                                        <?= date(
-                                                            "d/m/Y",
-                                                            strtotime(
-                                                                $categorie[
-                                                                    "date_creation"
-                                                                ]
-                                                            )
-                                                        ) ?>
+                                                        <?php if (
+                                                            isset($categorie["date_creation"])
+                                                            && !empty($categorie["date_creation"])
+                                                        ): ?>
+
+                                                            <?= date(
+                                                                "d/m/Y",
+                                                                strtotime(
+                                                                    $categorie["date_creation"]
+                                                                )
+                                                            ) ?>
+
+                                                        <?php else: ?>
+
+                                                            —
+
+                                                        <?php endif; ?>
+
+                                                    </td>
+
+
+                                                    <!-- ACTIONS -->
+
+                                                    <td class="text-center">
+
+                                                        <div class="d-flex justify-content-center gap-2">
+
+
+                                                            <!-- MODIFIER -->
+
+                                                            <a
+                                                                href="modifier-categorie.php?id=<?= $categorie["id"] ?>"
+                                                                class="btn btn-sm btn-outline-primary"
+                                                                title="Modifier">
+
+                                                                <i class="bi bi-pencil"></i>
+
+                                                            </a>
+
+
+                                                            <!-- SUPPRIMER -->
+
+                                                            <a
+                                                                href="supprimer-categorie.php?id=<?= $categorie["id"] ?>"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                title="Supprimer"
+                                                                onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+
+                                                                <i class="bi bi-trash"></i>
+
+                                                            </a>
+
+                                                        </div>
 
                                                     </td>
 
@@ -439,24 +474,16 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
             </div>
 
+        </div>
 
-        </main>
-
-    </div>
-
-</div>
+    </main>
 
 
-<!-- FOOTER -->
+    <!-- Bootstrap JS -->
 
-<?php include "includes/footer.php"; ?>
-
-
-<!-- Bootstrap JS -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
 
 
 </body>

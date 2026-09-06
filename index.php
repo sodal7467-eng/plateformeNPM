@@ -1,440 +1,96 @@
+
+<?php
+session_start();
+
+require_once("config/database.php");
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Accueil - Quincaillerie NPM</title>
+    <title>Quincaillerie NPM</title>
 
     <!-- Bootstrap -->
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    >
 
     <!-- Notre CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
-
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
-
-    <?php include 'includes/navbar.php'; ?>
-
-
-    <!-- ================= HERO ================= -->
-
-    <section class="hero">
-
-        <div class="container">
-
-            <div class="row align-items-center min-vh-75">
-
-                <!-- Texte -->
-
-                <div class="col-lg-6">
-
-                    <span class="badge bg-warning text-dark mb-3">
-                        Bienvenue chez NPM
-                    </span>
-
-                    <h1 class="display-4 fw-bold">
-                        Tout pour construire,
-                        <span class="text-orange">
-                            rénover et bricoler
-                        </span>
-                    </h1>
-
-                    <p class="lead text-muted my-4">
-                        Découvrez notre sélection de produits de
-                        qualité pour vos travaux de construction,
-                        rénovation et bricolage.
-                    </p>
-
-                    <div class="d-flex gap-3 flex-wrap">
-
-                        <a href="produits.php"
-                           class="btn btn-dark btn-lg">
-                            Découvrir nos produits
-                        </a>
-
-                        <a href="categories.php"
-                           class="btn btn-outline-dark btn-lg">
-                            Voir les catégories
-                        </a>
-
-                    </div>
-
-                </div>
+<?php
+require_once("includes/navbar.php");
+?>
 
 
-                <!-- Image -->
+<!-- =====================================
+     HERO
+===================================== -->
 
-                <div class="col-lg-6 text-center mt-5 mt-lg-0">
+<section class="hero-npm">
 
-                    <div class="hero-image">
+    <div class="container">
 
-                        <img
-                            src="assets/images/images-quincaillerie.png"
-                            class="img-fluid">
+        <div class="row align-items-center">
 
-                    </div>
+            <!-- Texte -->
+            <div class="col-lg-6">
 
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= CATÉGORIES ================= -->
-
-    <section class="py-5">
-
-        <div class="container">
-
-            <div class="text-center mb-5">
-
-                <span class="text-orange fw-bold">
-                    NOS CATÉGORIES
+                <span class="hero-badge">
+                    QUINCAILLERIE NPM
                 </span>
 
-                <h2 class="fw-bold mt-2">
-                    Trouvez ce dont vous avez besoin
-                </h2>
+                <h1>
+                    Tout pour réussir
+                    <span>vos projets.</span>
+                </h1>
 
-                <p class="text-muted">
-                    Découvrez nos différentes catégories de produits.
+                <p>
+                    Retrouvez chez NPM des outils, matériaux et
+                    équipements de qualité pour vos travaux de
+                    construction, rénovation et bricolage.
                 </p>
 
-            </div>
+                <div class="mt-4">
 
+                    <a href="produits.php" class="btn btn-warning btn-lg me-2">
+                        Découvrir les produits
+                    </a>
 
-            <div class="row g-4">
-
-                <!-- Catégorie 1 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            <i class="bi bi-tools"></i>
-                        </div>
-
-                        <h5 class="fw-bold">
-                            Outils
-                        </h5>
-
-                        <p class="text-muted">
-                            Marteaux, tournevis,
-                            pinces et autres outils.
-                        </p>
-
-                        <a href="categories.php"
-                           class="text-decoration-none">
-                            Voir les produits →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Catégorie 2 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            <i class="bi bi-droplet"></i>
-                        </div>
-
-                        <h5 class="fw-bold">
-                            Plomberie
-                        </h5>
-
-                        <p class="text-muted">
-                            Robinets, tuyaux et accessoires
-                            de plomberie.
-                        </p>
-
-                        <a href="categories.php"
-                           class="text-decoration-none">
-                            Voir les produits →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Catégorie 3 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            <i class="bi bi-lightbulb"></i>
-                        </div>
-
-                        <h5 class="fw-bold">
-                            Électricité
-                        </h5>
-
-                        <p class="text-muted">
-                            Câbles, ampoules, prises
-                            et matériel électrique.
-                        </p>
-
-                        <a href="categories.php"
-                           class="text-decoration-none">
-                            Voir les produits →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Catégorie 4 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="category-card">
-
-                        <div class="category-icon">
-                            <i class="bi bi-brush"></i>
-                        </div>
-
-                        <h5 class="fw-bold">
-                            Peinture
-                        </h5>
-
-                        <p class="text-muted">
-                            Peintures, pinceaux et
-                            accessoires.
-                        </p>
-
-                        <a href="categories.php"
-                           class="text-decoration-none">
-                            Voir les produits →
-                        </a>
-
-                    </div>
+                    <a href="contact.php" class="btn btn-outline-light btn-lg">
+                        Nous contacter
+                    </a>
 
                 </div>
 
             </div>
 
-        </div>
 
-    </section>
+            <!-- Bloc visuel -->
+            <div class="col-lg-6">
 
+                <div class="hero-box">
 
-    <!-- ================= PRODUITS POPULAIRES ================= -->
+                    <div class="hero-box-icon">
+                        <img src="assets/images/images-quincaillerie.png" alt="">
+                    </div>
 
-    <section class="py-5 bg-light">
-
-        <div class="container">
-
-            <div class="d-flex justify-content-between align-items-center mb-5">
-
-                <div>
-
-                    <span class="text-orange fw-bold">
-                        NOS PRODUITS
-                    </span>
-
-                    <h2 class="fw-bold mt-2">
-                        Produits populaires
+                    <h2>
+                        NPM
                     </h2>
 
-                </div>
-
-                <a href="produits.php"
-                   class="btn btn-outline-dark">
-                    Voir tous les produits
-                </a>
-
-            </div>
-
-
-            <div class="row g-4">
-
-                <!-- Produit 1 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/marteau.jpg"
-                                alt="Marteau"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Outils
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Marteau professionnel
-                            </h5>
-
-                            <h5 class="text-orange fw-bold">
-                                8 000 FCFA
-                            </h5>
-
-                            <a href="produit.php"
-                               class="btn btn-dark w-100 mt-2">
-                                Voir le produit
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Produit 2 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/perceuse.jpg"
-                                alt="Perceuse"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Outils
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Perceuse électrique
-                            </h5>
-
-                            <h5 class="text-orange fw-bold">
-                                45 000 FCFA
-                            </h5>
-
-                            <a href="produit.php"
-                               class="btn btn-dark w-100 mt-2">
-                                Voir le produit
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Produit 3 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/robinet.jpg"
-                                alt="Robinet"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Plomberie
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Robinet moderne
-                            </h5>
-
-                            <h5 class="text-orange fw-bold">
-                                15 000 FCFA
-                            </h5>
-
-                            <a href="produit.php"
-                               class="btn btn-dark w-100 mt-2">
-                                Voir le produit
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Produit 4 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/peinture.jpg"
-                                alt="Peinture"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Peinture
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Peinture intérieure
-                            </h5>
-
-                            <h5 class="text-orange fw-bold">
-                                12 000 FCFA
-                            </h5>
-
-                            <a href="produit.php"
-                               class="btn btn-dark w-100 mt-2">
-                                Voir le produit
-                            </a>
-
-                        </div>
-
-                    </div>
+                    <p>
+                        Qualité • Fiabilité • Proximité
+                    </p>
 
                 </div>
 
@@ -442,308 +98,403 @@
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- ================= POURQUOI NPM ================= -->
 
-    <section class="py-5">
+<!-- =====================================
+     CATÉGORIES
+===================================== -->
 
-        <div class="container">
+<section class="py-5">
 
-            <div class="text-center mb-5">
+    <div class="container">
 
-                <span class="text-orange fw-bold">
-                    POURQUOI NPM ?
-                </span>
+        <div class="section-title text-center mb-5">
 
-                <h2 class="fw-bold mt-2">
-                    Pourquoi choisir NPM ?
-                </h2>
+            <span>
+                NOS CATÉGORIES
+            </span>
 
-            </div>
+            <h2>
+                Trouvez ce qu'il vous faut
+            </h2>
 
-
-            <div class="row g-4">
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="text-center">
-
-                        <i class="bi bi-award feature-icon"></i>
-
-                        <h5 class="fw-bold mt-3">
-                            Produits de qualité
-                        </h5>
-
-                        <p class="text-muted">
-                            Nous sélectionnons des produits
-                            fiables et de qualité.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="text-center">
-
-                        <i class="bi bi-truck feature-icon"></i>
-
-                        <h5 class="fw-bold mt-3">
-                            Livraison
-                        </h5>
-
-                        <p class="text-muted">
-                            Faites vos achats et recevez
-                            vos produits facilement.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="text-center">
-
-                        <i class="bi bi-shield-check feature-icon"></i>
-
-                        <h5 class="fw-bold mt-3">
-                            Paiement sécurisé
-                        </h5>
-
-                        <p class="text-muted">
-                            Vos commandes sont traitées
-                            en toute sécurité.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="text-center">
-
-                        <i class="bi bi-headset feature-icon"></i>
-
-                        <h5 class="fw-bold mt-3">
-                            Assistance
-                        </h5>
-
-                        <p class="text-muted">
-                            Notre équipe est disponible
-                            pour vous accompagner.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
+            <p>
+                Découvrez nos différentes catégories de produits.
+            </p>
 
         </div>
 
-    </section>
 
-<!-- 
-    ================= PROMOTION =================
+        <div class="row g-4">
 
-    <section class="py-5">
+            <?php
 
-        <div class="container">
+            $requete = $pdo->query(
+                "SELECT * FROM categories ORDER BY id DESC LIMIT 8"
+            );
 
-            <div class="promotion">
+            $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
-                <div class="row align-items-center">
+            ?>
 
-                    <div class="col-lg-8">
 
-                        <span class="badge bg-light text-dark mb-3">
-                            OFFRE SPÉCIALE
-                        </span>
+            <?php if (!empty($categories)): ?>
 
-                        <h2 class="fw-bold">
-                            Profitez de nos promotions !
-                        </h2>
+                <?php foreach ($categories as $categorie): ?>
 
-                        <p class="mb-4">
-                            Découvrez nos offres et faites des économies
-                            sur une sélection de produits.
-                        </p>
+                    <div class="col-lg-3 col-md-6">
 
-                        <a href="produits.php"
-                           class="btn btn-light">
-                            Découvrir les offres
+                        <a
+                            href="produits.php?categorie=<?= $categorie['id'] ?>"
+                            class="category-card"
+                        >
+
+                            <div class="category-icon">
+                                🛠️
+                            </div>
+
+                            <h3>
+                                <?= htmlspecialchars($categorie['nom']) ?>
+                            </h3>
+
+                            <span>
+                                Voir les produits →
+                            </span>
+
                         </a>
 
                     </div>
 
+                <?php endforeach; ?>
+
+            <?php else: ?>
+
+                <div class="col-12 text-center">
+
+                    <p>
+                        Aucune catégorie disponible.
+                    </p>
+
+                </div>
+
+            <?php endif; ?>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     POURQUOI NPM
+===================================== -->
+
+<section class="why-npm py-5">
+
+    <div class="container">
+
+        <div class="text-center section-title mb-5">
+
+            <span>
+                POURQUOI NOUS CHOISIR ?
+            </span>
+
+            <h2>
+                Pourquoi choisir NPM ?
+            </h2>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Qualité
+                    </h3>
+
+                    <p>
+                        Des produits sélectionnés pour répondre
+                        à vos besoins.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        💰
+                    </div>
+
+                    <h3>
+                        Bons prix
+                    </h3>
+
+                    <p>
+                        Des solutions accessibles pour vos différents
+                        projets.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        🚚
+                    </div>
+
+                    <h3>
+                        Service
+                    </h3>
+
+                    <p>
+                        Une expérience simple et pratique pour
+                        trouver vos produits.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-3 col-md-6">
+
+                <div class="feature-card">
+
+                    <div class="feature-icon">
+                        🤝
+                    </div>
+
+                    <h3>
+                        Confiance
+                    </h3>
+
+                    <p>
+                        Nous plaçons la satisfaction de nos clients
+                        au cœur de nos priorités.
+                    </p>
+
                 </div>
 
             </div>
 
         </div>
 
-    </section> -->
+    </div>
+
+</section>
 
 
-    <!-- ================= TÉMOIGNAGES ================= -->
 
-    <section class="py-5 bg-light">
+<!-- =====================================
+     PRODUITS
+===================================== -->
 
-        <div class="container">
+<section class="py-5">
 
-            <div class="text-center mb-5">
+    <div class="container">
 
-                <span class="text-orange fw-bold">
-                    AVIS CLIENTS
-                </span>
+        <div class="section-title text-center mb-5">
 
-                <h2 class="fw-bold mt-2">
-                    Ce que nos clients pensent de nous
-                </h2>
+            <span>
+                NOS PRODUITS
+            </span>
 
-            </div>
+            <h2>
+                Produits populaires
+            </h2>
 
-
-            <div class="row g-4">
-
-                <div class="col-md-4">
-
-                    <div class="testimonial-card">
-
-                        <div class="mb-3">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <p>
-                            "Très bon service et produits de qualité.
-                            Je recommande NPM."
-                        </p>
-
-                        <strong>
-                            Client NPM
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-4">
-
-                    <div class="testimonial-card">
-
-                        <div class="mb-3">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <p>
-                            "J'ai trouvé rapidement les produits
-                            dont j'avais besoin."
-                        </p>
-
-                        <strong>
-                            Client NPM
-                        </strong>
-
-                    </div>
-
-                </div>
-
-
-                <div class="col-md-4">
-
-                    <div class="testimonial-card">
-
-                        <div class="mb-3">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <p>
-                            "Une plateforme simple et pratique
-                            pour acheter mes matériaux."
-                        </p>
-
-                        <strong>
-                            Client NPM
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
+            <p>
+                Découvrez quelques-uns de nos produits.
+            </p>
 
         </div>
 
-    </section>
+
+        <?php
+
+        $requete = $pdo->query(
+            "SELECT produits.*, categories.nom AS categorie_nom
+             FROM produits
+             LEFT JOIN categories
+             ON produits.categorie = categories.id
+             ORDER BY produits.id DESC
+             LIMIT 8"
+        );
+
+        $produits = $requete->fetchAll(PDO::FETCH_ASSOC);
+
+        ?>
 
 
-    <!-- ================= NEWSLETTER ================= -->
+        <div class="row g-4">
 
-    <section class="py-5">
+            <?php if (!empty($produits)): ?>
 
-        <div class="container">
+                <?php foreach ($produits as $produit): ?>
 
-            <div class="newsletter text-center">
+                    <div class="col-lg-3 col-md-6">
 
-                <h2 class="fw-bold">
-                    Ne manquez aucune offre
-                </h2>
+                        <div class="product-card">
 
-                <p class="text-muted">
-                    Inscrivez-vous à notre newsletter.
-                </p>
+                            <!-- Image -->
+                            <div class="product-image">
 
-                <form class="row justify-content-center g-2 mt-4">
+                                <?php if (!empty($produit['image'])): ?>
 
-                    <div class="col-md-6">
+                                    <img
+                                        src="uploads/<?= htmlspecialchars($produit['image']) ?>"
+                                        alt="<?= htmlspecialchars($produit['nom']) ?>"
+                                    >
 
-                        <input
-                            type="email"
-                            class="form-control form-control-lg"
-                            placeholder="Votre adresse email"
-                            required>
+                                <?php else: ?>
+
+                                    <div class="no-image">
+                                        🛠️
+                                    </div>
+
+                                <?php endif; ?>
+
+                            </div>
+
+
+                            <!-- Informations -->
+                            <div class="product-content">
+
+                                <small>
+                                    <?= htmlspecialchars(
+                                        $produit['categorie_nom'] ?? 'Produit'
+                                    ) ?>
+                                </small>
+
+                                <h3>
+                                    <?= htmlspecialchars($produit['nom']) ?>
+                                </h3>
+
+                                <p class="price">
+                                    <?= number_format(
+                                        $produit['prix'],
+                                        0,
+                                        ',',
+                                        ' '
+                                    ) ?>
+                                    FCFA
+                                </p>
+
+                                <a
+                                    href="details-produit.php?id=<?= $produit['id'] ?>"
+                                    class="btn btn-dark w-100"
+                                >
+                                    Voir le produit
+                                </a>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div class="col-md-auto">
+                <?php endforeach; ?>
 
-                        <button
-                            type="submit"
-                            class="btn btn-dark btn-lg">
-                            S'inscrire
-                        </button>
+            <?php else: ?>
 
-                    </div>
+                <div class="col-12 text-center">
 
-                </form>
+                    <p>
+                        Aucun produit disponible pour le moment.
+                    </p>
 
-            </div>
+                </div>
+
+            <?php endif; ?>
 
         </div>
 
-    </section>
+
+        <div class="text-center mt-5">
+
+            <a href="produits.php" class="btn btn-warning btn-lg">
+                Voir tous les produits
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
 
 
-    <!-- ================= FOOTER ================= -->
 
-    <?php include 'includes/footer.php'; ?>
+<!-- =====================================
+     APPEL À L'ACTION
+===================================== -->
+
+<section class="cta-npm">
+
+    <div class="container text-center">
+
+        <h2>
+            Un projet en tête ?
+        </h2>
+
+        <p>
+            Découvrez notre catalogue ou contactez-nous
+            pour obtenir plus d'informations.
+        </p>
+
+        <a
+            href="produits.php"
+            class="btn btn-warning btn-lg me-2"
+        >
+            Voir nos produits
+        </a>
+
+        <a
+            href="contact.php"
+            class="btn btn-outline-light btn-lg"
+        >
+            Nous contacter
+        </a>
+
+    </div>
+
+</section>
 
 
-    <!-- Bootstrap JS -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
+<?php
+require_once("includes/footer.php");
+?>
+
+
+<!-- Bootstrap JS -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
 
 </body>
-
 </html>
+

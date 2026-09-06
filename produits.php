@@ -1,3 +1,92 @@
+
+<?php
+session_start();
+
+require_once("config/database.php");
+
+/* =========================================
+   RECHERCHE
+========================================= */
+
+$recherche = $_GET["recherche"] ?? "";
+
+/* =========================================
+   FILTRE CATÉGORIE
+========================================= */
+
+$categorie = $_GET["categorie"] ?? "";
+
+
+/* =========================================
+   RÉCUPÉRER LES CATÉGORIES
+========================================= */
+
+$requeteCategories = $pdo->query(
+    "SELECT * FROM categories ORDER BY nom ASC"
+);
+
+$categories = $requeteCategories->fetchAll(PDO::FETCH_ASSOC);
+
+
+/* =========================================
+   RÉCUPÉRER LES PRODUITS
+========================================= */
+
+$sql = "
+    SELECT 
+        produits.*,
+        categories.nom AS categorie_nom
+    FROM produits
+    LEFT JOIN categories
+        ON produits.categorie = categories.id
+    WHERE 1
+";
+
+$parametres = [];
+
+
+/* Recherche */
+
+if (!empty($recherche)) {
+
+    $sql .= "
+        AND (
+            produits.nom LIKE :recherche
+            OR produits.description LIKE :recherche
+        )
+    ";
+
+    $parametres["recherche"] = "%" . $recherche . "%";
+}
+
+
+/* Catégorie */
+
+if (!empty($categorie)) {
+
+    $sql .= "
+        AND produits.categorie = :categorie
+    ";
+
+    $parametres["categorie"] = $categorie;
+}
+
+
+/* Ordre */
+
+$sql .= "
+    ORDER BY produits.id DESC
+";
+
+
+$requeteProduits = $pdo->prepare($sql);
+
+$requeteProduits->execute($parametres);
+
+$produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,507 +94,456 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Produits - Quincaillerie NPM</title>
+    <title>Nos produits | Quincaillerie NPM</title>
+
 
     <!-- Bootstrap -->
+
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+        rel="stylesheet"
+    >
 
-    <!-- Bootstrap Icons -->
+
+    <!-- CSS NPM -->
+
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+        href="assets/css/style.css"
+    >
 
 </head>
 
+
 <body>
 
-    <!-- NAVBAR -->
 
-    <?php include 'includes/navbar.php'; ?>
+<?php require_once("includes/navbar.php"); ?>
 
 
-    <!-- =========================
-         TITRE DE LA PAGE
-    ========================== -->
+<!-- =========================================
+     EN-TÊTE
+========================================= -->
 
-    <section class="py-5 bg-light">
+<section class="products-header">
 
-        <div class="container">
+    <div class="container">
 
-            <div class="text-center">
+        <div class="text-center">
 
-                <span class="text-orange fw-bold">
-                    NOTRE BOUTIQUE
-                </span>
+            <span>
+                QUINCAILLERIE NPM
+            </span>
 
-                <h1 class="fw-bold mt-2">
-                    Tous nos produits
-                </h1>
+            <h1>
+                Nos produits
+            </h1>
 
-                <p class="text-muted">
-                    Découvrez notre sélection de produits
-                    pour vos travaux.
-                </p>
-
-            </div>
+            <p>
+                Découvrez notre catalogue de produits
+                pour tous vos projets.
+            </p>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- =========================
-         RECHERCHE ET FILTRE
-    ========================== -->
 
-    <section class="py-4">
+<!-- =========================================
+     CATALOGUE
+========================================= -->
 
-        <div class="container">
+<section class="py-5">
 
-            <div class="row g-3 align-items-center">
+    <div class="container">
+
+
+        <!-- RECHERCHE -->
+
+        <div class="product-tools mb-5">
+
+            <form
+                method="GET"
+                action="produits.php"
+                class="row g-3"
+            >
 
                 <!-- Recherche -->
 
                 <div class="col-lg-6">
 
-                    <form>
+                    <div class="search-box">
 
-                        <div class="input-group">
+                        <input
+                            type="text"
+                            name="recherche"
+                            class="form-control"
+                            placeholder="Rechercher un produit..."
+                            value="<?= htmlspecialchars($recherche) ?>"
+                        >
 
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Rechercher un produit...">
-
-                            <button
-                                class="btn btn-dark"
-                                type="submit">
-
-                                <i class="bi bi-search"></i>
-
-                                Rechercher
-
-                            </button>
-
-                        </div>
-
-                    </form>
+                    </div>
 
                 </div>
 
 
                 <!-- Catégorie -->
 
-                <div class="col-lg-3">
+                <div class="col-lg-4">
 
-                    <select class="form-select">
+                    <select
+                        name="categorie"
+                        class="form-select"
+                    >
 
-                        <option selected>
+                        <option value="">
                             Toutes les catégories
                         </option>
 
-                        <option>
-                            Outils
-                        </option>
 
-                        <option>
-                            Plomberie
-                        </option>
+                        <?php foreach ($categories as $cat): ?>
 
-                        <option>
-                            Électricité
-                        </option>
+                            <option
+                                value="<?= $cat["id"] ?>"
+                                <?= ($categorie == $cat["id"]) ? "selected" : "" ?>
+                            >
 
-                        <option>
-                            Peinture
-                        </option>
+                                <?= htmlspecialchars($cat["nom"]) ?>
+
+                            </option>
+
+                        <?php endforeach; ?>
 
                     </select>
 
                 </div>
 
 
-                <!-- Trier -->
+                <!-- Bouton -->
 
-                <div class="col-lg-3">
+                <div class="col-lg-2">
 
-                    <select class="form-select">
-
-                        <option selected>
-                            Trier par
-                        </option>
-
-                        <option>
-                            Prix croissant
-                        </option>
-
-                        <option>
-                            Prix décroissant
-                        </option>
-
-                        <option>
-                            Plus récent
-                        </option>
-
-                    </select>
+                    <button
+                        type="submit"
+                        class="btn btn-warning w-100"
+                    >
+                        Rechercher
+                    </button>
 
                 </div>
 
-            </div>
+            </form>
 
         </div>
 
-    </section>
 
 
-    <!-- =========================
-         PRODUITS
-    ========================== -->
+        <!-- =================================
+             RÉSULTATS
+        ================================= -->
 
-    <section class="py-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div class="container">
+            <div>
 
-            <div class="row g-4">
+                <h2 class="catalogue-title">
+                    Catalogue
+                </h2>
 
+                <p class="text-muted mb-0">
 
-                <!-- PRODUIT 1 -->
+                    <?= count($produits) ?>
 
-                <div class="col-md-6 col-lg-3">
+                    produit(s) trouvé(s)
 
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/marteau.jpg"
-                                alt="Marteau"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Outils
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Marteau professionnel
-                            </h5>
-
-                            <p class="text-muted small">
-                                Marteau solide pour vos travaux.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    8 000 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRODUIT 2 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/perceuse.jpg"
-                                alt="Perceuse"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Outils
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Perceuse électrique
-                            </h5>
-
-                            <p class="text-muted small">
-                                Perceuse idéale pour vos travaux.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    45 000 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRODUIT 3 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/robinet.jpg"
-                                alt="Robinet"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Plomberie
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Robinet moderne
-                            </h5>
-
-                            <p class="text-muted small">
-                                Robinet de qualité pour votre maison.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    15 000 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRODUIT 4 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/peinture.jpg"
-                                alt="Peinture"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Peinture
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Peinture intérieure
-                            </h5>
-
-                            <p class="text-muted small">
-                                Peinture pour vos travaux intérieurs.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    12 000 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRODUIT 5 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/tournevis.jpg"
-                                alt="Tournevis"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Outils
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Tournevis professionnel
-                            </h5>
-
-                            <p class="text-muted small">
-                                Tournevis résistant et pratique.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    5 000 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- PRODUIT 6 -->
-
-                <div class="col-md-6 col-lg-3">
-
-                    <div class="product-card">
-
-                        <div class="product-image">
-
-                            <img
-                                src="assets/images/ampoule.jpg"
-                                alt="Ampoule"
-                                class="img-fluid">
-
-                        </div>
-
-                        <div class="p-3">
-
-                            <small class="text-muted">
-                                Électricité
-                            </small>
-
-                            <h5 class="fw-bold mt-2">
-                                Ampoule LED
-                            </h5>
-
-                            <p class="text-muted small">
-                                Ampoule LED économique.
-                            </p>
-
-                            <div class="d-flex justify-content-between align-items-center">
-
-                                <strong class="text-orange">
-                                    2 500 FCFA
-                                </strong>
-
-                                <a
-                                    href="produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    Voir
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+                </p>
 
             </div>
 
+
+            <?php if (!empty($recherche) || !empty($categorie)): ?>
+
+                <a
+                    href="produits.php"
+                    class="btn btn-outline-dark"
+                >
+                    Réinitialiser
+                </a>
+
+            <?php endif; ?>
+
         </div>
 
-    </section>
 
 
-    <!-- FOOTER -->
+        <!-- =================================
+             PRODUITS
+        ================================= -->
 
-    <?php include 'includes/footer.php'; ?>
+        <div class="row g-4">
 
 
-    <!-- Bootstrap JS -->
+            <?php if (!empty($produits)): ?>
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
+
+                <?php foreach ($produits as $produit): ?>
+
+
+                    <div class="col-xl-3 col-lg-4 col-md-6">
+
+
+                        <div class="product-card">
+
+
+                            <!-- IMAGE -->
+
+                            <div class="product-image">
+
+
+                                <?php if (!empty($produit["image"])): ?>
+
+
+                                    <img
+                                        src="uploads/<?= htmlspecialchars($produit["image"]) ?>"
+                                        alt="<?= htmlspecialchars($produit["nom"]) ?>"
+                                    >
+
+
+                                <?php else: ?>
+
+
+                                    <div class="no-image">
+                                        🛠️
+                                    </div>
+
+
+                                <?php endif; ?>
+
+
+                            </div>
+
+
+
+                            <!-- INFORMATIONS -->
+
+                            <div class="product-content">
+
+
+                                <small>
+
+                                    <?= htmlspecialchars(
+                                        $produit["categorie_nom"] ?? "Produit"
+                                    ) ?>
+
+                                </small>
+
+
+                                <h3>
+
+                                    <?= htmlspecialchars(
+                                        $produit["nom"]
+                                    ) ?>
+
+                                </h3>
+
+
+
+                                <?php if (!empty($produit["description"])): ?>
+
+                                    <p class="product-description">
+
+                                        <?= htmlspecialchars(
+                                            mb_substr(
+                                                $produit["description"],
+                                                0,
+                                                80
+                                            )
+                                        ) ?>
+
+                                        <?php if (strlen($produit["description"]) > 80): ?>
+                                            ...
+                                        <?php endif; ?>
+
+                                    </p>
+
+                                <?php endif; ?>
+
+
+
+                                <!-- PRIX -->
+
+                                <p class="price">
+
+                                    <?= number_format(
+                                        $produit["prix"],
+                                        0,
+                                        ",",
+                                        " "
+                                    ) ?>
+
+                                    FCFA
+
+                                </p>
+
+
+
+                                <!-- STOCK -->
+
+                                <?php if (isset($produit["stock"])): ?>
+
+
+                                    <?php if ($produit["stock"] > 0): ?>
+
+                                        <span class="stock-available">
+
+                                            ✓
+                                            <?= $produit["stock"] ?>
+                                            disponible(s)
+
+                                        </span>
+
+
+                                    <?php else: ?>
+
+                                        <span class="stock-empty">
+
+                                            Rupture de stock
+
+                                        </span>
+
+                                    <?php endif; ?>
+
+
+                                <?php endif; ?>
+
+
+
+                                <!-- ACTIONS -->
+
+                                <div class="product-actions mt-3">
+
+
+                                    <a
+                                        href="details-produit.php?id=<?= $produit["id"] ?>"
+                                        class="btn btn-dark w-100 mb-2"
+                                    >
+
+                                        Voir le produit
+
+                                    </a>
+
+
+                                    <?php if (
+                                        !isset($produit["stock"])
+                                        || $produit["stock"] > 0
+                                    ): ?>
+
+
+                                        <a
+                                            href="panier.php?action=ajouter&id=<?= $produit["id"] ?>"
+                                            class="btn btn-warning w-100"
+                                        >
+
+                                            🛒 Ajouter au panier
+
+                                        </a>
+
+
+                                    <?php else: ?>
+
+
+                                        <button
+                                            type="button"
+                                            class="btn btn-secondary w-100"
+                                            disabled
+                                        >
+
+                                            Rupture de stock
+
+                                        </button>
+
+
+                                    <?php endif; ?>
+
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                <?php endforeach; ?>
+
+
+            <?php else: ?>
+
+
+                <!-- AUCUN PRODUIT -->
+
+                <div class="col-12">
+
+                    <div class="empty-products text-center">
+
+                        <div class="empty-icon">
+                            🔎
+                        </div>
+
+                        <h3>
+                            Aucun produit trouvé
+                        </h3>
+
+                        <p>
+                            Aucun produit ne correspond
+                            à votre recherche.
+                        </p>
+
+                        <a
+                            href="produits.php"
+                            class="btn btn-warning"
+                        >
+                            Voir tous les produits
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+            <?php endif; ?>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<?php require_once("includes/footer.php"); ?>
+
+
+<!-- Bootstrap JS -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
 
 </body>
 
 </html>
+

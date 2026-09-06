@@ -1,3 +1,93 @@
+<?php
+
+session_start();
+
+require_once "config/database.php";
+
+$message = "";
+$erreur = "";
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $nom = trim($_POST["nom"] ?? "");
+    $email = trim($_POST["email"] ?? "");
+    $motDePasse = $_POST["password"] ?? "";
+    $confirmation = $_POST["confirmation"] ?? "";
+    $conditions = isset($_POST["conditions"]);
+
+
+    // Vérifier les champs
+    if (
+        empty($nom) ||
+        empty($email) ||
+        empty($motDePasse) ||
+        empty($confirmation)
+    ) {
+
+        $erreur = "Veuillez remplir tous les champs.";
+
+    } elseif (!$conditions) {
+
+        $erreur = "Vous devez accepter les conditions d'utilisation.";
+
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+
+        $erreur = "Veuillez saisir une adresse email valide.";
+
+    } elseif ($motDePasse !== $confirmation) {
+
+        $erreur = "Les deux mots de passe ne correspondent pas.";
+
+    } elseif (strlen($motDePasse) < 6) {
+
+        $erreur = "Le mot de passe doit contenir au moins 6 caractères.";
+
+    } else {
+
+        // Vérifier si l'email existe déjà
+        $verification = $pdo->prepare("
+            SELECT id
+            FROM utilisateurs
+            WHERE email = ?
+        ");
+
+        $verification->execute([$email]);
+
+        if ($verification->fetch()) {
+
+            $erreur = "Cette adresse email est déjà utilisée.";
+
+        } else {
+
+            // CRYPTER LE MOT DE PASSE
+            $motDePasseHash = password_hash(
+                $motDePasse,
+                PASSWORD_DEFAULT
+            );
+
+
+            // Insérer l'utilisateur
+            $requete = $pdo->prepare("
+                INSERT INTO utilisateurs
+                (nom, email, mot_de_passe)
+                VALUES (?, ?, ?)
+            ");
+
+            $requete->execute([
+                $nom,
+                $email,
+                $motDePasseHash
+            ]);
+
+
+            $message = "Votre compte a été créé avec succès.";
+
+        }
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,331 +95,343 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Inscription - Quincaillerie NPM</title>
 
+
     <!-- Bootstrap -->
+
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
         rel="stylesheet">
 
+
     <!-- Bootstrap Icons -->
+
     <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/style.css">
+
+    <link
+        rel="stylesheet"
+        href="assets/css/style.css">
 
 </head>
+
 
 <body>
 
 
-    <!-- ================= NAVBAR ================= -->
+<?php include "includes/navbar.php"; ?>
 
-    <?php include 'includes/navbar.php'; ?>
 
+<main>
 
-    <!-- ================= INSCRIPTION ================= -->
+    <section class="inscription-section py-5">
 
-    <main>
+        <div class="container">
 
-        <section class="inscription-section py-5">
+            <div class="row justify-content-center">
 
-            <div class="container">
+                <div class="col-md-9 col-lg-6">
 
-                <div class="row justify-content-center">
+                    <div class="inscription-card">
 
-                    <div class="col-md-9 col-lg-6">
 
-                        <div class="inscription-card">
+                        <!-- Icône -->
 
+                        <div class="inscription-icon">
 
-                            <!-- Icône -->
+                            <i class="bi bi-person-plus"></i>
 
-                            <div class="inscription-icon">
+                        </div>
 
-                                <i class="bi bi-person-plus"></i>
 
-                            </div>
+                        <!-- Titre -->
 
+                        <div class="text-center mb-4">
 
-                            <!-- Titre -->
+                            <span class="text-orange fw-bold">
+                                ESPACE CLIENT
+                            </span>
 
-                            <div class="text-center mb-4">
+                            <h1 class="fw-bold mt-2">
+                                Créer un compte
+                            </h1>
 
-                                <span class="text-orange fw-bold">
-                                    ESPACE CLIENT
-                                </span>
+                            <p class="text-muted">
+                                Rejoignez NPM et profitez d'une expérience
+                                d'achat simple et rapide.
+                            </p>
 
-                                <h1 class="fw-bold mt-2">
-                                    Créer un compte
-                                </h1>
+                        </div>
 
-                                <p class="text-muted">
-                                    Rejoignez NPM et profitez d'une expérience
-                                    d'achat simple et rapide.
-                                </p>
 
-                            </div>
+                        <!-- Message succès -->
 
+                        <?php if (!empty($message)): ?>
 
-                            <!-- Formulaire -->
+                            <div
+                                class="alert alert-success"
+                                role="alert">
 
-                            <form action="#" method="POST">
+                                <i class="bi bi-check-circle me-2"></i>
 
+                                <?= htmlspecialchars($message) ?>
 
-                                <!-- Nom et prénom -->
-
-                                <div class="row">
-
-                                    <div class="col-md-6 mb-3">
-
-                                        <label
-                                            for="prenom"
-                                            class="form-label fw-bold">
-
-                                            Prénom
-
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            name="prenom"
-                                            id="prenom"
-                                            class="form-control"
-                                            placeholder="Votre prénom"
-                                            required>
-
-                                    </div>
-
-
-                                    <div class="col-md-6 mb-3">
-
-                                        <label
-                                            for="nom"
-                                            class="form-label fw-bold">
-
-                                            Nom
-
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            name="nom"
-                                            id="nom"
-                                            class="form-control"
-                                            placeholder="Votre nom"
-                                            required>
-
-                                    </div>
-
-                                </div>
-
-
-                                <!-- Téléphone -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="telephone"
-                                        class="form-label fw-bold">
-
-                                        Téléphone
-
-                                    </label>
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-
-                                            <i class="bi bi-telephone"></i>
-
-                                        </span>
-
-                                        <input
-                                            type="tel"
-                                            name="telephone"
-                                            id="telephone"
-                                            class="form-control"
-                                            placeholder="77 000 00 00"
-                                            required>
-
-                                    </div>
-
-                                </div>
-
-
-                                <!-- Email -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="email"
-                                        class="form-label fw-bold">
-
-                                        Adresse email
-
-                                    </label>
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-
-                                            <i class="bi bi-envelope"></i>
-
-                                        </span>
-
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            id="email"
-                                            class="form-control"
-                                            placeholder="exemple@email.com"
-                                            required>
-
-                                    </div>
-
-                                </div>
-
-
-                                <!-- Mot de passe -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="password"
-                                        class="form-label fw-bold">
-
-                                        Mot de passe
-
-                                    </label>
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-
-                                            <i class="bi bi-lock"></i>
-
-                                        </span>
-
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            id="password"
-                                            class="form-control"
-                                            placeholder="Créer un mot de passe"
-                                            required>
-
-                                        <button
-                                            type="button"
-                                            class="btn btn-outline-secondary"
-                                            id="voirPassword">
-
-                                            <i class="bi bi-eye"></i>
-
-                                        </button>
-
-                                    </div>
-
-                                </div>
-
-
-                                <!-- Confirmation mot de passe -->
-
-                                <div class="mb-3">
-
-                                    <label
-                                        for="confirmation"
-                                        class="form-label fw-bold">
-
-                                        Confirmer le mot de passe
-
-                                    </label>
-
-                                    <div class="input-group">
-
-                                        <span class="input-group-text">
-
-                                            <i class="bi bi-lock-fill"></i>
-
-                                        </span>
-
-                                        <input
-                                            type="password"
-                                            name="confirmation"
-                                            id="confirmation"
-                                            class="form-control"
-                                            placeholder="Confirmer votre mot de passe"
-                                            required>
-
-                                    </div>
-
-                                </div>
-
-
-                                <!-- Conditions -->
-
-                                <div class="form-check mb-4">
-
-                                    <input
-                                        type="checkbox"
-                                        class="form-check-input"
-                                        id="conditions"
-                                        name="conditions"
-                                        required>
-
-                                    <label
-                                        for="conditions"
-                                        class="form-check-label">
-
-                                        J'accepte les conditions
-                                        d'utilisation de NPM.
-
-                                    </label>
-
-                                </div>
-
-
-                                <!-- Bouton -->
-
-                                <button
-                                    type="submit"
-                                    class="btn btn-dark btn-lg w-100">
-
-                                    <i class="bi bi-person-plus"></i>
-
-                                    Créer mon compte
-
-                                </button>
-
-
-                            </form>
-
-
-                            <!-- Connexion -->
-
-                            <div class="text-center mt-4">
-
-                                <p class="text-muted mb-0">
-
-                                    Vous avez déjà un compte ?
+                                <div class="mt-3">
 
                                     <a
                                         href="connexion.php"
-                                        class="text-orange fw-bold text-decoration-none">
+                                        class="btn btn-dark">
 
                                         Se connecter
 
                                     </a>
 
-                                </p>
+                                </div>
 
                             </div>
 
+                        <?php endif; ?>
+
+
+                        <!-- Message erreur -->
+
+                        <?php if (!empty($erreur)): ?>
+
+                            <div
+                                class="alert alert-danger"
+                                role="alert">
+
+                                <i class="bi bi-exclamation-circle me-2"></i>
+
+                                <?= htmlspecialchars($erreur) ?>
+
+                            </div>
+
+                        <?php endif; ?>
+
+
+                        <?php if (empty($message)): ?>
+
+                        <!-- Formulaire -->
+
+                        <form
+                            action="inscription.php"
+                            method="POST">
+
+
+                            <!-- Nom -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="nom"
+                                    class="form-label fw-bold">
+
+                                    Nom complet
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-person"></i>
+
+                                    </span>
+
+                                    <input
+                                        type="text"
+                                        name="nom"
+                                        id="nom"
+                                        class="form-control"
+                                        placeholder="Votre nom complet"
+                                        value="<?= htmlspecialchars($_POST["nom"] ?? "") ?>"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Email -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="email"
+                                    class="form-label fw-bold">
+
+                                    Adresse email
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-envelope"></i>
+
+                                    </span>
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        class="form-control"
+                                        placeholder="exemple@email.com"
+                                        value="<?= htmlspecialchars($_POST["email"] ?? "") ?>"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Mot de passe -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="password"
+                                    class="form-label fw-bold">
+
+                                    Mot de passe
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-lock"></i>
+
+                                    </span>
+
+                                    <input
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        class="form-control"
+                                        placeholder="Créer un mot de passe"
+                                        required>
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary"
+                                        id="voirPassword">
+
+                                        <i class="bi bi-eye"></i>
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Confirmation -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="confirmation"
+                                    class="form-label fw-bold">
+
+                                    Confirmer le mot de passe
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-lock-fill"></i>
+
+                                    </span>
+
+                                    <input
+                                        type="password"
+                                        name="confirmation"
+                                        id="confirmation"
+                                        class="form-control"
+                                        placeholder="Confirmer votre mot de passe"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Conditions -->
+
+                            <div class="form-check mb-4">
+
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    id="conditions"
+                                    name="conditions"
+                                    required>
+
+                                <label
+                                    for="conditions"
+                                    class="form-check-label">
+
+                                    J'accepte les conditions
+                                    d'utilisation de NPM.
+
+                                </label>
+
+                            </div>
+
+
+                            <!-- Bouton -->
+
+                            <button
+                                type="submit"
+                                class="btn btn-dark btn-lg w-100">
+
+                                <i class="bi bi-person-plus me-1"></i>
+
+                                Créer mon compte
+
+                            </button>
+
+
+                        </form>
+
+                        <?php endif; ?>
+
+
+                        <!-- Connexion -->
+
+                        <div class="text-center mt-4">
+
+                            <p class="text-muted mb-0">
+
+                                Vous avez déjà un compte ?
+
+                                <a
+                                    href="connexion.php"
+                                    class="text-orange fw-bold text-decoration-none">
+
+                                    Se connecter
+
+                                </a>
+
+                            </p>
+
                         </div>
+
 
                     </div>
 
@@ -337,51 +439,51 @@
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
+    </section>
 
-
-    <!-- ================= FOOTER ================= -->
-
-    <?php include 'includes/footer.php'; ?>
+</main>
 
 
-    <!-- Bootstrap JS -->
-
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
+<?php include "includes/footer.php"; ?>
 
 
-    <!-- Afficher le mot de passe -->
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
 
-    <script>
 
-        const password = document.getElementById("password");
-        const voirPassword = document.getElementById("voirPassword");
+<script>
 
-        voirPassword.addEventListener("click", function () {
+const password = document.getElementById("password");
+const voirPassword = document.getElementById("voirPassword");
 
-            if (password.type === "password") {
+if (password && voirPassword) {
 
-                password.type = "text";
+    voirPassword.addEventListener("click", function () {
 
-                voirPassword.innerHTML =
-                    '<i class="bi bi-eye-slash"></i>';
+        if (password.type === "password") {
 
-            } else {
+            password.type = "text";
 
-                password.type = "password";
+            voirPassword.innerHTML =
+                '<i class="bi bi-eye-slash"></i>';
 
-                voirPassword.innerHTML =
-                    '<i class="bi bi-eye"></i>';
+        } else {
 
-            }
+            password.type = "password";
 
-        });
+            voirPassword.innerHTML =
+                '<i class="bi bi-eye"></i>';
 
-    </script>
+        }
+
+    });
+
+}
+
+</script>
 
 </body>
 
