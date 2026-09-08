@@ -223,6 +223,85 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
         // =================================================
+        // CRÉER AUTOMATIQUEMENT LA FACTURE
+        // =================================================
+
+        $annee = date("Y");
+
+
+        // Récupérer la dernière facture
+        $requeteDerniereFacture = $pdo->query("
+            SELECT id
+            FROM factures
+            ORDER BY id DESC
+            LIMIT 1
+            FOR UPDATE
+        ");
+
+        $derniereFacture = $requeteDerniereFacture->fetch(
+            PDO::FETCH_ASSOC
+        );
+
+
+        if ($derniereFacture) {
+
+            $numero = (int) $derniereFacture["id"] + 1;
+
+        } else {
+
+            $numero = 1;
+
+        }
+
+
+        // Générer le numéro
+        $numeroFacture = "FAC-"
+            . $annee
+            . "-"
+            . str_pad(
+                $numero,
+                5,
+                "0",
+                STR_PAD_LEFT
+            );
+
+
+        // Montants de la facture
+        $montantTotal = (float) $total;
+
+        $montantPaye = 0;
+
+        $resteAPayer = $montantTotal;
+
+        $statutFacture = "Impayée";
+
+
+        // Insérer la facture
+        $requeteFacture = $pdo->prepare("
+            INSERT INTO factures
+            (
+                commande_id,
+                numero_facture,
+                montant_total,
+                montant_paye,
+                reste_a_payer,
+                statut
+            )
+            VALUES (?, ?, ?, ?, ?, ?)
+        ");
+
+
+        $requeteFacture->execute([
+            $commandeId,
+            $numeroFacture,
+            $montantTotal,
+            $montantPaye,
+            $resteAPayer,
+            $statutFacture
+        ]);
+
+
+        // =================================================
         // VALIDER LA TRANSACTION
         // =================================================
 
@@ -488,9 +567,7 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
             <div class="row g-4">
 
 
-                <!-- =====================================
-                     INFORMATIONS CLIENT
-                ====================================== -->
+                <!-- INFORMATIONS CLIENT -->
 
                 <div class="col-lg-7">
 
@@ -501,8 +578,6 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                             Informations de livraison
                         </h3>
 
-
-                        <!-- Erreur -->
 
                         <?php if (!empty($erreur)): ?>
 
@@ -815,9 +890,7 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                 </div>
 
 
-                <!-- =====================================
-                     RÉSUMÉ
-                ====================================== -->
+                <!-- RÉSUMÉ -->
 
                 <div class="col-lg-5">
 
@@ -899,8 +972,6 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                         <hr>
 
 
-                        <!-- Sous-total -->
-
                         <div
                             class="d-flex justify-content-between mb-3"
                         >
@@ -925,8 +996,6 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                         </div>
 
 
-                        <!-- Livraison -->
-
                         <div
                             class="d-flex justify-content-between mb-3"
                         >
@@ -944,8 +1013,6 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
 
                         <hr>
 
-
-                        <!-- Total -->
 
                         <div
                             class="d-flex justify-content-between align-items-center"
@@ -970,8 +1037,6 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
 
                         </div>
 
-
-                        <!-- Sécurité -->
 
                         <div class="mt-4 p-3 bg-light rounded">
 

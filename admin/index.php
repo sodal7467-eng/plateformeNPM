@@ -83,7 +83,7 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
 <!-- ================= HEADER ================= -->
 
-<?php include "../includes/header.php"; ?>
+<?php include "includes/navbar.php"; ?>
 
 
 <div class="container-fluid">

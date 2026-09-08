@@ -8,120 +8,183 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <aside class="admin-sidebar">
 
+    <!-- LOGO -->
+    <!-- <div class="sidebar-logo">
 
-<!-- Logo -->
+        <a href="produits.php">
 
-<!-- <div class="sidebar-logo">
+            <span class="logo-npm">
+                NPM
+            </span>
 
-    <a href="produits.php">
+            <span class="logo-admin">
+                ADMIN
+            </span>
 
-        <span class="logo-npm">
-            NPM
-        </span>
+        </a>
 
-        <span class="logo-admin">
-            ADMIN
-        </span>
-
-    </a>
-
-</div> -->
+    </div> -->
 
 
-<!-- Menu -->
+    <!-- MENU -->
+    <nav class="sidebar-menu">
 
-<nav class="sidebar-menu">
-
-    <p class="sidebar-title">
-        MENU PRINCIPAL
-    </p>
-
-
-    <!-- Produits -->
-
-    <a href="produits.php" class="sidebar-link">
-
-        <span class="sidebar-icon">📦</span>
-
-        <span>Produits</span>
-
-    </a>
+        <p class="sidebar-title">
+            MENU PRINCIPAL
+        </p>
 
 
-    <!-- Catégories -->
+        <!-- PRODUITS -->
+        <a href="produits.php" class="sidebar-link">
 
-    <a href="categories.php" class="sidebar-link">
+            <span class="sidebar-icon">
+                📦
+            </span>
 
-        <span class="sidebar-icon">🏷️</span>
+            <span>
+                Produits
+            </span>
 
-        <span>Catégories</span>
-
-    </a>
-
-
-    <!-- Clients -->
-
-    <a href="clients.php" class="sidebar-link">
-
-        <span class="sidebar-icon">👥</span>
-
-        <span>Clients</span>
-
-    </a>
+        </a>
 
 
-    <!-- Commandes -->
+        <!-- CATÉGORIES -->
+        <a href="categories.php" class="sidebar-link">
 
-    <a href="commandes.php" class="sidebar-link">
+            <span class="sidebar-icon">
+                🏷️
+            </span>
 
-        <span class="sidebar-icon">🛒</span>
+            <span>
+                Catégories
+            </span>
 
-        <span>Commandes</span>
-
-    </a>
-
-
-    <!-- Messages -->
-
-    <a href="messages.php" class="sidebar-link">
-
-        <span class="sidebar-icon">✉️</span>
-
-        <span>Messages</span>
-
-    </a>
+        </a>
 
 
-    <div class="sidebar-separator"></div>
+        <!-- CLIENTS -->
+        <a href="clients.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                👥
+            </span>
+
+            <span>
+                Clients
+            </span>
+
+        </a>
 
 
-    <p class="sidebar-title">
-        SITE
-    </p>
+        <!-- COMMANDES -->
+        <a href="commandes.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🛒
+            </span>
+
+            <span>
+                Commandes
+            </span>
+
+        </a>
 
 
-    <!-- Voir le site -->
+        <!-- FACTURES -->
+        <a href="factures.php" class="sidebar-link">
 
-    <a href="../index.php" class="sidebar-link">
+            <span class="sidebar-icon">
+                🧾
+            </span>
 
-        <span class="sidebar-icon">🌐</span>
+            <span>
+                Factures
+            </span>
 
-        <span>Voir le site</span>
-
-    </a>
+        </a>
 
 
-    <!-- Déconnexion -->
+        <!-- CRÉDITS CLIENTS -->
+        <a href="credits.php" class="sidebar-link">
 
-    <a href="../deconnexion.php" class="sidebar-link sidebar-logout">
+            <span class="sidebar-icon">
+                💰
+            </span>
 
-        <span class="sidebar-icon">↪</span>
+            <span>
+                Crédits clients
+            </span>
 
-        <span>Déconnexion</span>
+        </a>
 
-    </a>
 
-</nav>
+        <!-- STOCKS -->
+        <a href="stocks.php" class="sidebar-link">
 
+            <span class="sidebar-icon">
+                📊
+            </span>
+
+            <span>
+                Stocks
+            </span>
+
+        </a>
+
+
+        <!-- MESSAGES -->
+        <a href="messages.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                ✉️
+            </span>
+
+            <span>
+                Messages
+            </span>
+
+        </a>
+
+
+        <!-- SÉPARATION -->
+        <div class="sidebar-separator"></div>
+
+
+        <p class="sidebar-title">
+            SITE
+        </p>
+
+
+        <!-- VOIR LE SITE -->
+        <a href="../index.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🌐
+            </span>
+
+            <span>
+                Voir le site
+            </span>
+
+        </a>
+
+
+        <!-- DÉCONNEXION -->
+        <a
+            href="../deconnexion.php"
+            class="sidebar-link sidebar-logout"
+        >
+
+            <span class="sidebar-icon">
+                ↪
+            </span>
+
+            <span>
+                Déconnexion
+            </span>
+
+        </a>
+
+    </nav>
 
 </aside>
