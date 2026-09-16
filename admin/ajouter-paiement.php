@@ -430,6 +430,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <?php require_once("includes/navbar.php"); ?>
 
 <?php require_once("includes/sidebar.php"); ?>
+<?php require_once("includes/auth.php");?> 
+
 
 
 <main class="admin-content">

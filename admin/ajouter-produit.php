@@ -346,6 +346,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ====================================================== -->
 
 <?php require_once("includes/sidebar.php"); ?>
+<?php require_once("includes/auth.php");?> 
 
 
 <!-- =====================================================

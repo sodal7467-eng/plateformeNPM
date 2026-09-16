@@ -312,6 +312,7 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
 
 
     <?php require_once("includes/sidebar.php"); ?>
+    <?php require_once("includes/auth.php");?> 
 
 
     <main class="admin-content">
@@ -499,6 +500,7 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
 
                                             <option
                                                 value="<?= (int) $commande["id"] ?>"
+                                                <?= (int) ($_GET["commande_id"] ?? 0) === (int) $commande["id"] ? "selected" : "" ?>
                                             >
 
                                                 Commande

@@ -100,6 +100,8 @@ foreach ($credits as $credit) {
 
 <?php require_once "includes/sidebar.php"; ?>
 
+<?php require_once("includes/auth.php");?> 
+
 
 <!--
 |--------------------------------------------------------------------------

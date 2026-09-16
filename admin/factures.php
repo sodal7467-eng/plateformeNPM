@@ -115,6 +115,7 @@ foreach ($factures as $facture) {
 <div class="admin-layout">
 
     <?php require_once("includes/sidebar.php"); ?>
+    <?php require_once("includes/auth.php");?> 
 
 
     <main class="admin-content">

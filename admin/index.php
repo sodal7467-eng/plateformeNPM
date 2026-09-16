@@ -1,46 +1,77 @@
 <?php
 
-require_once "../config/database.php";
+require_once("includes/auth.php");
+require_once("../config/database.php");
+
+/*
+|--------------------------------------------------------------------------
+| STATISTIQUES
+|--------------------------------------------------------------------------
+*/
+
+// Nombre de produits
+$requete = $pdo->query("SELECT COUNT(*) FROM produits");
+$totalProduits = $requete->fetchColumn();
+
+// Nombre de clients
+$requete = $pdo->query("
+    SELECT COUNT(*)
+    FROM utilisateurs
+    WHERE role = 'client'
+");
+$totalClients = $requete->fetchColumn();
+
+// Nombre de commandes
+$requete = $pdo->query("SELECT COUNT(*) FROM commandes");
+$totalCommandes = $requete->fetchColumn();
+
+// Chiffre d'affaires
+$requete = $pdo->query("
+    SELECT COALESCE(SUM(total), 0)
+    FROM commandes
+");
+$chiffreAffaires = $requete->fetchColumn();
+
+// Produits avec stock faible
+$requete = $pdo->query("
+    SELECT COUNT(*)
+    FROM produits
+    WHERE stock <= 5
+");
+$stockFaible = $requete->fetchColumn();
 
 
-// ===============================
-// STATISTIQUES PRODUITS
-// ===============================
+/*
+|--------------------------------------------------------------------------
+| DERNIÈRES COMMANDES
+|--------------------------------------------------------------------------
+*/
 
-// Nombre total de produits
-$requeteProduits = $pdo->query(
-    "SELECT COUNT(*) FROM produits"
-);
+$requete = $pdo->query("
+    SELECT *
+    FROM commandes
+    ORDER BY id DESC
+    LIMIT 5
+");
 
-$totalProduits = $requeteProduits->fetchColumn();
-
-
-// Nombre de produits en stock faible
-$requeteStock = $pdo->query(
-    "SELECT COUNT(*) 
-     FROM produits 
-     WHERE stock <= 5"
-);
-
-$stockFaible = $requeteStock->fetchColumn();
+$dernieresCommandes = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 
-// Valeur totale du stock
-$requeteValeurStock = $pdo->query(
-    "SELECT SUM(prix * stock) FROM produits"
-);
+/*
+|--------------------------------------------------------------------------
+| PRODUITS EN STOCK FAIBLE
+|--------------------------------------------------------------------------
+*/
 
-$valeurStock = $requeteValeurStock->fetchColumn();
+$requete = $pdo->query("
+    SELECT *
+    FROM produits
+    WHERE stock <= 5
+    ORDER BY stock ASC
+    LIMIT 5
+");
 
-
-// Les 5 derniers produits
-$requeteDerniersProduits = $pdo->query(
-    "SELECT * FROM produits 
-     ORDER BY id DESC 
-     LIMIT 5"
-);
-
-$derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
+$produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -51,85 +82,73 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Tableau de bord - NPM</title>
-
+    <title>Dashboard - Quincaillerie NPM</title>
 
     <!-- Bootstrap -->
-
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-        rel="stylesheet">
-
+        rel="stylesheet"
+    >
 
     <!-- Bootstrap Icons -->
-
     <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
 
-
-    <!-- CSS -->
-
+    <!-- CSS du projet -->
     <link
         rel="stylesheet"
-        href="../assets/css/style.css">
+        href="../assets/css/style.css"
+    >
 
 </head>
 
 <body>
 
-
-<!-- ================= HEADER ================= -->
-
-<?php include "includes/navbar.php"; ?>
-
+<?php require_once("includes/navbar.php"); ?>
 
 <div class="container-fluid">
 
     <div class="row">
 
-
-        <!-- ================= SIDEBAR ================= -->
+        <!-- SIDEBAR -->
 
         <div class="col-md-3 col-lg-2 p-0">
 
-            <?php include "includes/sidebar.php"; ?>
+            <?php require_once("includes/sidebar.php"); ?>
 
         </div>
 
 
-        <!-- ================= CONTENU ================= -->
+        <!-- CONTENU PRINCIPAL -->
 
-        <main class="col-md-9 col-lg-10 p-4">
+        <main class="col-md-9 col-lg-10 px-4 py-4">
 
-
-            <!-- Titre -->
+            <!-- EN-TÊTE -->
 
             <div class="mb-4">
 
                 <h1 class="fw-bold">
-
                     Tableau de bord
-
                 </h1>
 
                 <p class="text-muted">
-
-                    Bienvenue dans l'espace d'administration de NPM.
-
+                    Bienvenue dans l'espace d'administration de Quincaillerie NPM.
                 </p>
 
             </div>
 
 
-            <!-- ================= STATISTIQUES ================= -->
+            <!-- CARTES STATISTIQUES -->
 
             <div class="row g-4 mb-4">
 
 
-                <!-- Produits -->
+                <!-- PRODUITS -->
 
                 <div class="col-md-6 col-xl-3">
 
@@ -137,7 +156,7 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
 
                                 <div>
 
@@ -145,26 +164,23 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
                                         Produits
                                     </p>
 
-                                    <h2 class="fw-bold">
+                                    <h2 class="fw-bold mb-0">
                                         <?= $totalProduits ?>
                                     </h2>
 
                                 </div>
 
-                                <div class="fs-1 text-primary">
-
+                                <div class="fs-1 text-secondary">
                                     <i class="bi bi-box-seam"></i>
-
                                 </div>
 
                             </div>
 
                             <a
                                 href="produits.php"
-                                class="text-decoration-none">
-
+                                class="small text-decoration-none"
+                            >
                                 Voir les produits →
-
                             </a>
 
                         </div>
@@ -174,7 +190,7 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
 
-                <!-- Commandes -->
+                <!-- CLIENTS -->
 
                 <div class="col-md-6 col-xl-3">
 
@@ -182,52 +198,7 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between">
-
-                                <div>
-
-                                    <p class="text-muted mb-1">
-                                        Commandes
-                                    </p>
-
-                                    <h2 class="fw-bold">
-                                        0
-                                    </h2>
-
-                                </div>
-
-                                <div class="fs-1 text-success">
-
-                                    <i class="bi bi-cart-check"></i>
-
-                                </div>
-
-                            </div>
-
-                            <a
-                                href="commandes.php"
-                                class="text-decoration-none">
-
-                                Voir les commandes →
-
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <!-- Clients -->
-
-                <div class="col-md-6 col-xl-3">
-
-                    <div class="card border-0 shadow-sm h-100">
-
-                        <div class="card-body">
-
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
 
                                 <div>
 
@@ -235,26 +206,23 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
                                         Clients
                                     </p>
 
-                                    <h2 class="fw-bold">
-                                        0
+                                    <h2 class="fw-bold mb-0">
+                                        <?= $totalClients ?>
                                     </h2>
 
                                 </div>
 
-                                <div class="fs-1 text-warning">
-
+                                <div class="fs-1 text-secondary">
                                     <i class="bi bi-people"></i>
-
                                 </div>
 
                             </div>
 
                             <a
                                 href="clients.php"
-                                class="text-decoration-none">
-
+                                class="small text-decoration-none"
+                            >
                                 Voir les clients →
-
                             </a>
 
                         </div>
@@ -264,7 +232,7 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
 
-                <!-- Valeur du stock -->
+                <!-- COMMANDES -->
 
                 <div class="col-md-6 col-xl-3">
 
@@ -272,44 +240,80 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex justify-content-between align-items-center">
 
                                 <div>
 
                                     <p class="text-muted mb-1">
-                                        Valeur du stock
+                                        Commandes
                                     </p>
 
-                                    <h4 class="fw-bold">
-
-                                        <?= number_format(
-                                            $valeurStock ?? 0,
-                                            0,
-                                            ",",
-                                            " "
-                                        ) ?>
-
-                                        FCFA
-
-                                    </h4>
+                                    <h2 class="fw-bold mb-0">
+                                        <?= $totalCommandes ?>
+                                    </h2>
 
                                 </div>
 
-                                <div class="fs-1 text-danger">
-
-                                    <i class="bi bi-boxes"></i>
-
+                                <div class="fs-1 text-secondary">
+                                    <i class="bi bi-cart-check"></i>
                                 </div>
 
                             </div>
 
                             <a
-                                href="stock.php"
-                                class="text-decoration-none">
-
-                                Gérer le stock →
-
+                                href="commandes.php"
+                                class="small text-decoration-none"
+                            >
+                                Voir les commandes →
                             </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CHIFFRE D'AFFAIRES -->
+
+                <div class="col-md-6 col-xl-3">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Chiffre d'affaires
+                                    </p>
+
+                                    <h2 class="fw-bold mb-0">
+
+                                        <?= number_format(
+                                            $chiffreAffaires,
+                                            0,
+                                            ',',
+                                            ' '
+                                        ) ?>
+
+                                        FCFA
+
+                                    </h2>
+
+                                </div>
+
+                                <div class="fs-1 text-secondary">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+
+                            </div>
+
+                            <span class="small text-muted">
+                                Total des commandes
+                            </span>
 
                         </div>
 
@@ -320,39 +324,30 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
 
-            <!-- ================= DEUX COLONNES ================= -->
+            <!-- DEUXIÈME SECTION -->
 
             <div class="row g-4">
 
 
-                <!-- Derniers produits -->
+                <!-- DERNIÈRES COMMANDES -->
 
                 <div class="col-lg-8">
 
                     <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white py-3">
+                        <div class="card-header bg-white border-0 py-3">
 
-                            <div class="d-flex
-                                        justify-content-between
-                                        align-items-center">
+                            <div class="d-flex justify-content-between align-items-center">
 
                                 <h5 class="fw-bold mb-0">
-
-                                    <i class="bi bi-box-seam"></i>
-
-                                    Derniers produits
-
+                                    Dernières commandes
                                 </h5>
 
                                 <a
-                                    href="ajouter-produit.php"
-                                    class="btn btn-dark btn-sm">
-
-                                    <i class="bi bi-plus"></i>
-
-                                    Ajouter
-
+                                    href="commandes.php"
+                                    class="btn btn-sm btn-outline-dark"
+                                >
+                                    Toutes les commandes
                                 </a>
 
                             </div>
@@ -362,129 +357,94 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
                         <div class="card-body p-0">
 
-                            <?php if (empty($derniersProduits)): ?>
+                            <div class="table-responsive">
 
-                                <div class="text-center p-5">
+                                <table class="table table-hover align-middle mb-0">
 
-                                    <i class="bi bi-box fs-1 text-muted"></i>
+                                    <thead class="table-light">
 
-                                    <p class="text-muted mt-3">
+                                        <tr>
 
-                                        Aucun produit n'a encore été ajouté.
+                                            <th>ID</th>
 
-                                    </p>
+                                            <th>Client</th>
 
-                                    <a
-                                        href="ajouter-produit.php"
-                                        class="btn btn-dark">
+                                            <th>Total</th>
 
-                                        Ajouter mon premier produit
+                                            <th>Statut</th>
 
-                                    </a>
+                                        </tr>
 
-                                </div>
+                                    </thead>
 
-                            <?php else: ?>
 
-                                <div class="table-responsive">
+                                    <tbody>
 
-                                    <table class="table table-hover mb-0">
+                                    <?php if (empty($dernieresCommandes)): ?>
 
-                                        <thead>
+                                        <tr>
+
+                                            <td
+                                                colspan="4"
+                                                class="text-center text-muted py-4"
+                                            >
+                                                Aucune commande pour le moment.
+                                            </td>
+
+                                        </tr>
+
+                                    <?php else: ?>
+
+                                        <?php foreach ($dernieresCommandes as $commande): ?>
 
                                             <tr>
 
-                                                <th>Produit</th>
+                                                <td>
+                                                    #<?= $commande["id"] ?>
+                                                </td>
 
-                                                <th>Catégorie</th>
+                                                <td>
+                                                    <?= htmlspecialchars(
+                                                        $commande["nom"] ?? "Client"
+                                                    ) ?>
+                                                </td>
 
-                                                <th>Prix</th>
+                                                <td class="fw-semibold">
 
-                                                <th>Stock</th>
+                                                    <?= number_format(
+                                                        $commande["total"] ?? 0,
+                                                        0,
+                                                        ',',
+                                                        ' '
+                                                    ) ?>
+
+                                                    FCFA
+
+                                                </td>
+
+                                                <td>
+
+                                                    <span class="badge bg-secondary">
+
+                                                        <?= htmlspecialchars(
+                                                            $commande["statut"] ?? "En attente"
+                                                        ) ?>
+
+                                                    </span>
+
+                                                </td>
 
                                             </tr>
 
-                                        </thead>
+                                        <?php endforeach; ?>
 
-                                        <tbody>
+                                    <?php endif; ?>
 
-                                            <?php foreach (
-                                                $derniersProduits
-                                                as $produit
-                                            ): ?>
+                                    </tbody>
 
-                                                <tr>
+                                </table>
 
-                                                    <td>
-
-                                                        <strong>
-
-                                                            <?= htmlspecialchars(
-                                                                $produit["nom"]
-                                                            ) ?>
-
-                                                        </strong>
-
-                                                    </td>
-
-                                                    <td>
-
-                                                        <?= htmlspecialchars(
-                                                            $produit["categorie"]
-                                                        ) ?>
-
-                                                    </td>
-
-                                                    <td>
-
-                                                        <?= number_format(
-                                                            $produit["prix"],
-                                                            0,
-                                                            ",",
-                                                            " "
-                                                        ) ?>
-
-                                                        FCFA
-
-                                                    </td>
-
-                                                    <td>
-
-                                                        <?php if (
-                                                            $produit["stock"] <= 5
-                                                        ): ?>
-
-                                                            <span
-                                                                class="badge bg-danger">
-
-                                                                <?= $produit["stock"] ?>
-
-                                                            </span>
-
-                                                        <?php else: ?>
-
-                                                            <span
-                                                                class="badge bg-success">
-
-                                                                <?= $produit["stock"] ?>
-
-                                                            </span>
-
-                                                        <?php endif; ?>
-
-                                                    </td>
-
-                                                </tr>
-
-                                            <?php endforeach; ?>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-
-                            <?php endif; ?>
+                            </div>
 
                         </div>
 
@@ -493,20 +453,16 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
                 </div>
 
 
-                <!-- Stock faible -->
+                <!-- STOCK FAIBLE -->
 
                 <div class="col-lg-4">
 
                     <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white py-3">
+                        <div class="card-header bg-white border-0 py-3">
 
                             <h5 class="fw-bold mb-0">
-
-                                <i class="bi bi-exclamation-triangle text-danger"></i>
-
                                 Stock faible
-
                             </h5>
 
                         </div>
@@ -518,40 +474,55 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 
                                 <div class="text-center py-4">
 
-                                    <i
-                                        class="bi bi-check-circle fs-1 text-success">
-                                    </i>
+                                    <i class="bi bi-check-circle fs-1 text-success"></i>
 
-                                    <p class="text-muted mt-3 mb-0">
-
-                                        Aucun produit en stock faible.
-
+                                    <p class="mt-3 mb-0 text-muted">
+                                        Tous les produits ont un stock suffisant.
                                     </p>
 
                                 </div>
 
                             <?php else: ?>
 
-                                <div class="text-center">
+                                <?php foreach ($produitsStockFaible as $produit): ?>
 
-                                    <h2 class="fw-bold text-danger">
+                                    <div class="d-flex justify-content-between align-items-center border-bottom py-3">
 
-                                        <?= $stockFaible ?>
+                                        <div>
 
-                                    </h2>
+                                            <div class="fw-semibold">
 
-                                    <p class="text-muted">
+                                                <?= htmlspecialchars(
+                                                    $produit["nom"]
+                                                ) ?>
 
-                                        produit(s) avec un stock faible.
+                                            </div>
 
-                                    </p>
+                                            <small class="text-muted">
+                                                Stock restant
+                                            </small>
+
+                                        </div>
+
+
+                                        <span class="badge bg-danger">
+
+                                            <?= $produit["stock"] ?>
+
+                                        </span>
+
+                                    </div>
+
+                                <?php endforeach; ?>
+
+
+                                <div class="mt-3">
 
                                     <a
-                                        href="stock.php"
-                                        class="btn btn-outline-danger">
-
-                                        Voir le stock
-
+                                        href="stocks.php"
+                                        class="btn btn-outline-dark btn-sm w-100"
+                                    >
+                                        Gérer les stocks
                                     </a>
 
                                 </div>
@@ -567,6 +538,56 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
 
+            <!-- ACTIONS RAPIDES -->
+
+            <div class="card border-0 shadow-sm mt-4">
+
+                <div class="card-body">
+
+                    <h5 class="fw-bold mb-3">
+                        Actions rapides
+                    </h5>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            href="ajouter-produit.php"
+                            class="btn btn-dark"
+                        >
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Ajouter un produit
+                        </a>
+
+                        <a
+                            href="categories.php"
+                            class="btn btn-outline-dark"
+                        >
+                            <i class="bi bi-tags me-2"></i>
+                            Gérer les catégories
+                        </a>
+
+                        <a
+                            href="commandes.php"
+                            class="btn btn-outline-dark"
+                        >
+                            <i class="bi bi-cart-check me-2"></i>
+                            Gérer les commandes
+                        </a>
+
+                        <a
+                            href="messages.php"
+                            class="btn btn-outline-dark"
+                        >
+                            <i class="bi bi-envelope me-2"></i>
+                            Voir les messages
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </main>
 
     </div>
@@ -574,17 +595,11 @@ $derniersProduits = $requeteDerniersProduits->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 
-<!-- ================= FOOTER ================= -->
-
-<?php include "includes/footer.php"; ?>
-
-
 <!-- Bootstrap JS -->
 
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-</script>
-
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
 
 </body>
 

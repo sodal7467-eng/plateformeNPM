@@ -1232,3 +1232,1873 @@ img {
     padding-top: 60px;
     min-height: 100vh;
 }
+/* =========================================================
+   RESPONSIVE ADMIN
+========================================================= */
+
+.admin-sidebar {
+    width: 250px;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    transition: all 0.3s ease;
+}
+
+.admin-content {
+    margin-left: 250px;
+    min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+
+/* =========================================================
+   TABLETTES
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .admin-sidebar {
+        width: 220px;
+    }
+
+    .admin-content {
+        margin-left: 220px;
+    }
+
+}
+
+
+/* =========================================================
+   TÉLÉPHONES
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .admin-sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
+    }
+
+    .admin-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .admin-sidebar .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .admin-sidebar .nav-link {
+        flex: 1 1 45%;
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .admin-content .container,
+    .admin-content .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   PETITS TÉLÉPHONES
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .admin-sidebar .nav-link {
+        flex: 1 1 100%;
+    }
+
+    .admin-content {
+        padding: 15px !important;
+    }
+
+    .admin-content h1 {
+        font-size: 24px;
+    }
+
+    .admin-content h2 {
+        font-size: 21px;
+    }
+
+    .admin-content h3 {
+        font-size: 19px;
+    }
+
+    .admin-content .btn {
+        font-size: 13px;
+    }
+
+}
+
+
+/* =========================================================
+   TABLEAUX ADMIN
+========================================================= */
+
+.admin-content .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-content table {
+    min-width: 700px;
+}
+
+
+/* =========================================================
+   CARTES STATISTIQUES
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .admin-content .row {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+
+}
+
+
+/* =========================================================
+   FORMULAIRES
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .admin-content form .btn {
+        width: 100%;
+    }
+
+}
+/* =========================================================
+   ADMIN - NAVBAR
+========================================================= */
+
+.admin-navbar {
+    height: 80px;
+    width: 100%;
+    background: #101828;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    z-index: 1050;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Partie gauche */
+
+.admin-navbar-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+
+/* Logo */
+
+.admin-logo {
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.admin-logo span {
+    color: #f28c28;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.admin-logo strong {
+    color: white;
+    font-size: 25px;
+    letter-spacing: 1px;
+}
+
+
+/* Bouton hamburger */
+
+.admin-menu-btn {
+    display: none;
+
+    border: none;
+    background: transparent;
+
+    color: white;
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    padding: 5px;
+}
+
+
+/* =========================================================
+   BOUTONS NAVBAR
+========================================================= */
+
+.admin-navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.admin-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+
+.admin-btn-site {
+    background: #f28c28;
+    color: white;
+}
+
+
+.admin-btn-site:hover {
+    background: #d97706;
+    color: white;
+}
+
+
+.admin-btn-logout {
+    background: #dc3545;
+    color: white;
+}
+
+
+.admin-btn-logout:hover {
+    background: #bb2d3b;
+    color: white;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.admin-sidebar {
+    position: fixed;
+
+    top: 80px;
+    left: 0;
+
+    width: 250px;
+
+    height: calc(100vh - 80px);
+
+    z-index: 1040;
+
+    overflow-y: auto;
+}
+
+
+/* =========================================================
+   CONTENU ADMIN
+========================================================= */
+
+.admin-content {
+    margin-left: 250px;
+
+    padding-top: 80px;
+
+    min-height: 100vh;
+
+    width: calc(100% - 250px);
+}
+
+
+/* =========================================================
+   BOUTON FERMER SIDEBAR
+========================================================= */
+
+.admin-sidebar-close {
+    display: none;
+
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   OVERLAY
+========================================================= */
+
+.admin-overlay {
+    display: none;
+}
+
+
+/* =========================================================
+   TABLEAUX
+========================================================= */
+
+.admin-content .table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* =========================================================
+   ESPACE DU CONTENU
+========================================================= */
+
+.admin-content > .container,
+.admin-content > .container-fluid {
+    padding-top: 35px;
+    padding-bottom: 40px;
+}
+
+
+/* =========================================================
+   TABLETTES
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .admin-sidebar {
+        width: 230px;
+    }
+
+    .admin-content {
+        margin-left: 230px;
+
+        width: calc(100% - 230px);
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    /* Navbar */
+
+    .admin-navbar {
+        height: 70px;
+
+        padding: 0 15px;
+    }
+
+
+    /* Hamburger */
+
+    .admin-menu-btn {
+        display: block;
+    }
+
+
+    /* Logo */
+
+    .admin-logo span {
+        font-size: 22px;
+    }
+
+    .admin-logo strong {
+        font-size: 20px;
+    }
+
+
+    /* Boutons */
+
+    .admin-navbar-actions {
+        gap: 5px;
+    }
+
+
+    .admin-btn {
+        padding: 9px 10px;
+
+        font-size: 13px;
+    }
+
+
+    .admin-btn span {
+        display: none;
+    }
+
+
+    .admin-btn i {
+        font-size: 18px;
+    }
+
+
+    /* Sidebar */
+
+    .admin-sidebar {
+
+        top: 0;
+        left: -280px;
+
+        width: 270px;
+
+        height: 100vh;
+
+        transition: left 0.3s ease;
+
+        z-index: 1060;
+    }
+
+
+    .admin-sidebar.show {
+        left: 0;
+    }
+
+
+    /* Bouton fermer */
+
+    .admin-sidebar-close {
+        display: block;
+    }
+
+
+    /* Overlay */
+
+    .admin-overlay {
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 100%;
+        height: 100%;
+
+        background: rgba(0, 0, 0, 0.55);
+
+        z-index: 1055;
+    }
+
+
+    .admin-overlay.show {
+        display: block;
+    }
+
+
+    /* Contenu */
+
+    .admin-content {
+
+        margin-left: 0;
+
+        padding-top: 70px;
+
+        width: 100%;
+    }
+
+
+    /* Espace haut du contenu */
+
+    .admin-content > .container,
+    .admin-content > .container-fluid {
+
+        padding-top: 30px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+
+    /* Titres */
+
+    .admin-content h1 {
+        font-size: 28px;
+    }
+
+
+    .admin-content h2 {
+        font-size: 23px;
+    }
+
+
+    .admin-content h3 {
+        font-size: 20px;
+    }
+
+
+    /* Tableaux */
+
+    .admin-content table {
+        min-width: 700px;
+    }
+
+}
+
+
+/* =========================================================
+   PETITS TÉLÉPHONES
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .admin-navbar {
+        padding: 0 10px;
+    }
+
+
+    .admin-logo {
+        gap: 5px;
+    }
+
+
+    .admin-logo span {
+        font-size: 20px;
+    }
+
+
+    .admin-logo strong {
+        font-size: 18px;
+    }
+
+
+    .admin-btn-site,
+    .admin-btn-logout {
+        width: 38px;
+        height: 38px;
+
+        padding: 0;
+    }
+
+
+    .admin-content > .container,
+    .admin-content > .container-fluid {
+
+        padding-top: 25px;
+    }
+
+
+    .admin-content h1 {
+
+        font-size: 25px;
+
+        margin-bottom: 10px;
+    }
+
+}
+/* =========================================================
+   PAGE MESSAGES ADMIN
+========================================================= */
+
+.messages-page {
+    padding-top: 70px;
+    padding-bottom: 40px;
+}
+
+.messages-header {
+    min-height: 50px;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .messages-page {
+        padding-top: 50px;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .messages-header {
+        align-items: flex-start !important;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .messages-header h1 {
+        font-size: 28px;
+    }
+
+    .messages-header p {
+        font-size: 14px;
+    }
+
+    .messages-header .badge {
+        font-size: 13px !important;
+    }
+
+    .messages-page .card {
+        width: 100%;
+    }
+
+    .messages-page .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .messages-page table {
+        min-width: 750px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .messages-page {
+        padding-top: 20px;
+    }
+
+    .messages-header h1 {
+        font-size: 24px;
+    }
+
+    .messages-header p {
+        font-size: 13px;
+    }
+
+}
+@media (max-width: 767px) {
+
+    .admin-menu-btn {
+        display: block;
+        border: none;
+        background: transparent;
+        color: white;
+        font-size: 30px;
+        cursor: pointer;
+    }
+
+    .admin-sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 270px;
+        height: 100vh;
+        z-index: 1060;
+        transition: left 0.3s ease;
+    }
+
+    .admin-sidebar.show {
+        left: 0;
+    }
+
+    .admin-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 1055;
+    }
+
+    .admin-overlay.show {
+        display: block;
+    }
+}
+/* =========================================================
+   NAVBAR ADMIN
+========================================================= */
+
+.admin-navbar {
+    height: 80px;
+
+    width: 100%;
+
+    background: #101828;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 25px;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 1050;
+
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+.admin-navbar-left {
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+
+.admin-logo {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    text-decoration: none;
+}
+
+
+.admin-logo span {
+    color: #f28c28;
+
+    font-size: 28px;
+
+    font-weight: 800;
+}
+
+
+.admin-logo strong {
+    color: white;
+
+    font-size: 25px;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   BOUTON BURGER
+========================================================= */
+
+.admin-menu-btn {
+    display: none;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    padding: 5px;
+}
+
+
+/* =========================================================
+   ACTIONS NAVBAR
+========================================================= */
+
+.admin-navbar-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.admin-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 11px 17px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+
+.admin-btn-site {
+    background: #f28c28;
+
+    color: white;
+}
+
+
+.admin-btn-site:hover {
+    background: #d97706;
+
+    color: white;
+}
+
+
+.admin-btn-logout {
+    background: #dc3545;
+
+    color: white;
+}
+
+
+.admin-btn-logout:hover {
+    background: #bb2d3b;
+
+    color: white;
+}
+
+
+/* =========================================================
+   MENU MOBILE
+========================================================= */
+
+.admin-mobile-menu {
+    display: none;
+
+    position: absolute;
+
+    top: 70px;
+
+    left: 0;
+
+    width: 100%;
+
+    background: #101828;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+
+    padding: 15px;
+
+    z-index: 2000;
+}
+
+
+.admin-mobile-menu.active {
+    display: block;
+}
+
+
+/* En-tête du menu */
+
+.admin-mobile-menu-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    color: white;
+
+    font-weight: 700;
+
+    padding: 10px 5px 15px;
+
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+
+    margin-bottom: 10px;
+}
+
+
+.admin-mobile-menu-header button {
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 20px;
+
+    cursor: pointer;
+}
+
+
+/* Liens */
+
+.admin-mobile-menu a {
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    color: #e5e7eb;
+
+    text-decoration: none;
+
+    padding: 14px 12px;
+
+    border-radius: 8px;
+
+    margin-bottom: 4px;
+
+    transition: 0.2s;
+}
+
+
+.admin-mobile-menu a:hover {
+    background: rgba(255,255,255,0.08);
+
+    color: white;
+}
+
+
+.admin-mobile-menu a i {
+    width: 25px;
+
+    font-size: 18px;
+
+    text-align: center;
+}
+
+
+/* Séparation */
+
+.admin-mobile-menu hr {
+    border-color: rgba(255,255,255,0.15);
+
+    margin: 12px 0;
+}
+
+
+/* Voir le site */
+
+.admin-mobile-menu .mobile-site-link {
+    background: #f28c28;
+
+    color: white;
+
+    margin-top: 5px;
+}
+
+
+/* Déconnexion */
+
+.admin-mobile-menu .mobile-logout-link {
+    background: #dc3545;
+
+    color: white;
+
+    margin-top: 6px;
+}
+
+
+/* =========================================================
+   DESKTOP
+========================================================= */
+
+@media (min-width: 768px) {
+
+    .admin-mobile-menu {
+        display: none !important;
+    }
+
+}
+
+
+/* =========================================================
+   TABLETTE
+========================================================= */
+
+@media (max-width: 991px) and (min-width: 768px) {
+
+    .admin-navbar {
+        padding: 0 15px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .admin-navbar {
+        height: 70px;
+
+        padding: 0 12px;
+    }
+
+
+    /* Afficher burger */
+
+    .admin-menu-btn {
+        display: block;
+    }
+
+
+    /* Logo */
+
+    .admin-logo {
+        gap: 6px;
+    }
+
+
+    .admin-logo span {
+        font-size: 22px;
+    }
+
+
+    .admin-logo strong {
+        font-size: 20px;
+    }
+
+
+    /* Actions */
+
+    .admin-navbar-actions {
+        gap: 5px;
+    }
+
+
+    .admin-btn {
+        width: 40px;
+
+        height: 40px;
+
+        padding: 0;
+
+        border-radius: 8px;
+    }
+
+
+    .admin-btn span {
+        display: none;
+    }
+
+
+    .admin-btn i {
+        font-size: 18px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .admin-navbar {
+        padding: 0 8px;
+    }
+
+
+    .admin-logo span {
+        font-size: 20px;
+    }
+
+
+    .admin-logo strong {
+        font-size: 18px;
+    }
+
+
+    .admin-menu-btn {
+        font-size: 27px;
+    }
+
+}
+/* =========================================================
+   ADMIN - PAGE MESSAGES
+========================================================= */
+
+.messages-page {
+    padding: 35px;
+    width: 100%;
+}
+
+
+/* =========================
+   EN-TÊTE
+========================= */
+
+.messages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.messages-header h1 {
+    margin: 0 0 8px 0;
+    font-size: 38px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.messages-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 16px;
+}
+
+
+/* =========================
+   STATISTIQUES
+========================= */
+
+.messages-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.message-stat-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
+}
+
+.message-stat-card .stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: #f2f4f7;
+    color: #101828;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.message-stat-card h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.message-stat-card p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+
+/* =========================
+   CARTE DES MESSAGES
+========================= */
+
+.messages-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
+    overflow: hidden;
+}
+
+
+/* =========================
+   EN-TÊTE DE LA CARTE
+========================= */
+
+.messages-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #eaecf0;
+}
+
+.messages-card-header h5 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #101828;
+}
+
+
+/* =========================
+   TABLEAU
+========================= */
+
+.messages-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.messages-table thead th {
+    padding: 15px 18px;
+
+    background: #f9fafb;
+
+    color: #475467;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-align: left;
+
+    border-bottom: 1px solid #eaecf0;
+
+    white-space: nowrap;
+}
+
+.messages-table tbody td {
+    padding: 17px 18px;
+
+    color: #344054;
+
+    border-bottom: 1px solid #f2f4f7;
+
+    vertical-align: middle;
+}
+
+.messages-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+/* =========================
+   MESSAGE NON LU
+========================= */
+
+.message-unread {
+    background: #fffaf0;
+}
+
+
+/* =========================
+   CLIENT
+========================= */
+
+.message-client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.message-client-avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #101828;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+.message-client-name {
+    font-weight: 600;
+    color: #101828;
+}
+
+
+/* =========================
+   SUJET
+========================= */
+
+.message-subject {
+    font-weight: 600;
+    color: #101828;
+}
+
+.message-preview {
+    margin-top: 4px;
+
+    font-size: 13px;
+    color: #667085;
+
+    max-width: 250px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* =========================
+   STATUT
+========================= */
+
+.message-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.message-status-new {
+    background: #eff8ff;
+    color: #175cd3;
+}
+
+.message-status-treated {
+    background: #fffaeb;
+    color: #b54708;
+}
+
+.message-status-replied {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+
+/* =========================
+   BOUTON VOIR
+========================= */
+
+.message-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 8px 13px;
+
+    border-radius: 7px;
+
+    background: #101828;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.message-view-btn:hover {
+    background: #1d2939;
+    color: #ffffff;
+}
+
+
+/* =========================
+   AUCUN MESSAGE
+========================= */
+
+.messages-empty {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.messages-empty i {
+    font-size: 55px;
+    color: #98a2b3;
+}
+
+.messages-empty h5 {
+    margin-top: 15px;
+    color: #344054;
+    font-weight: 600;
+}
+
+.messages-empty p {
+    color: #667085;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .messages-page {
+        padding: 30px 20px;
+    }
+
+    .messages-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 767px) {
+
+    .messages-page {
+        padding: 25px 15px;
+    }
+
+    .messages-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .messages-header h1 {
+        font-size: 28px;
+    }
+
+    .messages-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .messages-card-header {
+        padding: 16px;
+    }
+
+    .messages-table {
+        min-width: 850px;
+    }
+
+}
+
+
+/* =========================
+   PETIT MOBILE
+========================= */
+
+@media (max-width: 480px) {
+
+    .messages-page {
+        padding: 20px 12px;
+    }
+
+    .messages-header h1 {
+        font-size: 24px;
+    }
+
+}
+/* =========================================================
+   ADMIN - PAGE MESSAGES
+========================================================= */
+
+.messages-page {
+    padding: 35px;
+    width: 100%;
+}
+
+
+/* EN-TÊTE */
+
+.messages-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.messages-header h1 {
+    margin: 0 0 8px;
+    font-size: 38px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.messages-header p {
+    margin: 0;
+    color: #667085;
+    font-size: 16px;
+}
+
+
+/* STATISTIQUES */
+
+.messages-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.message-stat-card {
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
+}
+
+.message-stat-card .stat-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: #f2f4f7;
+    color: #101828;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+
+    margin-bottom: 15px;
+}
+
+.message-stat-card h3 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #101828;
+}
+
+.message-stat-card p {
+    margin: 5px 0 0;
+    color: #667085;
+    font-size: 14px;
+}
+
+
+/* CARTE DES MESSAGES */
+
+.messages-card {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #eaecf0;
+    border-radius: 12px;
+
+    box-shadow: 0 2px 8px rgba(16, 24, 40, 0.06);
+
+    overflow: hidden;
+}
+
+.messages-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 24px;
+
+    border-bottom: 1px solid #eaecf0;
+}
+
+.messages-card-header h5 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #101828;
+}
+
+
+/* TABLEAU */
+
+.messages-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.messages-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+}
+
+.messages-table thead th {
+    padding: 15px 18px;
+
+    background: #f9fafb;
+
+    color: #475467;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-align: left;
+
+    border-bottom: 1px solid #eaecf0;
+
+    white-space: nowrap;
+}
+
+.messages-table tbody td {
+    padding: 17px 18px;
+
+    color: #344054;
+
+    border-bottom: 1px solid #f2f4f7;
+
+    vertical-align: middle;
+}
+
+.messages-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+
+/* MESSAGE NON LU */
+
+.message-unread {
+    background: #fffaf0;
+}
+
+
+/* CLIENT */
+
+.message-client {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.message-client-avatar {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: #101828;
+    color: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+
+    flex-shrink: 0;
+}
+
+.message-client-name {
+    font-weight: 600;
+    color: #101828;
+}
+
+
+/* SUJET */
+
+.message-subject {
+    font-weight: 600;
+    color: #101828;
+}
+
+
+/* APERÇU */
+
+.message-preview {
+    margin-top: 4px;
+
+    font-size: 13px;
+    color: #667085;
+
+    max-width: 250px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* STATUT */
+
+.message-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 6px 11px;
+
+    border-radius: 20px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+.message-status-new {
+    background: #eff8ff;
+    color: #175cd3;
+}
+
+.message-status-treated {
+    background: #fffaeb;
+    color: #b54708;
+}
+
+.message-status-replied {
+    background: #ecfdf3;
+    color: #027a48;
+}
+
+
+/* BOUTON VOIR */
+
+.message-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    padding: 8px 13px;
+
+    border-radius: 7px;
+
+    background: #101828;
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: 0.2s ease;
+}
+
+.message-view-btn:hover {
+    background: #1d2939;
+    color: #ffffff;
+}
+
+
+/* AUCUN MESSAGE */
+
+.messages-empty {
+    text-align: center;
+    padding: 70px 20px;
+}
+
+.messages-empty i {
+    font-size: 55px;
+    color: #98a2b3;
+}
+
+.messages-empty h5 {
+    margin-top: 15px;
+    color: #344054;
+    font-weight: 600;
+}
+
+.messages-empty p {
+    color: #667085;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .messages-page {
+        padding: 30px 20px;
+    }
+
+    .messages-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 767px) {
+
+    .messages-page {
+        padding: 25px 15px;
+    }
+
+    .messages-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .messages-header h1 {
+        font-size: 28px;
+    }
+
+    .messages-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .messages-card-header {
+        padding: 16px;
+    }
+
+    .messages-table {
+        min-width: 850px;
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .messages-page {
+        padding: 20px 12px;
+    }
+
+    .messages-header h1 {
+        font-size: 24px;
+    }
+
+}

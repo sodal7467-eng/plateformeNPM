@@ -44,17 +44,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             )
         ) {
 
-            // Connexion réussie
-            $_SESSION["id"] = $utilisateur["id"];
-            $_SESSION["nom"] = $utilisateur["nom"];
-            $_SESSION["email"] = $utilisateur["email"];
+           // Connexion réussie
+session_regenerate_id(true);
 
+$_SESSION["id"] = $utilisateur["id"];
+$_SESSION["nom"] = $utilisateur["nom"];
+$_SESSION["email"] = $utilisateur["email"];
+$_SESSION["role"] = $utilisateur["role"];
 
-            // Redirection
-            header("Location: index.php");
-            exit;
+// Redirection selon le rôle
+if ($utilisateur["role"] === "admin") {
 
-        } else {
+    header("Location: admin/index.php");
+    exit;
+
+} else {
+
+    header("Location: index.php");
+    exit;
+}
 
             $erreur = "Email ou mot de passe incorrect.";
 

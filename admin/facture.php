@@ -1,84 +1,111 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once "../config/database.php";
+require_once("../config/database.php");
 
 
-// =========================================================
-// VÉRIFIER L'ID DE LA FACTURE
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Vérifier l'ID de la facture
+|--------------------------------------------------------------------------
+*/
 
 if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
-
     header("Location: factures.php");
     exit;
 }
 
-$factureId = (int) $_GET["id"];
+$facture_id = (int) $_GET["id"];
 
 
-// =========================================================
-// RÉCUPÉRER LA FACTURE
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Récupérer la facture + client + commande
+|--------------------------------------------------------------------------
+*/
 
 $requete = $pdo->prepare("
     SELECT
-        factures.*,
+        f.id AS facture_id,
+        f.numero_facture,
+        f.commande_id,
+        f.montant_total,
+        f.montant_paye,
+        f.reste_a_payer,
+        f.statut AS statut_facture,
 
-        commandes.id AS commande_id,
-        commandes.statut AS commande_statut,
-        commandes.date_commande,
+        c.date_commande,
+        c.statut AS statut_commande,
+        c.total AS total_commande,
 
-        utilisateurs.nom AS client_nom,
-        utilisateurs.email AS client_email
+        u.id AS utilisateur_id,
+        u.nom AS client_nom,
+        u.email AS client_email
 
-    FROM factures
+    FROM factures f
 
-    INNER JOIN commandes
-        ON factures.commande_id = commandes.id
+    INNER JOIN commandes c
+        ON f.commande_id = c.id
 
-    INNER JOIN utilisateurs
-        ON commandes.utilisateur_id = utilisateurs.id
+    INNER JOIN utilisateurs u
+        ON c.utilisateur_id = u.id
 
-    WHERE factures.id = ?
+    WHERE f.id = ?
+
+    LIMIT 1
 ");
 
-$requete->execute([$factureId]);
+$requete->execute([$facture_id]);
 
 $facture = $requete->fetch(PDO::FETCH_ASSOC);
 
 
-// =========================================================
-// VÉRIFIER SI LA FACTURE EXISTE
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Vérifier que la facture existe
+|--------------------------------------------------------------------------
+*/
 
 if (!$facture) {
-
     header("Location: factures.php");
     exit;
 }
 
 
-// =========================================================
-// RÉCUPÉRER LES PRODUITS DE LA COMMANDE
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Récupérer les produits de la commande
+|--------------------------------------------------------------------------
+|
+| IMPORTANT :
+| Les noms des colonnes peuvent varier selon ta table commande_details.
+| Ici on utilise :
+|
+| commande_details.commande_id
+| commande_details.produit_id
+| commande_details.quantite
+| commande_details.prix
+|
+*/
 
 $requeteProduits = $pdo->prepare("
     SELECT
-        commande_details.*,
+        cd.quantite,
+        cd.prix,
 
-        produits.nom AS produit_nom,
-        produits.image AS produit_image
+        p.nom AS produit_nom
 
-    FROM commande_details
+    FROM commande_details cd
 
-    INNER JOIN produits
-        ON commande_details.produit_id = produits.id
+    INNER JOIN produits p
+        ON cd.produit_id = p.id
 
-    WHERE commande_details.commande_id = ?
+    WHERE cd.commande_id = ?
 
-    ORDER BY commande_details.id ASC
+    ORDER BY cd.id ASC
 ");
 
 $requeteProduits->execute([
@@ -88,9 +115,11 @@ $requeteProduits->execute([
 $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
 
 
-// =========================================================
-// MONTANTS
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Recalcul des valeurs d'affichage
+|--------------------------------------------------------------------------
+*/
 
 $montantTotal = (float) $facture["montant_total"];
 
@@ -99,28 +128,76 @@ $montantPaye = (float) $facture["montant_paye"];
 $resteAPayer = (float) $facture["reste_a_payer"];
 
 
-// =========================================================
-// STATUT
-// =========================================================
+/*
+|--------------------------------------------------------------------------
+| Sécurité sur les montants
+|--------------------------------------------------------------------------
+*/
 
-$statut = $facture["statut"];
+if ($montantPaye < 0) {
+    $montantPaye = 0;
+}
 
-if ($statut === "Payée") {
+if ($montantPaye > $montantTotal) {
+    $montantPaye = $montantTotal;
+}
 
-    $statutClasse = "success";
+$resteAPayer = $montantTotal - $montantPaye;
 
-} elseif ($statut === "Partiellement payée") {
+if ($resteAPayer < 0) {
+    $resteAPayer = 0;
+}
 
-    $statutClasse = "warning";
+
+/*
+|--------------------------------------------------------------------------
+| Déterminer le statut automatiquement
+|--------------------------------------------------------------------------
+*/
+
+if ($resteAPayer <= 0) {
+
+    $statutFacture = "Payée";
+
+    $classeStatut = "statut-payee";
+
+    $iconeStatut = "bi-check-circle";
+
+} elseif ($montantPaye > 0) {
+
+    $statutFacture = "Partiellement payée";
+
+    $classeStatut = "statut-partielle";
+
+    $iconeStatut = "bi-clock";
 
 } else {
 
-    $statutClasse = "danger";
+    $statutFacture = "Impayée";
+
+    $classeStatut = "statut-impayee";
+
+    $iconeStatut = "bi-exclamation-circle";
+
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| Date de la commande
+|--------------------------------------------------------------------------
+*/
+
+$dateCommande = date(
+    "d/m/Y à H:i",
+    strtotime($facture["date_commande"])
+);
+
 ?>
+<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
@@ -134,7 +211,7 @@ if ($statut === "Payée") {
 
     <title>
         <?= htmlspecialchars($facture["numero_facture"]) ?>
-        - Quincaillerie NPM
+        - NPM
     </title>
 
 
@@ -164,122 +241,431 @@ if ($statut === "Payée") {
 
     <style>
 
-        body {
-            background: #f5f7fa;
+        /*
+        |--------------------------------------------------------------------------
+        | FACTURE
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 35px;
         }
 
-        .invoice-container {
-            max-width: 950px;
-            margin: 40px auto;
-        }
 
-        .invoice-card {
+        .facture-card {
             background: #ffffff;
-            padding: 45px;
+            border: 1px solid #eaecf0;
             border-radius: 12px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 12px rgba(16, 24, 40, 0.06);
+            overflow: hidden;
         }
 
-        .invoice-logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: #f28c28;
-            letter-spacing: 1px;
+
+        /*
+        |--------------------------------------------------------------------------
+        | EN-TÊTE
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-header {
+            padding: 35px;
+            border-bottom: 1px solid #eaecf0;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 30px;
         }
 
-        .invoice-title {
-            font-size: 34px;
+
+        .facture-logo {
+            font-size: 30px;
             font-weight: 800;
             color: #101828;
         }
 
-        .invoice-number {
-            color: #667085;
-            font-size: 15px;
-        }
 
-        .invoice-info {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .invoice-table th {
-            background: #101828;
-            color: white;
-            padding: 14px;
-        }
-
-        .invoice-table td {
-            padding: 14px;
-            vertical-align: middle;
-        }
-
-        .invoice-total {
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .grand-total {
-            font-size: 25px;
-            font-weight: 800;
+        .facture-logo span {
             color: #f28c28;
         }
 
-        .invoice-footer {
-            border-top: 1px solid #e4e7ec;
-            margin-top: 35px;
-            padding-top: 20px;
-            text-align: center;
-            color: #667085;
+
+        .facture-title {
+            text-align: right;
         }
 
 
-        /* =================================================
-           IMPRESSION
-        ================================================= */
+        .facture-title h1 {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 700;
+            color: #101828;
+        }
+
+
+        .facture-number {
+            color: #667085;
+            margin-top: 5px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMATIONS
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-informations {
+            padding: 30px 35px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 30px;
+        }
+
+
+        .info-box h6 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #667085;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+
+        .info-box strong {
+            color: #101828;
+            font-size: 16px;
+        }
+
+
+        .info-box p {
+            margin: 3px 0;
+            color: #475467;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUT
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-status-box {
+            margin: 0 35px 30px;
+            padding: 18px 20px;
+
+            background: #f9fafb;
+
+            border: 1px solid #eaecf0;
+            border-radius: 10px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+
+        .facture-status-label {
+            color: #667085;
+            font-weight: 600;
+        }
+
+
+        .facture-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+
+            padding: 8px 14px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+
+        .statut-payee {
+            background: #ecfdf3;
+            color: #027a48;
+        }
+
+
+        .statut-partielle {
+            background: #fffaeb;
+            color: #b54708;
+        }
+
+
+        .statut-impayee {
+            background: #fef3f2;
+            color: #b42318;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TABLEAU PRODUITS
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-produits {
+            padding: 0 35px 30px;
+        }
+
+
+        .facture-produits table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+
+        .facture-produits thead th {
+            background: #f9fafb;
+
+            padding: 14px 15px;
+
+            color: #475467;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            border-bottom: 1px solid #eaecf0;
+        }
+
+
+        .facture-produits tbody td {
+            padding: 16px 15px;
+
+            border-bottom: 1px solid #f2f4f7;
+
+            color: #344054;
+        }
+
+
+        .facture-produits tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAUX
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-totaux {
+            width: 380px;
+            max-width: 100%;
+
+            margin-left: auto;
+
+            padding: 0 35px 35px;
+        }
+
+
+        .total-ligne {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 10px 0;
+
+            color: #475467;
+        }
+
+
+        .total-ligne strong {
+            color: #101828;
+        }
+
+
+        .total-final {
+            border-top: 2px solid #101828;
+
+            margin-top: 10px;
+            padding-top: 15px;
+
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+
+        .total-paye strong {
+            color: #027a48;
+        }
+
+
+        .total-reste strong {
+            color: #b42318;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | PIED DE FACTURE
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-footer {
+            padding: 25px 35px;
+
+            background: #f9fafb;
+
+            border-top: 1px solid #eaecf0;
+
+            text-align: center;
+
+            color: #667085;
+
+            font-size: 13px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | BOUTONS
+        |--------------------------------------------------------------------------
+        */
+
+        .facture-actions {
+            max-width: 1100px;
+
+            margin: 0 auto 25px;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .facture-actions-right {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | IMPRESSION
+        |--------------------------------------------------------------------------
+        */
 
         @media print {
 
             body {
-                background: white !important;
+                background: #ffffff !important;
             }
 
-            .no-print {
+
+            .admin-navbar,
+            .admin-sidebar,
+            .facture-actions {
                 display: none !important;
             }
 
-            .invoice-container {
-                margin: 0;
-                max-width: 100%;
+
+            .admin-content {
+                margin-left: 0 !important;
+                padding-top: 0 !important;
+                width: 100% !important;
             }
 
-            .invoice-card {
+
+            .facture-wrapper {
+                padding: 0;
+                max-width: none;
+            }
+
+
+            .facture-card {
+                border: none;
                 box-shadow: none;
-                border-radius: 0;
-                padding: 20px;
+            }
+
+
+            .facture-header {
+                padding-top: 10px;
             }
 
         }
 
 
-        /* =================================================
-           MOBILE
-        ================================================= */
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSIVE
+        |--------------------------------------------------------------------------
+        */
 
-        @media (max-width: 768px) {
+        @media (max-width: 767px) {
 
-            .invoice-card {
-                padding: 25px 18px;
+            .facture-wrapper {
+                padding: 20px 15px;
             }
 
-            .invoice-title {
-                font-size: 27px;
+
+            .facture-header {
+                flex-direction: column;
+                padding: 25px;
             }
 
-            .invoice-logo {
-                font-size: 27px;
+
+            .facture-title {
+                text-align: left;
+            }
+
+
+            .facture-informations {
+                grid-template-columns: 1fr;
+                padding: 25px;
+            }
+
+
+            .facture-status-box {
+                margin: 0 25px 25px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+
+            .facture-produits {
+                padding: 0 15px 25px;
+                overflow-x: auto;
+            }
+
+
+            .facture-produits table {
+                min-width: 650px;
+            }
+
+
+            .facture-totaux {
+                padding: 0 25px 25px;
+            }
+
+
+            .facture-actions {
+                padding: 0 15px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+
+            .facture-actions-right {
+                width: 100%;
+            }
+
+
+            .facture-actions-right .btn {
+                flex: 1;
             }
 
         }
@@ -289,147 +675,144 @@ if ($statut === "Payée") {
 </head>
 
 
-<body>
+<body class="bg-light">
 
 
-<!-- =====================================================
-     BOUTONS ADMIN
-===================================================== -->
+<?php require_once("includes/navbar.php"); ?>
 
-<div class="container mt-4 no-print">
+<?php require_once("includes/sidebar.php"); ?>
 
-    <div class="d-flex justify-content-between align-items-center">
+
+<main class="admin-content">
+
+
+    <!-- =========================================================
+         BOUTONS
+    ========================================================== -->
+
+    <div class="facture-actions">
+
 
         <a
             href="factures.php"
-            class="btn btn-outline-dark"
+            class="btn btn-outline-secondary"
         >
 
-            <i class="bi bi-arrow-left me-1"></i>
+            <i class="bi bi-arrow-left me-2"></i>
 
             Retour aux factures
 
         </a>
 
 
-        <button
-            onclick="window.print()"
-            class="btn btn-dark"
-        >
+        <div class="facture-actions-right">
 
-            <i class="bi bi-printer me-1"></i>
+            <button
+                type="button"
+                onclick="window.print()"
+                class="btn btn-dark"
+            >
 
-            Imprimer la facture
+                <i class="bi bi-printer me-2"></i>
 
-        </button>
+                Imprimer
 
-    </div>
-
-</div>
-
-
-<!-- =====================================================
-     FACTURE
-===================================================== -->
-
-<div class="invoice-container">
-
-    <div class="invoice-card">
-
-
-        <!-- =================================================
-             EN-TÊTE
-        ================================================= -->
-
-        <div class="row align-items-start mb-5">
-
-            <div class="col-md-6">
-
-                <div class="invoice-logo">
-                    NPM
-                </div>
-
-                <h5 class="fw-bold mb-2">
-                    Quincaillerie NPM
-                </h5>
-
-                <p class="text-muted mb-1">
-                    Votre partenaire en quincaillerie
-                </p>
-
-                <p class="text-muted mb-0">
-                    Outils • Matériaux • Équipements
-                </p>
-
-            </div>
-
-
-            <div class="col-md-6 text-md-end mt-4 mt-md-0">
-
-                <div class="invoice-title">
-                    FACTURE
-                </div>
-
-                <div class="invoice-number">
-
-                    <?= htmlspecialchars(
-                        $facture["numero_facture"]
-                    ) ?>
-
-                </div>
-
-                <div class="mt-2">
-
-                    <strong>
-                        Date :
-                    </strong>
-
-                    <?= date(
-                        "d/m/Y",
-                        strtotime($facture["date_facture"])
-                    ) ?>
-
-                </div>
-
-            </div>
+            </button>
 
         </div>
 
 
-        <!-- =================================================
-             INFORMATIONS CLIENT
-        ================================================= -->
-
-        <div class="row g-4 mb-5">
+    </div>
 
 
-            <div class="col-md-6">
 
-                <div class="invoice-info">
+    <!-- =========================================================
+         FACTURE
+    ========================================================== -->
 
-                    <h6 class="fw-bold mb-3">
+    <div class="facture-wrapper">
 
-                        <i class="bi bi-person me-2"></i>
+
+        <div class="facture-card">
+
+
+            <!-- =====================================================
+                 EN-TÊTE
+            ====================================================== -->
+
+            <div class="facture-header">
+
+
+                <div>
+
+                    <div class="facture-logo">
+
+                        <span>NPM</span>
+
+                        Quincaillerie
+
+                    </div>
+
+                    <p class="text-muted mb-0 mt-2">
+
+                        Matériaux, outillage et équipements
+
+                    </p>
+
+                </div>
+
+
+                <div class="facture-title">
+
+                    <h1>
+
+                        FACTURE
+
+                    </h1>
+
+                    <div class="facture-number">
+
+                        <?= htmlspecialchars(
+                            $facture["numero_facture"]
+                        ) ?>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 INFORMATIONS
+            ====================================================== -->
+
+            <div class="facture-informations">
+
+
+                <!-- CLIENT -->
+
+                <div class="info-box">
+
+                    <h6>
 
                         Facturé à
 
                     </h6>
 
 
-                    <p class="mb-1">
+                    <strong>
 
-                        <strong>
-                            <?= htmlspecialchars(
-                                $facture["client_nom"]
-                            ) ?>
-                        </strong>
+                        <?= htmlspecialchars(
+                            $facture["client_nom"]
+                        ) ?>
 
-                    </p>
+                    </strong>
 
 
-                    <p class="mb-0 text-muted">
-
-                        <i class="bi bi-envelope me-1"></i>
+                    <p>
 
                         <?= htmlspecialchars(
                             $facture["client_email"]
@@ -439,284 +822,336 @@ if ($statut === "Payée") {
 
                 </div>
 
-            </div>
 
 
-            <div class="col-md-6">
+                <!-- COMMANDE -->
 
-                <div class="invoice-info">
+                <div class="info-box">
 
-                    <h6 class="fw-bold mb-3">
+                    <h6>
 
-                        <i class="bi bi-receipt me-2"></i>
-
-                        Informations commande
+                        Informations
 
                     </h6>
 
 
-                    <p class="mb-1">
+                    <p>
 
-                        <strong>
-                            Commande :
-                        </strong>
+                        <strong>Commande :</strong>
 
-                        #<?= htmlspecialchars(
-                            $facture["commande_id"]
-                        ) ?>
+                        #<?= (int) $facture["commande_id"] ?>
 
                     </p>
 
 
-                    <p class="mb-0">
+                    <p>
 
-                        <strong>
-                            Statut :
-                        </strong>
+                        <strong>Date :</strong>
 
-                        <?= htmlspecialchars(
-                            $facture["commande_statut"]
-                        ) ?>
+                        <?= $dateCommande ?>
 
                     </p>
 
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- =================================================
-             PRODUITS
-        ================================================= -->
-
-        <div class="table-responsive">
-
-            <table class="table invoice-table align-middle">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Produit
-                        </th>
-
-                        <th class="text-center">
-                            Quantité
-                        </th>
-
-                        <th class="text-end">
-                            Prix unitaire
-                        </th>
-
-                        <th class="text-end">
-                            Total
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                <?php foreach ($produits as $produit): ?>
-
-                    <?php
-
-                    $prixUnitaire =
-                        (float) $produit["prix"];
-
-                    $quantite =
-                        (int) $produit["quantite"];
-
-                    $sousTotal =
-                        $prixUnitaire * $quantite;
-
-                    ?>
-
-                    <tr>
-
-                        <td>
-
-                            <strong>
-
-                                <?= htmlspecialchars(
-                                    $produit["produit_nom"]
-                                ) ?>
-
-                            </strong>
-
-                        </td>
-
-
-                        <td class="text-center">
-
-                            <?= $quantite ?>
-
-                        </td>
-
-
-                        <td class="text-end">
-
-                            <?= number_format(
-                                $prixUnitaire,
-                                0,
-                                ",",
-                                " "
-                            ) ?>
-
-                            FCFA
-
-                        </td>
-
-
-                        <td class="text-end fw-bold">
-
-                            <?= number_format(
-                                $sousTotal,
-                                0,
-                                ",",
-                                " "
-                            ) ?>
-
-                            FCFA
-
-                        </td>
-
-                    </tr>
-
-                <?php endforeach; ?>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-
-        <!-- =================================================
-             TOTAUX
-        ================================================= -->
-
-        <div class="row justify-content-end mt-4">
-
-            <div class="col-md-5">
-
-                <div class="invoice-total">
-
-
-                    <div class="d-flex justify-content-between mb-3">
-
-                        <span>
-                            Total facture
-                        </span>
-
-                        <strong>
-
-                            <?= number_format(
-                                $montantTotal,
-                                0,
-                                ",",
-                                " "
-                            ) ?>
-
-                            FCFA
-
-                        </strong>
-
-                    </div>
-
-
-                    <div class="d-flex justify-content-between mb-3">
-
-                        <span>
-                            Montant payé
-                        </span>
-
-                        <strong class="text-success">
-
-                            <?= number_format(
-                                $montantPaye,
-                                0,
-                                ",",
-                                " "
-                            ) ?>
-
-                            FCFA
-
-                        </strong>
-
-                    </div>
-
-
-                    <hr>
-
-
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <span class="fw-bold">
-                            Reste à payer
-                        </span>
-
-                        <span class="grand-total">
-
-                            <?= number_format(
-                                $resteAPayer,
-                                0,
-                                ",",
-                                " "
-                            ) ?>
-
-                            FCFA
-
-                        </span>
-
-                    </div>
-
-
-                    <div class="text-end mt-3">
-
-                        <span
-                            class="badge text-bg-<?= $statutClasse ?>"
-                        >
-
-                            <?= htmlspecialchars($statut) ?>
-
-                        </span>
-
-                    </div>
 
                 </div>
 
+
             </div>
 
-        </div>
 
 
-        <!-- =================================================
-             PIED DE FACTURE
-        ================================================= -->
+            <!-- =====================================================
+                 STATUT
+            ====================================================== -->
 
-        <div class="invoice-footer">
+            <div class="facture-status-box">
 
-            <p class="mb-1 fw-bold">
-                Merci pour votre confiance !
-            </p>
 
-            <p class="mb-0">
-                Quincaillerie NPM
-            </p>
+                <span class="facture-status-label">
+
+                    État du paiement
+
+                </span>
+
+
+                <span class="facture-status <?= $classeStatut ?>">
+
+                    <i class="bi <?= $iconeStatut ?>"></i>
+
+                    <?= htmlspecialchars($statutFacture) ?>
+
+                </span>
+
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 PRODUITS
+            ====================================================== -->
+
+            <div class="facture-produits">
+
+
+                <table>
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Produit
+                            </th>
+
+                            <th class="text-center">
+                                Quantité
+                            </th>
+
+                            <th class="text-end">
+                                Prix unitaire
+                            </th>
+
+                            <th class="text-end">
+                                Total
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                    <?php if (!empty($produits)): ?>
+
+
+                        <?php foreach ($produits as $produit): ?>
+
+
+                            <?php
+
+                            $prix =
+                                (float) $produit["prix"];
+
+                            $quantite =
+                                (int) $produit["quantite"];
+
+                            $totalProduit =
+                                $prix * $quantite;
+
+                            ?>
+
+
+                            <tr>
+
+
+                                <td>
+
+                                    <strong>
+
+                                        <?= htmlspecialchars(
+                                            $produit["produit_nom"]
+                                        ) ?>
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td class="text-center">
+
+                                    <?= $quantite ?>
+
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <?= number_format(
+                                        $prix,
+                                        0,
+                                        ",",
+                                        " "
+                                    ) ?>
+
+                                    FCFA
+
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <strong>
+
+                                        <?= number_format(
+                                            $totalProduit,
+                                            0,
+                                            ",",
+                                            " "
+                                        ) ?>
+
+                                        FCFA
+
+                                    </strong>
+
+                                </td>
+
+
+                            </tr>
+
+
+                        <?php endforeach; ?>
+
+
+                    <?php else: ?>
+
+
+                        <tr>
+
+                            <td
+                                colspan="4"
+                                class="text-center text-muted py-4"
+                            >
+
+                                Aucun produit trouvé pour cette commande.
+
+                            </td>
+
+                        </tr>
+
+
+                    <?php endif; ?>
+
+
+                    </tbody>
+
+                </table>
+
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 TOTAUX
+            ====================================================== -->
+
+            <div class="facture-totaux">
+
+
+                <!-- TOTAL -->
+
+                <div class="total-ligne">
+
+                    <span>
+
+                        Total facture
+
+                    </span>
+
+                    <strong>
+
+                        <?= number_format(
+                            $montantTotal,
+                            0,
+                            ",",
+                            " "
+                        ) ?>
+
+                        FCFA
+
+                    </strong>
+
+                </div>
+
+
+
+                <!-- PAYÉ -->
+
+                <div class="total-ligne total-paye">
+
+                    <span>
+
+                        Montant payé
+
+                    </span>
+
+                    <strong>
+
+                        <?= number_format(
+                            $montantPaye,
+                            0,
+                            ",",
+                            " "
+                        ) ?>
+
+                        FCFA
+
+                    </strong>
+
+                </div>
+
+
+
+                <!-- RESTE -->
+
+                <div class="total-ligne total-reste total-final">
+
+                    <span>
+
+                        Reste à payer
+
+                    </span>
+
+                    <strong>
+
+                        <?= number_format(
+                            $resteAPayer,
+                            0,
+                            ",",
+                            " "
+                        ) ?>
+
+                        FCFA
+
+                    </strong>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =====================================================
+                 FOOTER
+            ====================================================== -->
+
+            <div class="facture-footer">
+
+                <strong>NPM Quincaillerie</strong>
+
+                <br>
+
+                Merci pour votre confiance.
+
+            </div>
+
 
         </div>
 
 
     </div>
 
-</div>
 
+</main>
+
+
+
+<!-- Bootstrap JS -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">

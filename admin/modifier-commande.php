@@ -196,6 +196,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <?php endif; ?>
 
+        <?php require_once("includes/auth.php");?> 
+
 
 
         <div class="row g-4">

@@ -15,6 +15,7 @@ $requete = $pdo->query("
         commandes.utilisateur_id,
         commandes.total,
         commandes.statut,
+        commandes.type_vente,
         commandes.date_commande,
         utilisateurs.nom AS client_nom,
         utilisateurs.email AS client_email
@@ -95,6 +96,7 @@ foreach ($commandes as $commande) {
 
 <!-- Sidebar admin -->
 <?php require_once("includes/sidebar.php"); ?>
+<?php require_once("includes/auth.php");?> 
 
 
 <main class="admin-content">
@@ -119,6 +121,12 @@ foreach ($commandes as $commande) {
                 </p>
 
             </div>
+
+
+            <a href="nouvelle-vente.php" class="btn btn-warning">
+                <i class="bi bi-cart-plus me-1"></i>
+                Nouvelle vente en boutique
+            </a>
 
         </div>
 
@@ -375,6 +383,10 @@ foreach ($commandes as $commande) {
                                     </th>
 
                                     <th>
+                                        Type
+                                    </th>
+
+                                    <th>
                                         Total
                                     </th>
 
@@ -455,20 +467,50 @@ foreach ($commandes as $commande) {
 
                                         <td>
 
-                                            <a
-                                                href="mailto:<?= htmlspecialchars(
-                                                    $commande["client_email"]
-                                                ) ?>"
-                                                class="text-decoration-none"
-                                            >
+                                            <?php if (!empty($commande["client_email"])): ?>
 
-                                                <i class="bi bi-envelope me-1"></i>
+                                                <a
+                                                    href="mailto:<?= htmlspecialchars(
+                                                        $commande["client_email"]
+                                                    ) ?>"
+                                                    class="text-decoration-none"
+                                                >
 
-                                                <?= htmlspecialchars(
-                                                    $commande["client_email"]
-                                                ) ?>
+                                                    <i class="bi bi-envelope me-1"></i>
 
-                                            </a>
+                                                    <?= htmlspecialchars(
+                                                        $commande["client_email"]
+                                                    ) ?>
+
+                                                </a>
+
+                                            <?php else: ?>
+
+                                                <span class="text-muted">—</span>
+
+                                            <?php endif; ?>
+
+                                        </td>
+
+
+
+                                        <!-- Type -->
+
+                                        <td>
+
+                                            <?php if (($commande["type_vente"] ?? "en_ligne") === "boutique"): ?>
+
+                                                <span class="badge bg-dark">
+                                                    Boutique
+                                                </span>
+
+                                            <?php else: ?>
+
+                                                <span class="badge bg-secondary">
+                                                    En ligne
+                                                </span>
+
+                                            <?php endif; ?>
 
                                         </td>
 

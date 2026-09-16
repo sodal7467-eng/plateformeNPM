@@ -90,6 +90,20 @@ if (session_status() === PHP_SESSION_NONE) {
         </a>
 
 
+        <!-- NOUVELLE VENTE -->
+        <a href="nouvelle-vente.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🧾
+            </span>
+
+            <span>
+                Nouvelle vente
+            </span>
+
+        </a>
+
+
         <!-- FACTURES -->
         <a href="factures.php" class="sidebar-link">
 
@@ -113,6 +127,34 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <span>
                 Crédits clients
+            </span>
+
+        </a>
+
+
+        <!-- DÉPENSES -->
+        <a href="depenses.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🧮
+            </span>
+
+            <span>
+                Dépenses
+            </span>
+
+        </a>
+
+
+        <!-- RAPPORT MENSUEL -->
+        <a href="rapport-mensuel.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                📈
+            </span>
+
+            <span>
+                Rapport mensuel
             </span>
 
         </a>

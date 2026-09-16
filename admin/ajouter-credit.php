@@ -48,6 +48,16 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
 
 /*
 |--------------------------------------------------------------------------
+| Pré-remplissage depuis un lien (ex : depuis une commande)
+|--------------------------------------------------------------------------
+*/
+
+$utilisateur_id = $_GET["utilisateur_id"] ?? "";
+$commande_id = $_GET["commande_id"] ?? "";
+
+
+/*
+|--------------------------------------------------------------------------
 | Ajouter un crédit
 |--------------------------------------------------------------------------
 */
@@ -207,6 +217,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
+require_once("includes/auth.php");
 ?>
 
 <!DOCTYPE html>

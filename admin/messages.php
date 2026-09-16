@@ -1,90 +1,23 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 
 require_once("../config/database.php");
 
 /*
 |--------------------------------------------------------------------------
-| Marquer un message comme lu
+| Récupérer tous les messages
 |--------------------------------------------------------------------------
 */
-if (isset($_GET["lire"]) && is_numeric($_GET["lire"])) {
 
-    $messageId = (int) $_GET["lire"];
+$sql = "SELECT * FROM messages ORDER BY date_message DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
 
-    $requeteLu = $pdo->prepare("
-        UPDATE messages
-        SET lu = 1
-        WHERE id = ?
-    ");
-
-    $requeteLu->execute([$messageId]);
-
-    // Si la requête vient de JavaScript
-    if (
-        isset($_SERVER["HTTP_X_REQUESTED_WITH"]) &&
-        strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) === "xmlhttprequest"
-    ) {
-        header("Content-Type: application/json; charset=utf-8");
-
-        echo json_encode([
-            "success" => true
-        ]);
-
-        exit;
-    }
-
-    header("Location: messages.php");
-    exit;
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| Récupérer les messages
-|--------------------------------------------------------------------------
-*/
-$requete = $pdo->query("
-    SELECT
-        id,
-        nom,
-        email,
-        sujet,
-        message,
-        date_message,
-        lu
-    FROM messages
-    ORDER BY date_message DESC
-");
-
-$messages = $requete->fetchAll(PDO::FETCH_ASSOC);
-
-
-/*
-|--------------------------------------------------------------------------
-| Nombre total de messages
-|--------------------------------------------------------------------------
-*/
-$totalMessages = count($messages);
-
-
-/*
-|--------------------------------------------------------------------------
-| Nombre de messages non lus
-|--------------------------------------------------------------------------
-*/
-$nonLus = 0;
-
-foreach ($messages as $message) {
-    if ((int) $message["lu"] === 0) {
-        $nonLus++;
-    }
-}
+$messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
+<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -109,645 +42,239 @@ foreach ($messages as $message) {
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     >
 
-    <!-- CSS principal -->
-    <link
-        rel="stylesheet"
-        href="../assets/css/style.css"
-    >
+    <!-- CSS du projet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
-
 
 <body>
 
 <?php require_once("includes/navbar.php"); ?>
 
+<div class="container-fluid">
 
-<div class="admin-layout">
+    <div class="row">
 
-    <?php require_once("includes/sidebar.php"); ?>
+        <!-- SIDEBAR -->
+        <div class="col-md-3 col-lg-2">
 
-
-    <main class="admin-content">
-
-        <!-- =========================================================
-             EN-TÊTE
-        ========================================================== -->
-
-        <div class="d-flex justify-content-between align-items-center mb-4">
-
-            <div>
-
-                <h1 class="fw-bold mb-1">
-                    Messages
-                </h1>
-
-                <p class="text-muted mb-0">
-                    Consultez les messages reçus par Quincaillerie NPM.
-                </p>
-
-            </div>
-
-            <div class="d-flex gap-2">
-
-                <span class="badge bg-dark fs-6 px-3 py-2">
-                    <?= $totalMessages ?>
-                    message<?= $totalMessages > 1 ? "s" : "" ?>
-                </span>
-
-                <?php if ($nonLus > 0): ?>
-
-                    <span
-                        id="badgeNonLus"
-                        class="badge bg-danger fs-6 px-3 py-2"
-                    >
-                        <?= $nonLus ?> nouveau<?= $nonLus > 1 ? "x" : "" ?>
-                    </span>
-
-                <?php endif; ?>
-
-            </div>
+            <?php require_once("includes/sidebar.php"); ?>
 
         </div>
 
 
-        <!-- =========================================================
-             TABLEAU DES MESSAGES
-        ========================================================== -->
+        <!-- CONTENU PRINCIPAL -->
+        <main class="col-md-9 col-lg-10 py-4">
 
-        <div class="card border-0 shadow-sm">
+            <!-- TITRE -->
 
-            <div class="card-body p-0">
+            <div class="d-flex justify-content-between align-items-center mb-4">
 
-                <?php if (empty($messages)): ?>
+                <div>
 
-                    <!-- Aucun message -->
+                    <h1 class="fw-bold">
+                        <i class="bi bi-envelope me-2"></i>
+                        Messages
+                    </h1>
 
-                    <div class="text-center py-5">
+                    <p class="text-muted mb-0">
+                        Consultez les messages envoyés par les clients.
+                    </p>
 
-                        <i
-                            class="bi bi-envelope-open"
-                            style="font-size: 50px;"
-                        ></i>
+                </div>
 
-                        <h4 class="mt-3">
-                            Aucun message
-                        </h4>
-
-                        <p class="text-muted">
-                            Vous n'avez reçu aucun message pour le moment.
-                        </p>
-
-                    </div>
-
-                <?php else: ?>
-
-                    <div class="table-responsive">
-
-                        <table class="table table-hover align-middle mb-0">
-
-                            <thead class="table-dark">
-
-                                <tr>
-
-                                    <th>
-                                        #
-                                    </th>
-
-                                    <th>
-                                        Expéditeur
-                                    </th>
-
-                                    <th>
-                                        Sujet
-                                    </th>
-
-                                    <th>
-                                        Date
-                                    </th>
-
-                                    <th class="text-center">
-                                        État
-                                    </th>
-
-                                    <th class="text-center">
-                                        Actions
-                                    </th>
-
-                                </tr>
-
-                            </thead>
+            </div>
 
 
-                            <tbody>
+            <!-- CARTE -->
 
-                            <?php foreach ($messages as $message): ?>
+            <div class="card shadow-sm border-0">
 
-                                <?php
+                <div class="card-body">
 
-                                $messageId = (int) $message["id"];
+                    <?php if (count($messages) > 0): ?>
 
-                                $estNonLu = (int) $message["lu"] === 0;
+                        <div class="table-responsive">
 
-                                ?>
+                            <table class="table table-hover align-middle">
 
-                                <tr
-                                    id="message-<?= $messageId ?>"
-                                    data-message-id="<?= $messageId ?>"
-                                    class="<?= $estNonLu ? "table-warning" : "" ?>"
-                                >
+                                <thead class="table-light">
 
-                                    <!-- ID -->
+                                    <tr>
 
-                                    <td>
-                                        <strong>
-                                            #<?= $messageId ?>
-                                        </strong>
-                                    </td>
+                                        <th>#</th>
+
+                                        <th>Client</th>
+
+                                        <th>Email</th>
+
+                                        <th>Sujet</th>
+
+                                        <th>Date</th>
+
+                                        <th>Statut</th>
+
+                                        <th class="text-center">
+                                            Action
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
 
 
-                                    <!-- EXPÉDITEUR -->
+                                <tbody>
 
-                                    <td>
+                                <?php foreach ($messages as $message): ?>
 
-                                        <div class="fw-bold">
+                                    <tr>
 
-                                            <?= htmlspecialchars(
-                                                $message["nom"]
+                                        <!-- ID -->
+
+                                        <td>
+                                            <?= htmlspecialchars($message['id']) ?>
+                                        </td>
+
+
+                                        <!-- NOM -->
+
+                                        <td>
+
+                                            <strong>
+                                                <?= htmlspecialchars($message['nom']) ?>
+                                            </strong>
+
+                                        </td>
+
+
+                                        <!-- EMAIL -->
+
+                                        <td>
+
+                                            <?= htmlspecialchars($message['email']) ?>
+
+                                        </td>
+
+
+                                        <!-- SUJET -->
+
+                                        <td>
+
+                                            <?= htmlspecialchars($message['sujet']) ?>
+
+                                        </td>
+
+
+                                        <!-- DATE -->
+
+                                        <td>
+
+                                            <?= date(
+                                                'd/m/Y H:i',
+                                                strtotime($message['date_message'])
                                             ) ?>
 
-                                            <?php if ($estNonLu): ?>
+                                        </td>
 
-                                                <span
-                                                    class="badge bg-danger ms-1 badge-nouveau"
-                                                >
+
+                                        <!-- STATUT -->
+
+                                        <td>
+
+                                            <?php if ($message['lu'] == 0): ?>
+
+                                                <span class="badge bg-warning text-dark">
                                                     Nouveau
+                                                </span>
+
+                                            <?php else: ?>
+
+                                                <span class="badge bg-secondary">
+                                                    Lu
                                                 </span>
 
                                             <?php endif; ?>
 
-                                        </div>
-
-                                        <small class="text-muted">
-
-                                            <?= htmlspecialchars(
-                                                $message["email"]
-                                            ) ?>
-
-                                        </small>
-
-                                    </td>
+                                        </td>
 
 
-                                    <!-- SUJET -->
+                                        <!-- ACTION -->
 
-                                    <td>
+                                        <td class="text-center">
 
-                                        <span class="fw-semibold">
-
-                                            <?= htmlspecialchars(
-                                                $message["sujet"]
-                                            ) ?>
-
-                                        </span>
-
-                                    </td>
-
-
-                                    <!-- DATE -->
-
-                                    <td>
-
-                                        <?= date(
-                                            "d/m/Y H:i",
-                                            strtotime($message["date_message"])
-                                        ) ?>
-
-                                    </td>
-
-
-                                    <!-- ÉTAT -->
-
-                                    <td class="text-center">
-
-                                        <?php if ($estNonLu): ?>
-
-                                            <span
-                                                class="badge bg-danger"
-                                                id="etat-<?= $messageId ?>"
+                                            <a
+                                                href="details-message.php?id=<?= $message['id'] ?>"
+                                                class="btn btn-sm btn-primary"
                                             >
-                                                <i class="bi bi-envelope"></i>
-                                                Non lu
-                                            </span>
 
-                                        <?php else: ?>
+                                                <i class="bi bi-eye"></i>
 
-                                            <span
-                                                class="badge bg-success"
-                                                id="etat-<?= $messageId ?>"
+                                                Voir
+
+                                            </a>
+
+
+                                            <a
+                                                href="supprimer-message.php?id=<?= $message['id'] ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Voulez-vous vraiment supprimer ce message ?');"
                                             >
-                                                <i class="bi bi-envelope-open"></i>
-                                                Lu
-                                            </span>
 
-                                        <?php endif; ?>
+                                                <i class="bi bi-trash"></i>
 
-                                    </td>
+                                                Supprimer
 
+                                            </a>
 
-                                    <!-- ACTIONS -->
+                                        </td>
 
-                                    <td class="text-center">
+                                    </tr>
 
-                                        <!-- Voir -->
+                                <?php endforeach; ?>
 
-                                        <button
-                                            type="button"
-                                            class="btn btn-sm btn-outline-dark"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#modalMessage<?= $messageId ?>"
-                                            onclick="marquerCommeLu(<?= $messageId ?>)"
-                                            title="Voir le message"
-                                        >
+                                </tbody>
 
-                                            <i class="bi bi-eye"></i>
+                            </table>
 
-                                        </button>
+                        </div>
 
+                    <?php else: ?>
 
-                                        <!-- Répondre -->
+                        <!-- AUCUN MESSAGE -->
 
-                                        <a
-                                            href="mailto:<?= htmlspecialchars(
-                                                $message["email"]
-                                            ) ?>?subject=Re: <?= rawurlencode(
-                                                $message["sujet"]
-                                            ) ?>"
-                                            class="btn btn-sm btn-outline-primary"
-                                            title="Répondre"
-                                        >
+                        <div class="text-center py-5">
 
-                                            <i class="bi bi-reply"></i>
+                            <i
+                                class="bi bi-envelope-open display-1 text-muted"
+                            ></i>
 
-                                        </a>
+                            <h4 class="mt-3">
+                                Aucun message
+                            </h4>
 
+                            <p class="text-muted">
+                                Vous n'avez reçu aucun message pour le moment.
+                            </p>
 
-                                        <!-- Supprimer -->
+                        </div>
 
-                                        <a
-                                            href="supprimer-message.php?id=<?= $messageId ?>"
-                                            class="btn btn-sm btn-outline-danger"
-                                            title="Supprimer"
-                                            onclick="return confirm('Voulez-vous vraiment supprimer ce message ?');"
-                                        >
+                    <?php endif; ?>
 
-                                            <i class="bi bi-trash"></i>
-
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-
-
-                                <!-- =================================================
-                                     MODAL DU MESSAGE
-                                ================================================== -->
-
-                                <div
-                                    class="modal fade"
-                                    id="modalMessage<?= $messageId ?>"
-                                    tabindex="-1"
-                                    aria-labelledby="titreMessage<?= $messageId ?>"
-                                    aria-hidden="true"
-                                >
-
-                                    <div class="modal-dialog modal-lg modal-dialog-centered">
-
-                                        <div class="modal-content">
-
-
-                                            <!-- HEADER -->
-
-                                            <div class="modal-header">
-
-                                                <h5
-                                                    class="modal-title fw-bold"
-                                                    id="titreMessage<?= $messageId ?>"
-                                                >
-
-                                                    <i class="bi bi-envelope me-2"></i>
-
-                                                    <?= htmlspecialchars(
-                                                        $message["sujet"]
-                                                    ) ?>
-
-                                                </h5>
-
-
-                                                <button
-                                                    type="button"
-                                                    class="btn-close"
-                                                    data-bs-dismiss="modal"
-                                                    aria-label="Fermer"
-                                                ></button>
-
-                                            </div>
-
-
-                                            <!-- BODY -->
-
-                                            <div class="modal-body">
-
-
-                                                <!-- Expéditeur -->
-
-                                                <div class="mb-4">
-
-                                                    <div class="d-flex align-items-center gap-3">
-
-                                                        <div
-                                                            class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center"
-                                                            style="width:50px;height:50px;"
-                                                        >
-
-                                                            <i class="bi bi-person fs-4"></i>
-
-                                                        </div>
-
-
-                                                        <div>
-
-                                                            <div class="fw-bold">
-
-                                                                <?= htmlspecialchars(
-                                                                    $message["nom"]
-                                                                ) ?>
-
-                                                            </div>
-
-                                                            <div class="text-muted">
-
-                                                                <?= htmlspecialchars(
-                                                                    $message["email"]
-                                                                ) ?>
-
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-
-                                                </div>
-
-
-                                                <!-- Date -->
-
-                                                <div class="mb-3">
-
-                                                    <small class="text-muted">
-
-                                                        <i class="bi bi-calendar3 me-1"></i>
-
-                                                        Reçu le
-
-                                                        <?= date(
-                                                            "d/m/Y à H:i",
-                                                            strtotime(
-                                                                $message["date_message"]
-                                                            )
-                                                        ) ?>
-
-                                                    </small>
-
-                                                </div>
-
-
-                                                <!-- Sujet -->
-
-                                                <div class="mb-3">
-
-                                                    <strong>
-                                                        Sujet :
-                                                    </strong>
-
-                                                    <span>
-                                                        <?= htmlspecialchars(
-                                                            $message["sujet"]
-                                                        ) ?>
-                                                    </span>
-
-                                                </div>
-
-
-                                                <!-- Message -->
-
-                                                <div class="border rounded p-4 bg-light">
-
-                                                    <p
-                                                        class="mb-0"
-                                                        style="white-space: pre-line;"
-                                                    >
-
-                                                        <?= htmlspecialchars(
-                                                            $message["message"]
-                                                        ) ?>
-
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <!-- FOOTER -->
-
-                                            <div class="modal-footer">
-
-                                                <a
-                                                    href="mailto:<?= htmlspecialchars(
-                                                        $message["email"]
-                                                    ) ?>?subject=Re: <?= rawurlencode(
-                                                        $message["sujet"]
-                                                    ) ?>"
-                                                    class="btn btn-primary"
-                                                >
-
-                                                    <i class="bi bi-reply me-1"></i>
-
-                                                    Répondre
-
-                                                </a>
-
-
-                                                <a
-                                                    href="supprimer-message.php?id=<?= $messageId ?>"
-                                                    class="btn btn-danger"
-                                                    onclick="return confirm('Voulez-vous vraiment supprimer ce message ?');"
-                                                >
-
-                                                    <i class="bi bi-trash me-1"></i>
-
-                                                    Supprimer
-
-                                                </a>
-
-
-                                                <button
-                                                    type="button"
-                                                    class="btn btn-secondary"
-                                                    data-bs-dismiss="modal"
-                                                >
-
-                                                    Fermer
-
-                                                </button>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            <?php endforeach; ?>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                <?php endif; ?>
+                </div>
 
             </div>
 
-        </div>
+        </main>
 
-    </main>
+    </div>
 
 </div>
 
 
-<!-- =============================================================
-     BOOTSTRAP JS
-============================================================== -->
+<!-- Bootstrap JS -->
 
 <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-></script>
-
-
-<!-- =============================================================
-     JAVASCRIPT : MARQUER COMME LU
-============================================================== -->
-
-<script>
-
-function marquerCommeLu(messageId) {
-
-    fetch("messages.php?lire=" + messageId, {
-
-        method: "GET",
-
-        headers: {
-            "X-Requested-With": "XMLHttpRequest"
-        }
-
-    })
-
-    .then(response => response.json())
-
-    .then(data => {
-
-        if (data.success) {
-
-            // Récupérer la ligne
-            const ligne = document.getElementById(
-                "message-" + messageId
-            );
-
-
-            if (ligne) {
-
-                // Enlever le fond jaune
-                ligne.classList.remove("table-warning");
-
-
-                // Supprimer les badges "Nouveau"
-                const badgesNouveau = ligne.querySelectorAll(
-                    ".badge-nouveau"
-                );
-
-                badgesNouveau.forEach(badge => {
-                    badge.remove();
-                });
-
-
-                // Modifier l'état
-                const etat = document.getElementById(
-                    "etat-" + messageId
-                );
-
-                if (etat) {
-
-                    etat.className = "badge bg-success";
-
-                    etat.innerHTML =
-                        '<i class="bi bi-envelope-open"></i> Lu';
-
-                }
-
-            }
-
-
-            // Mettre à jour le nombre de nouveaux messages
-            const badgeNonLus = document.getElementById(
-                "badgeNonLus"
-            );
-
-
-            if (badgeNonLus) {
-
-                let nombre = parseInt(
-                    badgeNonLus.textContent
-                );
-
-                nombre = nombre - 1;
-
-
-                if (nombre <= 0) {
-
-                    badgeNonLus.remove();
-
-                } else {
-
-                    badgeNonLus.textContent =
-                        nombre +
-                        (nombre > 1
-                            ? " nouveaux"
-                            : " nouveau");
-
-                }
-
-            }
-
-        }
-
-    })
-
-    .catch(error => {
-
-        console.error(
-            "Erreur lors du marquage du message :",
-            error
-        );
-
-    });
-
-}
-
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
 </script>
 
 </body>

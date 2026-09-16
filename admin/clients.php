@@ -14,8 +14,11 @@ $requete = $pdo->query("
         id,
         nom,
         email,
+        telephone,
+        type_client,
         date_creation
     FROM utilisateurs
+    WHERE role = 'client'
     ORDER BY id DESC
 ");
 
@@ -31,6 +34,7 @@ $utilisateurs = $requete->fetchAll(PDO::FETCH_ASSOC);
 $totalUtilisateurs = count($utilisateurs);
 
 ?>
+<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -99,7 +103,7 @@ $totalUtilisateurs = count($utilisateurs);
                  EN-TÊTE
             ========================== -->
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
 
                 <div>
 
@@ -108,29 +112,50 @@ $totalUtilisateurs = count($utilisateurs);
                     </h1>
 
                     <p class="text-muted mb-0">
-                        Consultez les utilisateurs inscrits sur la plateforme NPM.
+                        Consultez les clients inscrits en ligne et ceux ajoutés depuis la boutique.
                     </p>
 
                 </div>
 
 
-                <!-- TOTAL CLIENTS -->
+                <div class="d-flex flex-wrap align-items-center gap-3">
 
-                <div class="bg-dark text-white rounded-3 px-4 py-3">
+                    <!-- ACTIONS -->
 
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex flex-wrap gap-2">
 
-                        <i class="bi bi-people fs-3 text-warning"></i>
+                        <a href="ajouter-client.php" class="btn btn-dark">
+                            <i class="bi bi-person-plus me-1"></i>
+                            Ajouter un client
+                        </a>
 
-                        <div>
+                        <a href="nouvelle-vente.php" class="btn btn-warning">
+                            <i class="bi bi-cart-plus me-1"></i>
+                            Nouvelle vente
+                        </a>
 
-                            <small class="text-light">
-                                Total clients
-                            </small>
+                    </div>
 
-                            <h4 class="mb-0 fw-bold">
-                                <?= $totalUtilisateurs ?>
-                            </h4>
+
+                    <!-- TOTAL CLIENTS -->
+
+                    <div class="bg-dark text-white rounded-3 px-4 py-3">
+
+                        <div class="d-flex align-items-center gap-3">
+
+                            <i class="bi bi-people fs-3 text-warning"></i>
+
+                            <div>
+
+                                <small class="text-light">
+                                    Total clients
+                                </small>
+
+                                <h4 class="mb-0 fw-bold">
+                                    <?= $totalUtilisateurs ?>
+                                </h4>
+
+                            </div>
 
                         </div>
 
@@ -232,6 +257,14 @@ $totalUtilisateurs = count($utilisateurs);
                                         </th>
 
                                         <th>
+                                            Téléphone
+                                        </th>
+
+                                        <th>
+                                            Type
+                                        </th>
+
+                                        <th>
                                             Date d'inscription
                                         </th>
 
@@ -304,17 +337,65 @@ $totalUtilisateurs = count($utilisateurs);
 
                                             <td>
 
-                                                <a
-                                                    href="mailto:<?= htmlspecialchars($utilisateur["email"]) ?>"
-                                                    class="text-decoration-none">
+                                                <?php if (!empty($utilisateur["email"])): ?>
 
-                                                    <i class="bi bi-envelope me-1"></i>
+                                                    <a
+                                                        href="mailto:<?= htmlspecialchars($utilisateur["email"]) ?>"
+                                                        class="text-decoration-none">
 
-                                                    <?= htmlspecialchars(
-                                                        $utilisateur["email"]
-                                                    ) ?>
+                                                        <i class="bi bi-envelope me-1"></i>
 
-                                                </a>
+                                                        <?= htmlspecialchars(
+                                                            $utilisateur["email"]
+                                                        ) ?>
+
+                                                    </a>
+
+                                                <?php else: ?>
+
+                                                    <span class="text-muted">—</span>
+
+                                                <?php endif; ?>
+
+                                            </td>
+
+
+                                            <!-- TÉLÉPHONE -->
+
+                                            <td>
+
+                                                <?php if (!empty($utilisateur["telephone"])): ?>
+
+                                                    <i class="bi bi-telephone me-1"></i>
+
+                                                    <?= htmlspecialchars($utilisateur["telephone"]) ?>
+
+                                                <?php else: ?>
+
+                                                    <span class="text-muted">—</span>
+
+                                                <?php endif; ?>
+
+                                            </td>
+
+
+                                            <!-- TYPE -->
+
+                                            <td>
+
+                                                <?php if (($utilisateur["type_client"] ?? "en_ligne") === "boutique"): ?>
+
+                                                    <span class="badge bg-dark">
+                                                        Boutique
+                                                    </span>
+
+                                                <?php else: ?>
+
+                                                    <span class="badge bg-secondary">
+                                                        En ligne
+                                                    </span>
+
+                                                <?php endif; ?>
 
                                             </td>
 

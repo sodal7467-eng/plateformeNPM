@@ -119,6 +119,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 <body>
 
+    <?php require_once("includes/auth.php");?> 
 
     <!-- NAVBAR ADMIN -->
 

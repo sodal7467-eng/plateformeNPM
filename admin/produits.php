@@ -1,5 +1,19 @@
 <?php
 
+session_start();
+
+/*
+|--------------------------------------------------------------------------
+| Vérification de la connexion administrateur
+|--------------------------------------------------------------------------
+*/
+
+if (!isset($_SESSION['id'])) {
+    header("Location: ../connexion.php");
+    exit;
+}
+require_once("includes/auth.php");
+
 require_once "../config/database.php";
 
 /*
@@ -635,21 +649,36 @@ foreach ($produits as $produit) {
 
                                                 <!-- SUPPRIMER -->
 
-                                                <a
-                                                    href="supprimer-produit.php?id=<?= $produit["id"] ?>"
-                                                    class="btn
-                                                           btn-sm
-                                                           btn-outline-danger"
-                                                    title="Supprimer"
-                                                    onclick="
-                                                        return confirm(
-                                                            'Voulez-vous vraiment supprimer ce produit ?'
-                                                        );
-                                                    ">
+<form
+    action="supprimer-produit.php"
+    method="POST"
+    class="d-inline"
+    onsubmit="return confirm('Voulez-vous vraiment supprimer ce produit ?');"
+>
 
-                                                    <i class="bi bi-trash"></i>
+    <input
+        type="hidden"
+        name="id"
+        value="<?= $produit["id"] ?>"
+    >
 
-                                                </a>
+    <input
+        type="hidden"
+        name="csrf_token"
+        value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>"
+    >
+
+    <button
+        type="submit"
+        class="btn btn-sm btn-outline-danger"
+        title="Supprimer"
+    >
+
+        <i class="bi bi-trash"></i>
+
+    </button>
+
+</form>
 
 
                                             </div>

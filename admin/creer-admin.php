@@ -2,6 +2,8 @@
 
 require_once "config/database.php"; 
 
+ require_once("includes/auth.php"); 
+
 $nom = "Admin NPM"; 
 $email = "admin@npm.com"; 
 $motDePasse = password_hash("123456", PASSWORD_DEFAULT); 

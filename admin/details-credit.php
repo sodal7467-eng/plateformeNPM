@@ -138,6 +138,8 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
 <?php require_once("includes/sidebar.php"); ?>
 
+<?php require_once("includes/auth.php");?> 
+
 
 <main class="admin-content">
 
