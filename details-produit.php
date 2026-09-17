@@ -153,49 +153,9 @@ if (!$produit) {
 
                     <!-- Prix -->
 
-                    <div class="product-detail-price">
+                    <div class="product-detail-price mb-4">
 
                         <?= number_format($produit["prix"], 0, ",", " ") ?> FCFA
-
-                    </div>
-
-
-                    <!-- Stock -->
-
-                    <?php if (isset($produit["stock"])): ?>
-
-                        <?php if ($produit["stock"] > 0): ?>
-
-                            <div class="stock-available mb-4">
-
-                                ✓ <?= (int) $produit["stock"] ?> produit(s) disponible(s)
-
-                            </div>
-
-                        <?php else: ?>
-
-                            <div class="stock-empty mb-4">
-
-                                ✕ Produit en rupture de stock
-
-                            </div>
-
-                        <?php endif; ?>
-
-                    <?php endif; ?>
-
-
-                    <!-- Description -->
-
-                    <div class="product-detail-description">
-
-                        <h4>Description</h4>
-
-                        <p>
-
-                            <?= nl2br(htmlspecialchars($produit["description"])) ?>
-
-                        </p>
 
                     </div>
 
@@ -209,7 +169,7 @@ if (!$produit) {
                         <form
                             action="panier.php"
                             method="GET"
-                            class="product-detail-form"
+                            class="product-detail-form mb-4"
                         >
 
                             <input
@@ -262,7 +222,7 @@ if (!$produit) {
                     <?php else: ?>
 
                         <button
-                            class="btn btn-secondary btn-lg w-100"
+                            class="btn btn-secondary btn-lg w-100 mb-4"
                             disabled
                         >
 
@@ -271,6 +231,21 @@ if (!$produit) {
                         </button>
 
                     <?php endif; ?>
+
+
+                    <!-- Description -->
+
+                    <div class="product-detail-description">
+
+                        <h4>Description</h4>
+
+                        <p>
+
+                            <?= nl2br(htmlspecialchars($produit["description"])) ?>
+
+                        </p>
+
+                    </div>
 
 
                 </div>

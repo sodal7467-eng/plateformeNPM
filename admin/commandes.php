@@ -371,10 +371,6 @@ foreach ($commandes as $commande) {
                                 <tr>
 
                                     <th>
-                                        Commande
-                                    </th>
-
-                                    <th>
                                         Client
                                     </th>
 
@@ -413,20 +409,6 @@ foreach ($commandes as $commande) {
                                 <?php foreach ($commandes as $commande): ?>
 
                                     <tr>
-
-
-                                        <!-- Numéro commande -->
-
-                                        <td>
-
-                                            <span class="fw-bold">
-
-                                                #<?= $commande["id"] ?>
-
-                                            </span>
-
-                                        </td>
-
 
 
                                         <!-- Client -->
@@ -642,6 +624,8 @@ foreach ($commandes as $commande) {
     </a>
 
 </td>
+
+                                    </tr>
 
                                 <?php endforeach; ?>
 

@@ -320,8 +320,6 @@ foreach ($produits as $produit) {
 
                             <tr>
 
-                                <th>ID</th>
-
                                 <th>Produit</th>
 
                                 <th>Catégorie</th>
@@ -351,7 +349,7 @@ foreach ($produits as $produit) {
 
                             <tr>
 
-                                <td colspan="7" class="text-center py-5">
+                                <td colspan="6" class="text-center py-5">
 
                                     <i class="bi bi-box fs-1 text-muted"></i>
 
@@ -393,13 +391,6 @@ foreach ($produits as $produit) {
 
 
                                 <tr>
-
-                                    <!-- ID -->
-
-                                    <td>
-                                        #<?= $produit["id"] ?>
-                                    </td>
-
 
                                     <!-- Produit -->
 

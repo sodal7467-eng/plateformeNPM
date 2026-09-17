@@ -187,18 +187,22 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
 
 
-            <div class="row g-4">
+            <!-- MODALE : AJOUTER UNE CATÉGORIE -->
 
+            <div
+                class="modal fade"
+                id="modalAjouterCategorie"
+                tabindex="-1"
+                aria-labelledby="modalAjouterCategorieLabel"
+                aria-hidden="true">
 
-                <!-- FORMULAIRE -->
+                <div class="modal-dialog">
 
-                <div class="col-lg-4">
+                    <div class="modal-content">
 
-                    <div class="card border-0 shadow-sm">
+                        <div class="modal-header bg-dark text-white">
 
-                        <div class="card-header bg-dark text-white">
-
-                            <h5 class="mb-0">
+                            <h5 class="modal-title" id="modalAjouterCategorieLabel">
 
                                 <i class="bi bi-plus-circle me-2"></i>
 
@@ -206,12 +210,19 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                             </h5>
 
+                            <button
+                                type="button"
+                                class="btn-close btn-close-white"
+                                data-bs-dismiss="modal"
+                                aria-label="Fermer">
+                            </button>
+
                         </div>
 
 
-                        <div class="card-body p-4">
+                        <form method="POST">
 
-                            <form method="POST">
+                            <div class="modal-body p-4">
 
 
                                 <!-- NOM -->
@@ -243,7 +254,7 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                 <!-- DESCRIPTION -->
 
-                                <div class="mb-3">
+                                <div class="mb-0">
 
                                     <label
                                         for="description"
@@ -264,11 +275,23 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
                                 </div>
 
 
-                                <!-- BOUTON -->
+                            </div>
+
+
+                            <div class="modal-footer">
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">
+
+                                    Annuler
+
+                                </button>
 
                                 <button
                                     type="submit"
-                                    class="btn btn-warning w-100 fw-semibold">
+                                    class="btn btn-warning fw-semibold">
 
                                     <i class="bi bi-plus-circle me-1"></i>
 
@@ -276,33 +299,48 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                 </button>
 
+                            </div>
 
-                            </form>
-
-                        </div>
+                        </form>
 
                     </div>
 
                 </div>
 
+            </div>
 
-                <!-- LISTE DES CATÉGORIES -->
 
-                <div class="col-lg-8">
+            <!-- LISTE DES CATÉGORIES -->
 
-                    <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white py-3">
+                <div class="card-header bg-white py-3">
 
-                            <h5 class="fw-bold mb-0">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                                <i class="bi bi-tags me-2"></i>
+                        <h5 class="fw-bold mb-0">
 
-                                Liste des catégories
+                            <i class="bi bi-tags me-2"></i>
 
-                            </h5>
+                            Liste des catégories
 
-                        </div>
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn btn-warning fw-semibold"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modalAjouterCategorie">
+
+                            <i class="bi bi-plus-circle me-1"></i>
+
+                            Ajouter une catégorie
+
+                        </button>
+
+                    </div>
+
+                </div>
 
 
                         <div class="card-body p-0">
@@ -336,8 +374,6 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                             <tr>
 
-                                                <th>ID</th>
-
                                                 <th>Nom</th>
 
                                                 <th>Description</th>
@@ -359,13 +395,6 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                                 <tr>
 
-                                                    <!-- ID -->
-
-                                                    <td>
-                                                        <?= $categorie["id"] ?>
-                                                    </td>
-
-
                                                     <!-- NOM -->
 
                                                     <td>
@@ -383,11 +412,56 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                                     <!-- DESCRIPTION -->
 
-                                                    <td>
+                                                    <td style="max-width: 260px;">
 
-                                                        <?= htmlspecialchars(
-                                                            $categorie["description"] ?? ""
-                                                        ) ?>
+                                                        <?php
+
+                                                        $description = trim($categorie["description"] ?? "");
+
+                                                        ?>
+
+                                                        <?php if ($description === ""): ?>
+
+                                                            <span class="text-muted">—</span>
+
+                                                        <?php else: ?>
+
+                                                            <?php
+
+                                                            $mots = preg_split('/\s+/', $description);
+                                                            $apercu = implode(" ", array_slice($mots, 0, 3));
+                                                            $estTronque = count($mots) > 3;
+
+                                                            ?>
+
+                                                            <?php if ($estTronque): ?>
+
+                                                                <details>
+
+                                                                    <summary
+                                                                        style="cursor: pointer;"
+                                                                        class="text-dark"
+                                                                    >
+
+                                                                        <?= htmlspecialchars($apercu) ?>…
+
+                                                                    </summary>
+
+                                                                    <div class="mt-2 text-muted">
+
+                                                                        <?= htmlspecialchars($description) ?>
+
+                                                                    </div>
+
+                                                                </details>
+
+                                                            <?php else: ?>
+
+                                                                <?= htmlspecialchars($description) ?>
+
+                                                            <?php endif; ?>
+
+                                                        <?php endif; ?>
 
                                                     </td>
 
@@ -470,10 +544,8 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     </div>
 
-                </div>
 
 
-            </div>
 
         </div>
 

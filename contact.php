@@ -9,6 +9,7 @@ $messageErreur = "";
 
 $nom = "";
 $email = "";
+$telephone = "";
 $sujet = "";
 $message = "";
 
@@ -21,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $nom = trim($_POST["nom"] ?? "");
     $email = trim($_POST["email"] ?? "");
+    $telephone = trim($_POST["telephone"] ?? "");
     $sujet = trim($_POST["sujet"] ?? "");
     $message = trim($_POST["message"] ?? "");
 
@@ -51,13 +53,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Enregistrer le message dans la base de données
             $requete = $pdo->prepare("
                 INSERT INTO messages
-                (nom, email, sujet, message)
-                VALUES (?, ?, ?, ?)
+                (nom, email, telephone, sujet, message)
+                VALUES (?, ?, ?, ?, ?)
             ");
 
             $requete->execute([
                 $nom,
                 $email,
+                $telephone !== "" ? $telephone : null,
                 $sujet,
                 $message
             ]);
@@ -71,6 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Vider les champs
             $nom = "";
             $email = "";
+            $telephone = "";
             $sujet = "";
             $message = "";
 
@@ -388,6 +392,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     placeholder="exemple@email.com"
                                     required
                                 >
+
+                            </div>
+
+
+                            <!-- Téléphone -->
+
+                            <div class="mb-3">
+
+                                <label for="telephone" class="form-label fw-semibold">
+                                    Téléphone (WhatsApp)
+                                </label>
+
+                                <input
+                                    type="tel"
+                                    class="form-control form-control-lg"
+                                    id="telephone"
+                                    name="telephone"
+                                    value="<?= htmlspecialchars($telephone ?? "") ?>"
+                                    placeholder="Ex : 77 000 00 00"
+                                >
+
+                                <small class="text-muted">
+                                    Facultatif — pour qu'on puisse te répondre plus vite sur WhatsApp.
+                                </small>
 
                             </div>
 

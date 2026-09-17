@@ -59,6 +59,87 @@ if ($message['lu'] == 0) {
     $message['lu'] = 1;
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| Retrouver un numéro de téléphone pour WhatsApp
+|--------------------------------------------------------------------------
+|
+| 1) Le numéro donné directement dans le formulaire de contact.
+| 2) À défaut, le numéro du compte client (si le même email existe
+|    dans la table utilisateurs).
+|
+*/
+
+$telephoneClient = $message['telephone'] ?? null;
+
+if (empty($telephoneClient) && !empty($message['email'])) {
+
+    $requeteTelephone = $pdo->prepare("
+        SELECT telephone
+        FROM utilisateurs
+        WHERE email = ?
+        LIMIT 1
+    ");
+
+    $requeteTelephone->execute([$message['email']]);
+
+    $telephoneClient = $requeteTelephone->fetchColumn() ?: null;
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Mettre le numéro au format international pour le lien WhatsApp
+|--------------------------------------------------------------------------
+*/
+
+function formaterNumeroWhatsapp(?string $numero): ?string
+{
+    if (empty($numero)) {
+        return null;
+    }
+
+    $chiffres = preg_replace('/\D/', '', $numero);
+
+    if ($chiffres === '') {
+        return null;
+    }
+
+    // Numéro local sénégalais (9 chiffres, ex : 77 000 00 00)
+    if (strlen($chiffres) === 9) {
+        $chiffres = '221' . $chiffres;
+    }
+
+    // Numéro local avec le 0 initial (ex : 077 000 00 00)
+    if (strlen($chiffres) === 10 && $chiffres[0] === '0') {
+        $chiffres = '221' . substr($chiffres, 1);
+    }
+
+    return $chiffres;
+}
+
+$numeroWhatsapp = formaterNumeroWhatsapp($telephoneClient);
+
+if ($numeroWhatsapp) {
+
+    $texteWhatsapp = "Bonjour " . $message['nom'] . ",\n\n";
+    $texteWhatsapp .= "Suite à votre message";
+
+    if (!empty($message['sujet'])) {
+        $texteWhatsapp .= " concernant \"" . $message['sujet'] . "\"";
+    }
+
+    $texteWhatsapp .= " :\n\"" . $message['message'] . "\"\n\n";
+
+    $lienWhatsapp = "https://wa.me/" . $numeroWhatsapp
+        . "?text=" . rawurlencode($texteWhatsapp);
+
+} else {
+
+    $lienWhatsapp = null;
+}
+
 ?>
 <?php require_once("includes/auth.php");?> 
 
@@ -106,24 +187,12 @@ if ($message['lu'] == 0) {
 <?php require_once("includes/navbar.php"); ?>
 
 
-<div class="container-fluid">
-
-    <div class="row">
+<?php require_once("includes/sidebar.php"); ?>
 
 
-        <!-- SIDEBAR -->
+<main class="admin-content">
 
-        <div class="col-md-3 col-lg-2">
-
-            <?php require_once("includes/sidebar.php"); ?>
-
-        </div>
-
-
-
-        <!-- CONTENU PRINCIPAL -->
-
-        <main class="col-md-9 col-lg-10 py-4">
+    <div class="container-fluid py-5 px-4">
 
 
             <!-- TITRE -->
@@ -213,6 +282,35 @@ if ($message['lu'] == 0) {
                             <div class="form-control bg-light">
 
                                 <?= htmlspecialchars($message['email']) ?>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TÉLÉPHONE -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-bold">
+
+                                <i class="bi bi-telephone me-1"></i>
+
+                                Téléphone
+
+                            </label>
+
+                            <div class="form-control bg-light">
+
+                                <?php if (!empty($telephoneClient)): ?>
+
+                                    <?= htmlspecialchars($telephoneClient) ?>
+
+                                <?php else: ?>
+
+                                    <span class="text-muted">Non renseigné</span>
+
+                                <?php endif; ?>
 
                             </div>
 
@@ -325,7 +423,40 @@ if ($message['lu'] == 0) {
 
                     <!-- ACTIONS -->
 
-                    <div class="d-flex gap-2">
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        <?php if ($lienWhatsapp): ?>
+
+                            <a
+                                href="<?= htmlspecialchars($lienWhatsapp) ?>"
+                                class="btn btn-success"
+                                target="_blank"
+                                rel="noopener"
+                            >
+
+                                <i class="bi bi-whatsapp me-1"></i>
+
+                                Répondre sur WhatsApp
+
+                            </a>
+
+                        <?php else: ?>
+
+                            <button
+                                type="button"
+                                class="btn btn-success"
+                                disabled
+                                title="Aucun numéro de téléphone disponible pour ce client"
+                            >
+
+                                <i class="bi bi-whatsapp me-1"></i>
+
+                                Répondre sur WhatsApp
+
+                            </button>
+
+                        <?php endif; ?>
+
 
                         <a
                             href="mailto:<?= htmlspecialchars($message['email']) ?>"
@@ -369,11 +500,9 @@ if ($message['lu'] == 0) {
             </div>
 
 
-        </main>
-
     </div>
 
-</div>
+</main>
 
 
 

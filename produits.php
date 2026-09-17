@@ -110,6 +110,14 @@ $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
     >
 
 
+    <!-- Bootstrap Icons -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    >
+
+
     <!-- CSS NPM -->
 
     <link
@@ -356,28 +364,6 @@ $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
 
 
 
-                                <?php if (!empty($produit["description"])): ?>
-
-                                    <p class="product-description">
-
-                                        <?= htmlspecialchars(
-                                            mb_substr(
-                                                $produit["description"],
-                                                0,
-                                                80
-                                            )
-                                        ) ?>
-
-                                        <?php if (strlen($produit["description"]) > 80): ?>
-                                            ...
-                                        <?php endif; ?>
-
-                                    </p>
-
-                                <?php endif; ?>
-
-
-
                                 <!-- PRIX -->
 
                                 <p class="price">
@@ -428,15 +414,17 @@ $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
 
                                 <!-- ACTIONS -->
 
-                                <div class="product-actions mt-3">
+                                <div class="product-actions d-flex justify-content-end gap-2 mt-3">
 
 
                                     <a
                                         href="details-produit.php?id=<?= $produit["id"] ?>"
-                                        class="btn btn-dark w-100 mb-2"
+                                        class="btn btn-dark product-icon-btn"
+                                        title="Voir le produit"
+                                        aria-label="Voir le produit"
                                     >
 
-                                        Voir le produit
+                                        <i class="bi bi-eye"></i>
 
                                     </a>
 
@@ -449,10 +437,12 @@ $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
 
                                         <a
                                             href="panier.php?action=ajouter&id=<?= $produit["id"] ?>"
-                                            class="btn btn-warning w-100"
+                                            class="btn btn-warning product-icon-btn"
+                                            title="Ajouter au panier"
+                                            aria-label="Ajouter au panier"
                                         >
 
-                                            🛒 Ajouter au panier
+                                            <i class="bi bi-cart-plus"></i>
 
                                         </a>
 
@@ -462,11 +452,13 @@ $produits = $requeteProduits->fetchAll(PDO::FETCH_ASSOC);
 
                                         <button
                                             type="button"
-                                            class="btn btn-secondary w-100"
+                                            class="btn btn-secondary product-icon-btn"
                                             disabled
+                                            title="Rupture de stock"
+                                            aria-label="Rupture de stock"
                                         >
 
-                                            Rupture de stock
+                                            <i class="bi bi-cart-x"></i>
 
                                         </button>
 

@@ -10,11 +10,49 @@ require_once("../config/database.php");
 |--------------------------------------------------------------------------
 */
 
-$sql = "SELECT * FROM messages ORDER BY date_message DESC";
+$sql = "
+    SELECT
+        messages.*,
+        utilisateurs.telephone AS telephone_compte
+    FROM messages
+    LEFT JOIN utilisateurs
+        ON utilisateurs.email = messages.email
+    ORDER BY messages.date_message DESC
+";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 
 $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+/*
+|--------------------------------------------------------------------------
+| Mettre un numéro au format international pour WhatsApp
+|--------------------------------------------------------------------------
+*/
+
+function formaterNumeroWhatsapp(?string $numero): ?string
+{
+    if (empty($numero)) {
+        return null;
+    }
+
+    $chiffres = preg_replace('/\D/', '', $numero);
+
+    if ($chiffres === '') {
+        return null;
+    }
+
+    if (strlen($chiffres) === 9) {
+        $chiffres = '221' . $chiffres;
+    }
+
+    if (strlen($chiffres) === 10 && $chiffres[0] === '0') {
+        $chiffres = '221' . substr($chiffres, 1);
+    }
+
+    return $chiffres;
+}
 
 ?>
 <?php require_once("includes/auth.php");?> 
@@ -51,20 +89,11 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <?php require_once("includes/navbar.php"); ?>
 
-<div class="container-fluid">
+<?php require_once("includes/sidebar.php"); ?>
 
-    <div class="row">
+<main class="admin-content">
 
-        <!-- SIDEBAR -->
-        <div class="col-md-3 col-lg-2">
-
-            <?php require_once("includes/sidebar.php"); ?>
-
-        </div>
-
-
-        <!-- CONTENU PRINCIPAL -->
-        <main class="col-md-9 col-lg-10 py-4">
+    <div class="container-fluid py-5 px-4">
 
             <!-- TITRE -->
 
@@ -102,8 +131,6 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                     <tr>
 
-                                        <th>#</th>
-
                                         <th>Client</th>
 
                                         <th>Email</th>
@@ -128,13 +155,6 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php foreach ($messages as $message): ?>
 
                                     <tr>
-
-                                        <!-- ID -->
-
-                                        <td>
-                                            <?= htmlspecialchars($message['id']) ?>
-                                        </td>
-
 
                                         <!-- NOM -->
 
@@ -202,6 +222,35 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                         <td class="text-center">
 
+                                            <?php
+
+                                            $numeroWhatsapp = formaterNumeroWhatsapp(
+                                                $message['telephone']
+                                                    ?? $message['telephone_compte']
+                                                    ?? null
+                                            );
+
+                                            ?>
+
+                                            <?php if ($numeroWhatsapp): ?>
+
+                                                <a
+                                                    href="https://wa.me/<?= $numeroWhatsapp ?>?text=<?= rawurlencode(
+                                                        'Bonjour ' . $message['nom'] . ",\n\nSuite à votre message :\n\"" . $message['message'] . "\"\n\n"
+                                                    ) ?>"
+                                                    class="btn btn-sm btn-success"
+                                                    target="_blank"
+                                                    rel="noopener"
+                                                    title="Répondre sur WhatsApp"
+                                                >
+
+                                                    <i class="bi bi-whatsapp"></i>
+
+                                                </a>
+
+                                            <?php endif; ?>
+
+
                                             <a
                                                 href="details-message.php?id=<?= $message['id'] ?>"
                                                 class="btn btn-sm btn-primary"
@@ -264,11 +313,9 @@ $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             </div>
 
-        </main>
-
     </div>
 
-</div>
+</main>
 
 
 <!-- Bootstrap JS -->

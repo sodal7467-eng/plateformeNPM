@@ -34,6 +34,20 @@ if (session_status() === PHP_SESSION_NONE) {
         </p>
 
 
+        <!-- TABLEAU DE BORD -->
+        <a href="index.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                📊
+            </span>
+
+            <span>
+                Tableau de bord
+            </span>
+
+        </a>
+
+
         <!-- PRODUITS -->
         <a href="produits.php" class="sidebar-link">
 
@@ -183,6 +197,43 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <span>
                 Messages
+            </span>
+
+        </a>
+
+
+        <!-- SÉPARATION -->
+        <div class="sidebar-separator"></div>
+
+
+        <p class="sidebar-title">
+            ÉQUIPE
+        </p>
+
+
+        <!-- ADMINISTRATEURS -->
+        <a href="administrateurs.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🛡️
+            </span>
+
+            <span>
+                Administrateurs
+            </span>
+
+        </a>
+
+
+        <!-- EMPLOYÉS -->
+        <a href="employes.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                🧑‍💼
+            </span>
+
+            <span>
+                Employés
             </span>
 
         </a>

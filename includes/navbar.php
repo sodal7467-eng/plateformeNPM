@@ -1,3 +1,9 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+?>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
     <div class="container">
 
@@ -10,10 +16,10 @@
         </a>
 
         <!-- Bouton mobile -->
-        <button 
-            class="navbar-toggler" 
-            type="button" 
-            data-bs-toggle="collapse" 
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
             data-bs-target="#navbarNPM"
             aria-controls="navbarNPM"
             aria-expanded="false"
@@ -68,9 +74,61 @@
 
                 <?php if (isset($_SESSION["id"])): ?>
 
-                    <a href="profil.php" class="btn btn-warning">
-                        Mon compte
-                    </a>
+                    <div class="dropdown">
+
+                        <button
+                            class="btn btn-warning dropdown-toggle d-flex align-items-center gap-1"
+                            type="button"
+                            id="menuCompteNPM"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            👤 <?= htmlspecialchars($_SESSION["nom"] ?? "Mon compte") ?>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuCompteNPM">
+
+                            <li>
+                                <a class="dropdown-item" href="profil.php">
+                                    Mon compte
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="modifier-profil.php">
+                                    Profil
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="mes-commende.php">
+                                    Ma commande
+                                </a>
+                            </li>
+
+                            <?php if (($_SESSION["role"] ?? "") === "admin"): ?>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <a class="dropdown-item fw-bold text-warning" href="admin/index.php">
+                                        ⚙️ Espace Administration
+                                    </a>
+                                </li>
+
+                            <?php endif; ?>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item text-danger" href="deconnexion.php">
+                                    Déconnexion
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
 
                 <?php else: ?>
 

@@ -515,8 +515,6 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
                                 <tr>
 
-                                    <th>#</th>
-
                                     <th>Montant</th>
 
                                     <th>Commentaire</th>
@@ -534,13 +532,6 @@ if ((float) $credit["reste_a_payer"] <= 0) {
                             <?php foreach ($paiements as $paiement): ?>
 
                                 <tr>
-
-                                    <td>
-
-                                        #<?= $paiement["id"] ?>
-
-                                    </td>
-
 
                                     <td>
 

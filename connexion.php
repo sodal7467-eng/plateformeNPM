@@ -12,25 +12,41 @@ $erreur = "";
 // Si le formulaire est envoyé
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $email = trim($_POST["email"] ?? "");
+    $methode = ($_POST["methode"] ?? "telephone") === "email"
+        ? "email"
+        : "telephone";
+
+    $identifiant = trim($_POST["identifiant"] ?? "");
     $motDePasse = $_POST["password"] ?? "";
 
 
     // Vérification des champs
-    if (empty($email) || empty($motDePasse)) {
+    if (empty($identifiant) || empty($motDePasse)) {
 
         $erreur = "Veuillez remplir tous les champs.";
 
     } else {
 
-        // Rechercher l'utilisateur
-        $requete = $pdo->prepare("
-            SELECT *
-            FROM utilisateurs
-            WHERE email = ?
-        ");
+        // Rechercher l'utilisateur selon la méthode choisie
+        if ($methode === "email") {
 
-        $requete->execute([$email]);
+            $requete = $pdo->prepare("
+                SELECT *
+                FROM utilisateurs
+                WHERE email = ?
+            ");
+
+        } else {
+
+            $requete = $pdo->prepare("
+                SELECT *
+                FROM utilisateurs
+                WHERE telephone = ?
+            ");
+
+        }
+
+        $requete->execute([$identifiant]);
 
         $utilisateur = $requete->fetch(PDO::FETCH_ASSOC);
 
@@ -44,27 +60,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             )
         ) {
 
-           // Connexion réussie
-session_regenerate_id(true);
+            // Connexion réussie
+            session_regenerate_id(true);
 
-$_SESSION["id"] = $utilisateur["id"];
-$_SESSION["nom"] = $utilisateur["nom"];
-$_SESSION["email"] = $utilisateur["email"];
-$_SESSION["role"] = $utilisateur["role"];
+            $_SESSION["id"] = $utilisateur["id"];
+            $_SESSION["nom"] = $utilisateur["nom"];
+            $_SESSION["email"] = $utilisateur["email"];
+            $_SESSION["telephone"] = $utilisateur["telephone"];
+            $_SESSION["role"] = $utilisateur["role"];
 
-// Redirection selon le rôle
-if ($utilisateur["role"] === "admin") {
+            // Redirection selon le rôle
+            if ($utilisateur["role"] === "admin") {
 
-    header("Location: admin/index.php");
-    exit;
+                header("Location: admin/index.php");
+                exit;
 
-} else {
+            } else {
 
-    header("Location: index.php");
-    exit;
-}
+                header("Location: index.php");
+                exit;
+            }
 
-            $erreur = "Email ou mot de passe incorrect.";
+        } else {
+
+            $erreur = $methode === "email"
+                ? "Adresse email ou mot de passe incorrect."
+                : "Numéro de téléphone ou mot de passe incorrect.";
 
         }
     }
@@ -204,39 +225,101 @@ if ($utilisateur["role"] === "admin") {
                         <form
                             action="connexion.php"
                             method="POST"
+                            id="formConnexion"
                         >
 
 
-                            <!-- Email -->
+                            <!-- Choix de la méthode de connexion -->
+
+                            <div
+                                class="btn-group w-100 mb-3"
+                                role="group"
+                                aria-label="Méthode de connexion"
+                            >
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="methode_radio"
+                                    id="methodeTelephone"
+                                    autocomplete="off"
+                                    <?= ($_POST["methode"] ?? "telephone") === "email" ? "" : "checked" ?>
+                                >
+
+                                <label
+                                    class="btn btn-outline-dark"
+                                    for="methodeTelephone"
+                                >
+
+                                    <i class="bi bi-telephone me-1"></i>
+
+                                    Téléphone
+
+                                </label>
+
+
+                                <input
+                                    type="radio"
+                                    class="btn-check"
+                                    name="methode_radio"
+                                    id="methodeEmail"
+                                    autocomplete="off"
+                                    <?= ($_POST["methode"] ?? "telephone") === "email" ? "checked" : "" ?>
+                                >
+
+                                <label
+                                    class="btn btn-outline-dark"
+                                    for="methodeEmail"
+                                >
+
+                                    <i class="bi bi-envelope me-1"></i>
+
+                                    Email
+
+                                </label>
+
+                            </div>
+
+
+                            <input
+                                type="hidden"
+                                name="methode"
+                                id="methodeInput"
+                                value="<?= ($_POST["methode"] ?? "telephone") === "email" ? "email" : "telephone" ?>"
+                            >
+
+
+                            <!-- Téléphone ou Email -->
 
                             <div class="mb-3">
 
                                 <label
-                                    for="email"
+                                    for="identifiant"
                                     class="form-label fw-bold"
+                                    id="labelIdentifiant"
                                 >
 
-                                    Adresse email
+                                    Numéro de téléphone
 
                                 </label>
 
 
                                 <div class="input-group">
 
-                                    <span class="input-group-text">
+                                    <span class="input-group-text" id="iconIdentifiant">
 
-                                        <i class="bi bi-envelope"></i>
+                                        <i class="bi bi-telephone"></i>
 
                                     </span>
 
 
                                     <input
-                                        type="email"
-                                        name="email"
-                                        id="email"
+                                        type="tel"
+                                        name="identifiant"
+                                        id="identifiant"
                                         class="form-control"
-                                        placeholder="exemple@email.com"
-                                        value="<?= htmlspecialchars($_POST["email"] ?? "") ?>"
+                                        placeholder="Ex : 77 123 45 67"
+                                        value="<?= htmlspecialchars($_POST["identifiant"] ?? "") ?>"
                                         required
                                     >
 
@@ -434,6 +517,54 @@ voirPassword.addEventListener("click", function () {
     }
 
 });
+
+</script>
+
+
+
+<!-- Basculer entre connexion par téléphone ou par email -->
+
+<script>
+
+const methodeTelephoneRadio = document.getElementById("methodeTelephone");
+const methodeEmailRadio = document.getElementById("methodeEmail");
+const methodeInput = document.getElementById("methodeInput");
+const labelIdentifiant = document.getElementById("labelIdentifiant");
+const iconIdentifiant = document.getElementById("iconIdentifiant");
+const identifiant = document.getElementById("identifiant");
+
+function appliquerMethodeConnexion(methode) {
+
+    methodeInput.value = methode;
+
+    if (methode === "email") {
+
+        labelIdentifiant.textContent = "Adresse email";
+        iconIdentifiant.innerHTML = '<i class="bi bi-envelope"></i>';
+        identifiant.type = "email";
+        identifiant.placeholder = "exemple@email.com";
+
+    } else {
+
+        labelIdentifiant.textContent = "Numéro de téléphone";
+        iconIdentifiant.innerHTML = '<i class="bi bi-telephone"></i>';
+        identifiant.type = "tel";
+        identifiant.placeholder = "Ex : 77 123 45 67";
+
+    }
+}
+
+methodeTelephoneRadio.addEventListener("change", function () {
+    appliquerMethodeConnexion("telephone");
+});
+
+methodeEmailRadio.addEventListener("change", function () {
+    appliquerMethodeConnexion("email");
+});
+
+// Applique le bon état au chargement (utile si le formulaire est
+// réaffiché après une erreur, méthode email déjà sélectionnée)
+appliquerMethodeConnexion(methodeInput.value);
 
 </script>
 

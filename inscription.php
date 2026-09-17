@@ -10,27 +10,28 @@ $erreur = "";
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $nom = trim($_POST["nom"] ?? "");
+    $telephone = trim($_POST["telephone"] ?? "");
     $email = trim($_POST["email"] ?? "");
     $motDePasse = $_POST["password"] ?? "";
     $confirmation = $_POST["confirmation"] ?? "";
     $conditions = isset($_POST["conditions"]);
 
 
-    // Vérifier les champs
+    // Vérifier les champs (l'email est facultatif)
     if (
         empty($nom) ||
-        empty($email) ||
+        empty($telephone) ||
         empty($motDePasse) ||
         empty($confirmation)
     ) {
 
-        $erreur = "Veuillez remplir tous les champs.";
+        $erreur = "Veuillez remplir tous les champs obligatoires.";
 
     } elseif (!$conditions) {
 
         $erreur = "Vous devez accepter les conditions d'utilisation.";
 
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } elseif (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
         $erreur = "Veuillez saisir une adresse email valide.";
 
@@ -44,16 +45,38 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     } else {
 
-        // Vérifier si l'email existe déjà
+        // Vérifier si le numéro de téléphone existe déjà
         $verification = $pdo->prepare("
             SELECT id
             FROM utilisateurs
-            WHERE email = ?
+            WHERE telephone = ?
         ");
 
-        $verification->execute([$email]);
+        $verification->execute([$telephone]);
+
+
+        // Vérifier si l'email (s'il est renseigné) existe déjà
+        $emailDejaUtilise = false;
+
+        if (!empty($email)) {
+
+            $verificationEmail = $pdo->prepare("
+                SELECT id
+                FROM utilisateurs
+                WHERE email = ?
+            ");
+
+            $verificationEmail->execute([$email]);
+
+            $emailDejaUtilise = (bool) $verificationEmail->fetch();
+        }
+
 
         if ($verification->fetch()) {
+
+            $erreur = "Ce numéro de téléphone est déjà utilisé.";
+
+        } elseif ($emailDejaUtilise) {
 
             $erreur = "Cette adresse email est déjà utilisée.";
 
@@ -66,16 +89,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
 
 
-            // Insérer l'utilisateur
+            // Insérer l'utilisateur (email facultatif)
             $requete = $pdo->prepare("
                 INSERT INTO utilisateurs
-                (nom, email, mot_de_passe)
-                VALUES (?, ?, ?)
+                (nom, telephone, email, mot_de_passe)
+                VALUES (?, ?, ?, ?)
             ");
 
             $requete->execute([
                 $nom,
-                $email,
+                $telephone,
+                $email !== "" ? $email : null,
                 $motDePasseHash
             ]);
 
@@ -262,7 +286,41 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </div>
 
 
-                            <!-- Email -->
+                            <!-- Téléphone -->
+
+                            <div class="mb-3">
+
+                                <label
+                                    for="telephone"
+                                    class="form-label fw-bold">
+
+                                    Numéro de téléphone
+
+                                </label>
+
+                                <div class="input-group">
+
+                                    <span class="input-group-text">
+
+                                        <i class="bi bi-telephone"></i>
+
+                                    </span>
+
+                                    <input
+                                        type="tel"
+                                        name="telephone"
+                                        id="telephone"
+                                        class="form-control"
+                                        placeholder="Ex : 77 123 45 67"
+                                        value="<?= htmlspecialchars($_POST["telephone"] ?? "") ?>"
+                                        required>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Email (facultatif) -->
 
                             <div class="mb-3">
 
@@ -271,6 +329,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     class="form-label fw-bold">
 
                                     Adresse email
+                                    <span class="text-muted fw-normal">(facultatif)</span>
 
                                 </label>
 
@@ -288,8 +347,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                         id="email"
                                         class="form-control"
                                         placeholder="exemple@email.com"
-                                        value="<?= htmlspecialchars($_POST["email"] ?? "") ?>"
-                                        required>
+                                        value="<?= htmlspecialchars($_POST["email"] ?? "") ?>">
 
                                 </div>
 

@@ -111,34 +111,66 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 <?php require_once("includes/navbar.php"); ?>
 
-<div class="container-fluid">
+<?php require_once("includes/sidebar.php"); ?>
 
-    <div class="row">
+<main class="admin-content">
 
-        <!-- SIDEBAR -->
-
-        <div class="col-md-3 col-lg-2 p-0">
-
-            <?php require_once("includes/sidebar.php"); ?>
-
-        </div>
-
-
-        <!-- CONTENU PRINCIPAL -->
-
-        <main class="col-md-9 col-lg-10 px-4 py-4">
+    <div class="container-fluid py-5 px-4">
 
             <!-- EN-TÊTE -->
 
-            <div class="mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
 
-                <h1 class="fw-bold">
-                    Tableau de bord
-                </h1>
+                <div>
 
-                <p class="text-muted">
-                    Bienvenue dans l'espace d'administration de Quincaillerie NPM.
-                </p>
+                    <h1 class="fw-bold">
+                        Tableau de bord
+                    </h1>
+
+                    <p class="text-muted mb-0">
+                        Bienvenue dans l'espace d'administration de Quincaillerie NPM.
+                    </p>
+
+                </div>
+
+
+                <!-- ACTIONS RAPIDES -->
+
+                <div class="d-flex flex-wrap gap-2">
+
+                    <a
+                        href="ajouter-produit.php"
+                        class="btn btn-dark btn-sm"
+                    >
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Ajouter un produit
+                    </a>
+
+                    <a
+                        href="categories.php"
+                        class="btn btn-outline-dark btn-sm"
+                    >
+                        <i class="bi bi-tags me-1"></i>
+                        Catégories
+                    </a>
+
+                    <a
+                        href="commandes.php"
+                        class="btn btn-outline-dark btn-sm"
+                    >
+                        <i class="bi bi-cart-check me-1"></i>
+                        Commandes
+                    </a>
+
+                    <a
+                        href="messages.php"
+                        class="btn btn-outline-dark btn-sm"
+                    >
+                        <i class="bi bi-envelope me-1"></i>
+                        Messages
+                    </a>
+
+                </div>
 
             </div>
 
@@ -284,13 +316,13 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                             <div class="d-flex justify-content-between align-items-center">
 
-                                <div>
+                                <div class="flex-grow-1" style="min-width: 0;">
 
                                     <p class="text-muted mb-1">
                                         Chiffre d'affaires
                                     </p>
 
-                                    <h2 class="fw-bold mb-0">
+                                    <h4 class="fw-bold mb-0" style="word-break: break-word;">
 
                                         <?= number_format(
                                             $chiffreAffaires,
@@ -299,13 +331,13 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
                                             ' '
                                         ) ?>
 
-                                        FCFA
+                                        <small class="fw-normal text-muted">FCFA</small>
 
-                                    </h2>
+                                    </h4>
 
                                 </div>
 
-                                <div class="fs-1 text-secondary">
+                                <div class="fs-2 text-secondary ms-2">
                                     <i class="bi bi-cash-stack"></i>
                                 </div>
 
@@ -335,7 +367,7 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white border-0 py-3">
+                        <div class="card-header bg-white py-3">
 
                             <div class="d-flex justify-content-between align-items-center">
 
@@ -361,11 +393,9 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                 <table class="table table-hover align-middle mb-0">
 
-                                    <thead class="table-light">
+                                    <thead class="table-dark">
 
                                         <tr>
-
-                                            <th>ID</th>
 
                                             <th>Client</th>
 
@@ -385,7 +415,7 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
                                         <tr>
 
                                             <td
-                                                colspan="4"
+                                                colspan="3"
                                                 class="text-center text-muted py-4"
                                             >
                                                 Aucune commande pour le moment.
@@ -398,10 +428,6 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
                                         <?php foreach ($dernieresCommandes as $commande): ?>
 
                                             <tr>
-
-                                                <td>
-                                                    #<?= $commande["id"] ?>
-                                                </td>
 
                                                 <td>
                                                     <?= htmlspecialchars(
@@ -459,7 +485,7 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                     <div class="card border-0 shadow-sm">
 
-                        <div class="card-header bg-white border-0 py-3">
+                        <div class="card-header bg-white py-3">
 
                             <h5 class="fw-bold mb-0">
                                 Stock faible
@@ -537,62 +563,9 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
 
             </div>
 
-
-            <!-- ACTIONS RAPIDES -->
-
-            <div class="card border-0 shadow-sm mt-4">
-
-                <div class="card-body">
-
-                    <h5 class="fw-bold mb-3">
-                        Actions rapides
-                    </h5>
-
-                    <div class="d-flex flex-wrap gap-2">
-
-                        <a
-                            href="ajouter-produit.php"
-                            class="btn btn-dark"
-                        >
-                            <i class="bi bi-plus-circle me-2"></i>
-                            Ajouter un produit
-                        </a>
-
-                        <a
-                            href="categories.php"
-                            class="btn btn-outline-dark"
-                        >
-                            <i class="bi bi-tags me-2"></i>
-                            Gérer les catégories
-                        </a>
-
-                        <a
-                            href="commandes.php"
-                            class="btn btn-outline-dark"
-                        >
-                            <i class="bi bi-cart-check me-2"></i>
-                            Gérer les commandes
-                        </a>
-
-                        <a
-                            href="messages.php"
-                            class="btn btn-outline-dark"
-                        >
-                            <i class="bi bi-envelope me-2"></i>
-                            Voir les messages
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </main>
-
     </div>
 
-</div>
+</main>
 
 
 <!-- Bootstrap JS -->

@@ -103,39 +103,18 @@ $totalUtilisateurs = count($utilisateurs);
                  EN-TÊTE
             ========================== -->
 
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+            <div class="mb-4">
 
-                <div>
+                <h1 class="fw-bold mb-2">
+                    Gestion des clients
+                </h1>
 
-                    <h1 class="fw-bold mb-2">
-                        Gestion des clients
-                    </h1>
-
-                    <p class="text-muted mb-0">
-                        Consultez les clients inscrits en ligne et ceux ajoutés depuis la boutique.
-                    </p>
-
-                </div>
+                <p class="text-muted mb-3">
+                    Consultez les clients inscrits en ligne et ceux ajoutés depuis la boutique.
+                </p>
 
 
                 <div class="d-flex flex-wrap align-items-center gap-3">
-
-                    <!-- ACTIONS -->
-
-                    <div class="d-flex flex-wrap gap-2">
-
-                        <a href="ajouter-client.php" class="btn btn-dark">
-                            <i class="bi bi-person-plus me-1"></i>
-                            Ajouter un client
-                        </a>
-
-                        <a href="nouvelle-vente.php" class="btn btn-warning">
-                            <i class="bi bi-cart-plus me-1"></i>
-                            Nouvelle vente
-                        </a>
-
-                    </div>
-
 
                     <!-- TOTAL CLIENTS -->
 
@@ -158,6 +137,23 @@ $totalUtilisateurs = count($utilisateurs);
                             </div>
 
                         </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="d-flex flex-wrap gap-2 ms-auto">
+
+                        <a href="ajouter-client.php" class="btn btn-dark">
+                            <i class="bi bi-person-plus me-1"></i>
+                            Ajouter un client
+                        </a>
+
+                        <a href="nouvelle-vente.php" class="btn btn-warning">
+                            <i class="bi bi-cart-plus me-1"></i>
+                            Nouvelle vente
+                        </a>
 
                     </div>
 
@@ -245,10 +241,6 @@ $totalUtilisateurs = count($utilisateurs);
                                     <tr>
 
                                         <th>
-                                            ID
-                                        </th>
-
-                                        <th>
                                             Client
                                         </th>
 
@@ -268,6 +260,10 @@ $totalUtilisateurs = count($utilisateurs);
                                             Date d'inscription
                                         </th>
 
+                                        <th class="text-center">
+                                            Actions
+                                        </th>
+
                                     </tr>
 
                                 </thead>
@@ -280,19 +276,6 @@ $totalUtilisateurs = count($utilisateurs);
                                     <?php foreach ($utilisateurs as $utilisateur): ?>
 
                                         <tr>
-
-
-                                            <!-- ID -->
-
-                                            <td>
-
-                                                <span class="fw-semibold">
-
-                                                    #<?= $utilisateur["id"] ?>
-
-                                                </span>
-
-                                            </td>
 
 
                                             <!-- NOM -->
@@ -424,6 +407,25 @@ $totalUtilisateurs = count($utilisateurs);
                                                     —
 
                                                 <?php endif; ?>
+
+                                            </td>
+
+
+                                            <!-- ACTIONS -->
+
+                                            <td class="text-center">
+
+                                                <a
+                                                    href="details-client.php?id=<?= $utilisateur["id"] ?>"
+                                                    class="btn btn-sm btn-outline-dark"
+                                                    title="Voir le profil"
+                                                >
+
+                                                    <i class="bi bi-eye"></i>
+
+                                                    Voir
+
+                                                </a>
 
                                             </td>
 

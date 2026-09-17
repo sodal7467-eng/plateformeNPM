@@ -511,10 +511,6 @@ foreach ($credits as $credit) {
                                 <tr>
 
                                     <th class="px-4">
-                                        ID
-                                    </th>
-
-                                    <th>
                                         Client
                                     </th>
 
@@ -559,18 +555,9 @@ foreach ($credits as $credit) {
                                 <tr>
 
 
-                                    <!-- ID -->
-
-                                    <td class="px-4 fw-bold">
-
-                                        #<?= $credit["id"] ?>
-
-                                    </td>
-
-
                                     <!-- CLIENT -->
 
-                                    <td>
+                                    <td class="px-4">
 
                                         <div class="d-flex align-items-center gap-2">
 

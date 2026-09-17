@@ -224,6 +224,89 @@ try {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+| 6) utilisateurs.role doit accepter 'employe'
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    $colonne = $pdo
+        ->query("SHOW COLUMNS FROM utilisateurs LIKE 'role'")
+        ->fetch(PDO::FETCH_ASSOC);
+
+    if (
+        $colonne
+        && stripos($colonne["Type"], "enum") === 0
+        && stripos($colonne["Type"], "'employe'") === false
+    ) {
+
+        $pdo->exec("
+            ALTER TABLE utilisateurs
+            MODIFY COLUMN role ENUM('client', 'admin', 'employe')
+            NOT NULL DEFAULT 'client'
+        ");
+
+        $actions[] = [
+            "ok" => true,
+            "texte" => "Colonne « role » mise à jour pour accepter « employe »."
+        ];
+
+    } else {
+
+        $actions[] = [
+            "ok" => true,
+            "texte" => "Colonne « role » accepte déjà « employe » (rien à faire)."
+        ];
+    }
+
+} catch (Exception $e) {
+
+    $actions[] = [
+        "ok" => false,
+        "texte" => "Erreur sur « role » : " . $e->getMessage()
+    ];
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| 7) messages.telephone
+|--------------------------------------------------------------------------
+*/
+
+try {
+
+    if (!colonneExiste($pdo, "messages", "telephone")) {
+
+        $pdo->exec("
+            ALTER TABLE messages
+            ADD COLUMN telephone VARCHAR(30) NULL AFTER email
+        ");
+
+        $actions[] = [
+            "ok" => true,
+            "texte" => "Colonne « telephone » ajoutée à la table messages."
+        ];
+
+    } else {
+
+        $actions[] = [
+            "ok" => true,
+            "texte" => "Colonne « telephone » déjà présente sur messages (rien à faire)."
+        ];
+    }
+
+} catch (Exception $e) {
+
+    $actions[] = [
+        "ok" => false,
+        "texte" => "Erreur sur « messages.telephone » : " . $e->getMessage()
+    ];
+}
+
+
 $toutOk = true;
 
 foreach ($actions as $action) {

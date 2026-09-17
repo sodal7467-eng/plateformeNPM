@@ -1,38 +1,44 @@
-<!DOCTYPE html>
-<html lang="fr">
+<?php
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+// =========================================================
+// DÉCONNEXION DU CLIENT / ADMIN
+// =========================================================
 
-    <title>Nos produits - Quincaillerie NPM</title>
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-    <link 
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
-        rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/style.css">
-</head>
+// Vider toutes les variables de session
 
-<body>
+$_SESSION = [];
 
-    <?php include 'includes/navbar.php'; ?>
 
-    <main>
+// Supprimer le cookie de session
 
-        <h1 class="text-center mt-5">
-            Nos produits
-        </h1>
+if (ini_get("session.use_cookies")) {
 
-        <!-- Les produits seront affichés ici plus tard -->
+    $parametres = session_get_cookie_params();
 
-    </main>
+    setcookie(
+        session_name(),
+        "",
+        time() - 42000,
+        $parametres["path"],
+        $parametres["domain"],
+        $parametres["secure"],
+        $parametres["httponly"]
+    );
 
-    <?php include 'includes/footer.php'; ?>
+}
 
-    <script 
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-    </script>
 
-</body>
-</html>
+// Détruire la session côté serveur
+
+session_destroy();
+
+
+// Rediriger vers l'accueil
+
+header("Location: index.php");
+exit;

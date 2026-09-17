@@ -120,6 +120,8 @@ foreach ($factures as $facture) {
 
     <main class="admin-content">
 
+        <div class="container-fluid py-5 px-4">
+
         <!-- =====================================================
              EN-TÊTE
         ====================================================== -->
@@ -490,10 +492,6 @@ foreach ($factures as $facture) {
                                 <tr>
 
                                     <th>
-                                        #
-                                    </th>
-
-                                    <th>
                                         N° Facture
                                     </th>
 
@@ -539,17 +537,6 @@ foreach ($factures as $facture) {
                             <?php foreach ($factures as $facture): ?>
 
                                 <tr>
-
-                                    <!-- ID -->
-
-                                    <td>
-
-                                        <strong>
-                                            #<?= (int) $facture["id"] ?>
-                                        </strong>
-
-                                    </td>
-
 
                                     <!-- NUMÉRO -->
 
@@ -797,6 +784,8 @@ foreach ($factures as $facture) {
                 <?php endif; ?>
 
             </div>
+
+        </div>
 
         </div>
 

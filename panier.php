@@ -412,150 +412,208 @@ if (!empty($_SESSION["panier"])) {
                         <div class="col-lg-8">
 
 
-                            <div class="cart-container">
+                            <div class="card border-0 shadow-sm">
 
 
-                                <?php foreach ($produitsPanier as $produit): ?>
+                                <div class="card-header bg-white py-3">
+
+                                    <h5 class="fw-bold mb-0">
+
+                                        <i class="bi bi-cart3 me-2"></i>
+
+                                        Produits dans le panier
+
+                                    </h5>
+
+                                </div>
 
 
-                                    <div class="cart-item">
+                                <div class="card-body p-0">
+
+                                    <div class="table-responsive">
+
+                                        <table class="table table-hover align-middle mb-0">
+
+                                            <thead class="table-dark">
+
+                                                <tr>
+
+                                                    <th>Produit</th>
+
+                                                    <th>Prix unitaire</th>
+
+                                                    <th class="text-center">Quantité</th>
+
+                                                    <th>Sous-total</th>
+
+                                                    <th class="text-center">Actions</th>
+
+                                                </tr>
+
+                                            </thead>
 
 
-                                        <!-- Image -->
+                                            <tbody>
 
-                                        <div class="cart-product-image">
+                                                <?php foreach ($produitsPanier as $produit): ?>
 
-
-                                            <?php if (!empty($produit["image"])): ?>
-
-                                                <img
-                                                    src="uploads/<?= htmlspecialchars($produit["image"]) ?>"
-                                                    alt="<?= htmlspecialchars($produit["nom"]) ?>"
-                                                    style="
-                                                        width:100%;
-                                                        height:100%;
-                                                        object-fit:cover;
-                                                        border-radius:10px;
-                                                    "
-                                                >
-
-                                            <?php else: ?>
-
-                                                <i class="bi bi-image"></i>
-
-                                            <?php endif; ?>
+                                                    <tr>
 
 
-                                        </div>
+                                                        <!-- Produit -->
+
+                                                        <td>
+
+                                                            <div class="d-flex align-items-center gap-3">
+
+                                                                <div
+                                                                    class="cart-product-image"
+                                                                    style="width:60px;height:60px;flex-shrink:0;"
+                                                                >
+
+                                                                    <?php if (!empty($produit["image"])): ?>
+
+                                                                        <img
+                                                                            src="uploads/<?= htmlspecialchars($produit["image"]) ?>"
+                                                                            alt="<?= htmlspecialchars($produit["nom"]) ?>"
+                                                                            style="
+                                                                                width:100%;
+                                                                                height:100%;
+                                                                                object-fit:cover;
+                                                                                border-radius:10px;
+                                                                            "
+                                                                        >
+
+                                                                    <?php else: ?>
+
+                                                                        <div
+                                                                            class="d-flex align-items-center justify-content-center bg-light rounded"
+                                                                            style="width:100%;height:100%;"
+                                                                        >
+
+                                                                            <i class="bi bi-image text-muted"></i>
+
+                                                                        </div>
+
+                                                                    <?php endif; ?>
+
+                                                                </div>
 
 
+                                                                <div>
 
-                                        <!-- Informations -->
+                                                                    <small class="text-muted d-block">
 
-                                        <div class="cart-product-info">
+                                                                        <?= htmlspecialchars(
+                                                                            $produit["categorie_nom"] ?? "Produit"
+                                                                        ) ?>
 
+                                                                    </small>
 
-                                            <small class="text-muted">
+                                                                    <strong>
 
-                                                <?= htmlspecialchars(
-                                                    $produit["categorie_nom"] ?? "Produit"
-                                                ) ?>
+                                                                        <?= htmlspecialchars(
+                                                                            $produit["nom"]
+                                                                        ) ?>
 
-                                            </small>
+                                                                    </strong>
 
+                                                                </div>
 
-                                            <h5 class="fw-bold">
+                                                            </div>
 
-                                                <?= htmlspecialchars(
-                                                    $produit["nom"]
-                                                ) ?>
-
-                                            </h5>
-
-
-                                            <p class="text-orange fw-bold mb-3">
-
-                                                <?= number_format(
-                                                    (float) $produit["prix"],
-                                                    0,
-                                                    ",",
-                                                    " "
-                                                ) ?>
-
-                                                FCFA
-
-                                            </p>
+                                                        </td>
 
 
+                                                        <!-- Prix unitaire -->
 
-                                            <!-- Quantité -->
+                                                        <td>
 
-                                            <div class="quantity-box">
+                                                            <?= number_format(
+                                                                (float) $produit["prix"],
+                                                                0,
+                                                                ",",
+                                                                " "
+                                                            ) ?>
 
+                                                            FCFA
 
-                                                <input
-                                                    type="number"
-                                                    name="quantites[<?= $produit["id"] ?>]"
-                                                    class="form-control text-center"
-                                                    value="<?= $produit["quantite"] ?>"
-                                                    min="1"
-                                                    max="<?= $produit["stock"] ?>"
-                                                >
-
-
-                                            </div>
+                                                        </td>
 
 
-                                            <small class="text-muted">
+                                                        <!-- Quantité -->
 
-                                                Stock disponible :
-                                                <?= $produit["stock"] ?>
+                                                        <td class="text-center">
 
-                                            </small>
+                                                            <input
+                                                                type="number"
+                                                                name="quantites[<?= $produit["id"] ?>]"
+                                                                class="form-control text-center mx-auto"
+                                                                style="width:85px;"
+                                                                value="<?= $produit["quantite"] ?>"
+                                                                min="1"
+                                                                max="<?= $produit["stock"] ?>"
+                                                            >
 
+                                                            <small class="text-muted d-block mt-1">
 
-                                        </div>
+                                                                Stock :
+                                                                <?= $produit["stock"] ?>
 
+                                                            </small>
 
-
-                                        <!-- Total produit -->
-
-                                        <div class="cart-product-total">
-
-
-                                            <strong>
-
-                                                <?= number_format(
-                                                    $produit["sous_total"],
-                                                    0,
-                                                    ",",
-                                                    " "
-                                                ) ?>
-
-                                                FCFA
-
-                                            </strong>
+                                                        </td>
 
 
-                                            <a
-                                                href="panier.php?action=supprimer&id=<?= $produit["id"] ?>"
-                                                class="btn btn-link text-danger"
-                                                title="Supprimer"
-                                                onclick="return confirm('Voulez-vous supprimer ce produit du panier ?');"
-                                            >
+                                                        <!-- Sous-total -->
 
-                                                <i class="bi bi-trash"></i>
+                                                        <td>
 
-                                            </a>
+                                                            <strong>
+
+                                                                <?= number_format(
+                                                                    $produit["sous_total"],
+                                                                    0,
+                                                                    ",",
+                                                                    " "
+                                                                ) ?>
+
+                                                                FCFA
+
+                                                            </strong>
+
+                                                        </td>
 
 
-                                        </div>
+                                                        <!-- Actions -->
 
+                                                        <td class="text-center">
+
+                                                            <a
+                                                                href="panier.php?action=supprimer&id=<?= $produit["id"] ?>"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                title="Supprimer"
+                                                                onclick="return confirm('Voulez-vous supprimer ce produit du panier ?');"
+                                                            >
+
+                                                                <i class="bi bi-trash"></i>
+
+                                                            </a>
+
+                                                        </td>
+
+
+                                                    </tr>
+
+                                                <?php endforeach; ?>
+
+                                            </tbody>
+
+                                        </table>
 
                                     </div>
 
-
-                                <?php endforeach; ?>
+                                </div>
 
 
                             </div>

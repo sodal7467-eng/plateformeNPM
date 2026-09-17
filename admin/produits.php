@@ -373,8 +373,6 @@ foreach ($produits as $produit) {
 
                                 <tr>
 
-                                    <th>ID</th>
-
                                     <th>Image</th>
 
                                     <th>Produit</th>
@@ -409,20 +407,6 @@ foreach ($produits as $produit) {
 
 
                                     <tr>
-
-
-                                        <!-- ID -->
-
-                                        <td>
-
-                                            <span class="fw-bold">
-
-                                                #<?= $produit["id"] ?>
-
-                                            </span>
-
-                                        </td>
-
 
 
                                         <!-- IMAGE -->

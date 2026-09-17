@@ -36,13 +36,15 @@ img {
 
 .navbar {
     background: #101828 !important;
-    padding: 15px 0;
+    padding: 8px 0;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
 }
 
 .navbar-brand {
-    font-size: 24px;
+    font-size: 20px;
     letter-spacing: 1px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .navbar-brand span {
@@ -53,11 +55,18 @@ img {
     color: #e5e7eb !important;
     font-weight: 500;
     margin: 0 6px;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     transition: 0.3s;
 }
 
 .navbar .nav-link:hover {
     color: #f28c28 !important;
+}
+
+.navbar .btn {
+    padding: 6px 14px;
+    font-size: 14px;
 }
 
 .navbar .btn-warning {
@@ -74,6 +83,39 @@ img {
 
 .navbar .btn-outline-light {
     font-weight: 500;
+}
+
+.navbar .dropdown-menu {
+    background: #101828;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    margin-top: 8px;
+    min-width: 200px;
+}
+
+.navbar .dropdown-item {
+    color: #e5e7eb;
+    padding: 6px 16px;
+    font-weight: 500;
+}
+
+.navbar .dropdown-item:hover,
+.navbar .dropdown-item:focus {
+    background: rgba(242, 140, 40, 0.15);
+    color: #f28c28;
+}
+
+.navbar .dropdown-item.text-warning:hover {
+    color: #f28c28 !important;
+}
+
+.navbar .dropdown-item.text-danger:hover {
+    background: rgba(220, 53, 69, 0.15);
+    color: #dc3545 !important;
+}
+
+.navbar .dropdown-divider {
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 
@@ -332,7 +374,7 @@ img {
 }
 
 .product-image {
-    height: 220px;
+    height: 170px;
     background: #f2f4f7;
 
     display: flex;
@@ -359,7 +401,7 @@ img {
 }
 
 .product-content {
-    padding: 22px;
+    padding: 16px 18px;
 }
 
 .product-content small {
@@ -368,15 +410,15 @@ img {
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 7px;
+    margin-bottom: 5px;
 }
 
 .product-content h3 {
-    font-size: 19px;
+    font-size: 17px;
     font-weight: 700;
     color: #101828;
 
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 
     white-space: nowrap;
     overflow: hidden;
@@ -385,9 +427,9 @@ img {
 
 .product-content .price {
     color: #101828;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 800;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
 }
 
 .product-content .btn-dark {
@@ -748,6 +790,26 @@ img {
 .product-actions .btn {
     padding: 10px;
     font-weight: 600;
+}
+
+.product-icon-btn {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+    border-radius: 8px;
+}
+
+.product-icon-btn:disabled,
+.product-icon-btn.disabled {
+    opacity: 0.6;
 }
 
 
@@ -1594,7 +1656,8 @@ img {
 ========================================================= */
 
 .admin-content > .container,
-.admin-content > .container-fluid {
+.admin-content > .container-fluid,
+.admin-content > .facture-wrapper {
     padding-top: 35px;
     padding-bottom: 40px;
 }
@@ -1742,7 +1805,8 @@ img {
     /* Espace haut du contenu */
 
     .admin-content > .container,
-    .admin-content > .container-fluid {
+    .admin-content > .container-fluid,
+    .admin-content > .facture-wrapper {
 
         padding-top: 30px;
         padding-left: 15px;
@@ -1812,7 +1876,8 @@ img {
 
 
     .admin-content > .container,
-    .admin-content > .container-fluid {
+    .admin-content > .container-fluid,
+    .admin-content > .facture-wrapper {
 
         padding-top: 25px;
     }
