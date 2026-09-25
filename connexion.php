@@ -3,90 +3,134 @@
 session_start();
 
 require_once "config/database.php";
+require_once "includes/rate_limit.php";
 
 
 // Message d'erreur
 $erreur = "";
 
+// Secondes restantes avant fin de blocage (0 si non bloqué)
+$blocageRestant = loginBlocageRestant($pdo);
+
 
 // Si le formulaire est envoyé
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $methode = ($_POST["methode"] ?? "telephone") === "email"
-        ? "email"
-        : "telephone";
+    // Refuser immédiatement si l'IP est bloquée
+    if ($blocageRestant > 0) {
 
-    $identifiant = trim($_POST["identifiant"] ?? "");
-    $motDePasse = $_POST["password"] ?? "";
-
-
-    // Vérification des champs
-    if (empty($identifiant) || empty($motDePasse)) {
-
-        $erreur = "Veuillez remplir tous les champs.";
+        $minutes = (int) ceil($blocageRestant / 60);
+        $erreur = "Trop de tentatives échouées. Réessayez dans {$minutes} minute(s).";
 
     } else {
 
-        // Rechercher l'utilisateur selon la méthode choisie
-        if ($methode === "email") {
+        $methode = ($_POST["methode"] ?? "telephone") === "email"
+            ? "email"
+            : "telephone";
 
-            $requete = $pdo->prepare("
-                SELECT *
-                FROM utilisateurs
-                WHERE email = ?
-            ");
+        $identifiant = trim($_POST["identifiant"] ?? "");
+        $motDePasse = $_POST["password"] ?? "";
+
+
+        // Vérification des champs
+        if (empty($identifiant) || empty($motDePasse)) {
+
+            $erreur = "Veuillez remplir tous les champs.";
 
         } else {
 
-            $requete = $pdo->prepare("
-                SELECT *
-                FROM utilisateurs
-                WHERE telephone = ?
-            ");
+            // Rechercher l'utilisateur selon la méthode choisie
+            if ($methode === "email") {
 
-        }
-
-        $requete->execute([$identifiant]);
-
-        $utilisateur = $requete->fetch(PDO::FETCH_ASSOC);
-
-
-        // Vérifier l'utilisateur et le mot de passe
-        if (
-            $utilisateur
-            && password_verify(
-                $motDePasse,
-                $utilisateur["mot_de_passe"]
-            )
-        ) {
-
-            // Connexion réussie
-            session_regenerate_id(true);
-
-            $_SESSION["id"] = $utilisateur["id"];
-            $_SESSION["nom"] = $utilisateur["nom"];
-            $_SESSION["email"] = $utilisateur["email"];
-            $_SESSION["telephone"] = $utilisateur["telephone"];
-            $_SESSION["role"] = $utilisateur["role"];
-
-            // Redirection selon le rôle
-            if ($utilisateur["role"] === "admin") {
-
-                header("Location: admin/index.php");
-                exit;
+                $requete = $pdo->prepare("
+                    SELECT *
+                    FROM utilisateurs
+                    WHERE email = ?
+                ");
+                $requete->execute([$identifiant]);
 
             } else {
 
-                header("Location: index.php");
-                exit;
+                /*
+                 * Normalisation du numéro de téléphone :
+                 * on retire tout ce qui n'est pas un chiffre, puis on garde
+                 * les 9 derniers chiffres (partie locale sénégalaise, unique).
+                 * On compare cote SQL avec les 9 derniers chiffres du numero
+                 * stocke en base, ce qui rend la connexion tolerante aux formats :
+                 * "77 123 45 67", "+221 77 123 45 67", "0771234567", etc.
+                 */
+                $chiffres = preg_replace('/\D/', '', $identifiant);
+                $last9 = substr($chiffres, -9);
+
+                if (strlen($last9) < 9) {
+                    // Numero invalide, on force l'echec proprement
+                    $requete = $pdo->prepare("SELECT * FROM utilisateurs WHERE 1 = 0");
+                    $requete->execute();
+                } else {
+                    $requete = $pdo->prepare("
+                        SELECT *
+                        FROM utilisateurs
+                        WHERE RIGHT(REGEXP_REPLACE(telephone, '[^0-9]', ''), 9) = ?
+                        LIMIT 1
+                    ");
+                    $requete->execute([$last9]);
+                }
+
             }
 
-        } else {
+            $utilisateur = $requete->fetch(PDO::FETCH_ASSOC);
 
-            $erreur = $methode === "email"
-                ? "Adresse email ou mot de passe incorrect."
-                : "Numéro de téléphone ou mot de passe incorrect.";
 
+            // Vérifier l'utilisateur et le mot de passe
+            if (
+                $utilisateur
+                && password_verify(
+                    $motDePasse,
+                    $utilisateur["mot_de_passe"]
+                )
+            ) {
+
+                // Enregistrer la tentative réussie
+                loginEnregistrerTentative($pdo, $identifiant, true);
+
+                // Connexion réussie
+                session_regenerate_id(true);
+
+                $_SESSION["id"] = $utilisateur["id"];
+                $_SESSION["nom"] = $utilisateur["nom"];
+                $_SESSION["email"] = $utilisateur["email"];
+                $_SESSION["telephone"] = $utilisateur["telephone"];
+                $_SESSION["role"] = $utilisateur["role"];
+
+                // Redirection selon le rôle
+                if ($utilisateur["role"] === "admin") {
+
+                    header("Location: admin/index.php");
+                    exit;
+
+                } else {
+
+                    header("Location: index.php");
+                    exit;
+                }
+
+            } else {
+
+                // Enregistrer l'échec pour le rate-limit
+                loginEnregistrerTentative($pdo, $identifiant, false);
+
+                // Recalculer le blocage : cet échec peut déclencher un lockout
+                $blocageRestant = loginBlocageRestant($pdo);
+
+                if ($blocageRestant > 0) {
+                    $minutes = (int) ceil($blocageRestant / 60);
+                    $erreur = "Trop de tentatives échouées. Réessayez dans {$minutes} minute(s).";
+                } else {
+                    $erreur = $methode === "email"
+                        ? "Adresse email ou mot de passe incorrect."
+                        : "Numéro de téléphone ou mot de passe incorrect.";
+                }
+            }
         }
     }
 }
@@ -407,7 +451,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                                 <a
-                                    href="#"
+                                    href="mot-de-passe-oublie.php"
                                     class="text-orange text-decoration-none"
                                 >
 

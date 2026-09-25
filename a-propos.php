@@ -39,7 +39,7 @@ session_start();
 <section class="py-5 bg-dark text-white">
     <div class="container py-5">
 
-        <div class="row align-items-center g-5">
+        <div class="row align-items-center g-4 g-lg-5">
 
             <div class="col-lg-7">
 
@@ -104,7 +104,7 @@ session_start();
 
     <div class="container py-4">
 
-        <div class="row align-items-center g-5">
+        <div class="row align-items-center g-4 g-lg-5">
 
             <div class="col-lg-6">
 
@@ -342,7 +342,7 @@ session_start();
 
     <div class="container py-4">
 
-        <div class="row align-items-center g-5">
+        <div class="row align-items-center g-4 g-lg-5">
 
             <div class="col-lg-5">
 

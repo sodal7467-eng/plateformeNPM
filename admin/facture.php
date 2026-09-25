@@ -4,7 +4,61 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
+require_once("../includes/parametres.php");
+
+
+/*
+|--------------------------------------------------------------------------
+| Helpers WhatsApp (partagés avec commande-details.php)
+|--------------------------------------------------------------------------
+*/
+
+function waNumero(?string $numero): ?string
+{
+    if (empty($numero)) return null;
+    $chiffres = preg_replace('/\D/', '', $numero);
+    if ($chiffres === '') return null;
+    if (strlen($chiffres) === 9) $chiffres = '221' . $chiffres;
+    if (strlen($chiffres) === 10 && $chiffres[0] === '0') {
+        $chiffres = '221' . substr($chiffres, 1);
+    }
+    return $chiffres;
+}
+
+function waLienFacture(
+    ?string $telephoneClient,
+    string $nomClient,
+    array $facture,
+    array $params,
+    string $dateCommande,
+    string $urlPubliqueFacture
+): ?string {
+    $num = waNumero($telephoneClient);
+    if (!$num) return null;
+
+    $nomBoutique = $params["nom_boutique"] ?? "Notre boutique";
+
+    /*
+     * Message court, SANS aucun montant, pour eviter qu'un client
+     * malveillant copie le message, modifie les chiffres et l'envoie
+     * a un tiers en pretendant que ce sont les prix de la boutique.
+     * Seul le lien officiel (servi par notre serveur) fait foi.
+     */
+    $texte  = "Bonjour " . $nomClient . ",\n\n";
+    $texte .= "Votre facture officielle *" . $nomBoutique . "* "
+           .  "(N. " . ($facture["numero_facture"] ?? "-") . ") est disponible ici :\n\n";
+    $texte .= $urlPubliqueFacture . "\n\n";
+    $texte .= "Cliquez sur le lien pour consulter les montants exacts "
+           .  "et telecharger votre facture au format PDF.\n\n";
+    $texte .= "Nous vous remercions pour votre confiance.\n\n";
+    $texte .= "_" . $nomBoutique . "_";
+    if (!empty($params["telephone"])) $texte .= "\n" . $params["telephone"];
+    if (!empty($params["adresse"]))   $texte .= "\n" . $params["adresse"];
+
+    return "https://wa.me/" . $num . "?text=" . rawurlencode($texte);
+}
 
 
 /*
@@ -31,6 +85,7 @@ $requete = $pdo->prepare("
     SELECT
         f.id AS facture_id,
         f.numero_facture,
+        f.token_public,
         f.commande_id,
         f.montant_total,
         f.montant_paye,
@@ -43,7 +98,8 @@ $requete = $pdo->prepare("
 
         u.id AS utilisateur_id,
         u.nom AS client_nom,
-        u.email AS client_email
+        u.email AS client_email,
+        u.telephone AS client_telephone
 
     FROM factures f
 
@@ -193,8 +249,30 @@ $dateCommande = date(
     strtotime($facture["date_commande"])
 );
 
+
+/*
+|--------------------------------------------------------------------------
+| Construire le lien WhatsApp d'envoi de la facture PDF publique
+|--------------------------------------------------------------------------
+*/
+
+$scheme = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ? "https" : "http";
+$host   = $_SERVER["HTTP_HOST"] ?? "localhost";
+$basePath = rtrim(dirname($_SERVER["PHP_SELF"] ?? "/"), "/\\");
+$basePath = preg_replace('#/admin/?$#', '', $basePath);
+$urlPubliqueFacture = $scheme . "://" . $host . $basePath . "/facture-publique.php?token="
+                    . ($facture["token_public"] ?? "");
+
+$lienWhatsappFacture = waLienFacture(
+    $facture["client_telephone"] ?? null,
+    $facture["client_nom"] ?? "client",
+    $facture,
+    parametresTous($pdo),
+    $facture["date_commande"] ?? date("Y-m-d"),
+    $urlPubliqueFacture
+);
+
 ?>
-<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
 
@@ -705,7 +783,30 @@ $dateCommande = date(
         </a>
 
 
-        <div class="facture-actions-right">
+        <div class="facture-actions-right d-flex gap-2">
+
+            <?php if ($lienWhatsappFacture): ?>
+                <a
+                    href="<?= htmlspecialchars($lienWhatsappFacture) ?>"
+                    class="btn btn-success"
+                    target="_blank"
+                    rel="noopener"
+                    title="Envoyer la facture au client sur WhatsApp"
+                >
+                    <i class="bi bi-whatsapp me-2"></i>
+                    Envoyer par WhatsApp
+                </a>
+            <?php else: ?>
+                <button
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    disabled
+                    title="Aucun numero de telephone enregistre pour ce client"
+                >
+                    <i class="bi bi-whatsapp me-2"></i>
+                    WhatsApp indisponible
+                </button>
+            <?php endif; ?>
 
             <button
                 type="button"
@@ -839,7 +940,7 @@ $dateCommande = date(
 
                         <strong>Commande :</strong>
 
-                        #<?= (int) $facture["commande_id"] ?>
+                        <?= (int) $facture["commande_id"] ?>
 
                     </p>
 

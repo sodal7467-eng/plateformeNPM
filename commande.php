@@ -3,6 +3,7 @@
 session_start();
 
 require_once "config/database.php";
+require_once "includes/csrf.php";
 
 
 // =========================================================
@@ -110,6 +111,8 @@ $erreur = "";
 // =========================================================
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    csrf_verifier();
 
     $paiement = $_POST["paiement"] ?? "livraison";
 
@@ -596,6 +599,8 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                             action="commande.php"
                             method="POST"
                         >
+
+                            <?= csrf_champ() ?>
 
 
                             <!-- Nom -->

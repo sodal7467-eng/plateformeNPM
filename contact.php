@@ -158,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <div class="container py-4">
 
-        <div class="row g-5">
+        <div class="row g-4 g-lg-5">
 
 
             <!-- =================================================

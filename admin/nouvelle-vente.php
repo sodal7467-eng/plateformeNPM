@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -58,6 +59,8 @@ $commentaire = "";
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $modeClient = $_POST["mode_client"] ?? "existant";
 
@@ -410,7 +413,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-require_once("includes/auth.php");
 
 ?>
 
@@ -504,6 +506,7 @@ require_once("includes/auth.php");
 
 
         <form method="POST" id="formVente">
+            <?= csrf_champ() ?>
 
             <div class="row g-4">
 

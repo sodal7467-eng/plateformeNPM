@@ -613,7 +613,7 @@ foreach ($produits as $produit) {
                                             <div
                                                 class="d-flex
                                                        justify-content-center
-                                                       gap-1">
+                                                       gap-2">
 
 
                                                 <!-- MODIFIER -->

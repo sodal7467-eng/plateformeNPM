@@ -1,26 +1,58 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once "../config/database.php";
 require_once("includes/auth.php");
+require_once "../config/database.php";
+require_once "../includes/log_admin.php";
+
 
 /*
 |--------------------------------------------------------------------------
-| Vérifier l'identifiant
+| VÉRIFIER LA MÉTHODE (POST obligatoire)
 |--------------------------------------------------------------------------
 */
 
-if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: messages.php");
     exit;
 }
 
-$id = (int) $_GET["id"];
 
 /*
 |--------------------------------------------------------------------------
-| Vérifier que le message existe
+| VÉRIFIER LE TOKEN CSRF
+|--------------------------------------------------------------------------
+*/
+
+if (
+    !isset($_POST["csrf_token"]) ||
+    !isset($_SESSION["csrf_token"]) ||
+    !hash_equals($_SESSION["csrf_token"], $_POST["csrf_token"])
+) {
+    die("Erreur de sécurité : requête invalide.");
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| VÉRIFIER L'IDENTIFIANT
+|--------------------------------------------------------------------------
+*/
+
+if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) {
+    header("Location: messages.php");
+    exit;
+}
+
+$id = (int) $_POST["id"];
+
+
+/*
+|--------------------------------------------------------------------------
+| VÉRIFIER QUE LE MESSAGE EXISTE
 |--------------------------------------------------------------------------
 */
 
@@ -37,9 +69,10 @@ if (!$message) {
     exit;
 }
 
+
 /*
 |--------------------------------------------------------------------------
-| Supprimer le message
+| SUPPRIMER LE MESSAGE
 |--------------------------------------------------------------------------
 */
 
@@ -49,11 +82,9 @@ $requete = $pdo->prepare(
 
 $requete->execute([$id]);
 
-/*
-|--------------------------------------------------------------------------
-| Retour à la liste des messages
-|--------------------------------------------------------------------------
-*/
 
-header("Location: messages.php");
+logAdmin($pdo, "message.supprimer", "message", $id);
+
+
+header("Location: messages.php?supprime=1");
 exit;

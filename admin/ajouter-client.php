@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -22,6 +23,8 @@ $email = "";
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $nom = trim($_POST["nom"] ?? "");
     $telephone = trim($_POST["telephone"] ?? "");
@@ -88,7 +91,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-require_once("includes/auth.php");
 
 ?>
 
@@ -226,6 +228,7 @@ require_once("includes/auth.php");
                     <div class="card-body p-4">
 
                         <form method="POST">
+                            <?= csrf_champ() ?>
 
 
                             <!-- Nom -->

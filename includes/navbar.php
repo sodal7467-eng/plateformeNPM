@@ -2,6 +2,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Charger les paramètres boutique si la DB est disponible
+if (isset($pdo) && $pdo instanceof PDO) {
+    require_once __DIR__ . "/parametres.php";
+    $navbarLogo = parametre($pdo, "logo_texte", "NPM");
+    $navbarSousLogo = parametre($pdo, "logo_soustitre", "QUINCAILLERIE");
+} else {
+    $navbarLogo = "NPM";
+    $navbarSousLogo = "QUINCAILLERIE";
+}
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
@@ -9,9 +19,9 @@ if (session_status() === PHP_SESSION_NONE) {
 
         <!-- Logo -->
         <a class="navbar-brand fw-bold" href="index.php">
-            <span class="text-warning">NPM</span>
+            <span class="text-warning"><?= htmlspecialchars($navbarLogo) ?></span>
             <small class="d-block text-light" style="font-size: 10px;">
-                QUINCAILLERIE
+                <?= htmlspecialchars($navbarSousLogo) ?>
             </small>
         </a>
 

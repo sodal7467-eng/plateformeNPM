@@ -3,6 +3,7 @@
 require_once("includes/auth.php");
 
 require_once("../config/database.php");
+require_once("../includes/log_admin.php");
 
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -29,6 +30,8 @@ $id = (int) $_POST["id"];
 
 $requete = $pdo->prepare("DELETE FROM depenses WHERE id = ?");
 $requete->execute([$id]);
+
+logAdmin($pdo, "depense.supprimer", "depense", $id);
 
 header("Location: depenses.php?supprime=1");
 exit;

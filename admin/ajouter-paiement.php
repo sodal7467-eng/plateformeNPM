@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -72,6 +73,8 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $montant = $_POST["montant"] ?? "";
     $commentaire = trim($_POST["commentaire"] ?? "");
@@ -430,7 +433,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <?php require_once("includes/navbar.php"); ?>
 
 <?php require_once("includes/sidebar.php"); ?>
-<?php require_once("includes/auth.php");?> 
 
 
 
@@ -692,6 +694,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 
                             <form method="POST">
+                                <?= csrf_champ() ?>
 
 
                                 <!-- Montant -->

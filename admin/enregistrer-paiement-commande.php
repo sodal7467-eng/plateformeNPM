@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -87,6 +88,8 @@ if ((float) $info["reste_a_payer"] <= 0) {
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $montant = $_POST["montant"] ?? "";
     $commentaire = trim($_POST["commentaire"] ?? "");
@@ -310,7 +313,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-require_once("includes/auth.php");
 ?>
 
 <!DOCTYPE html>
@@ -378,7 +380,7 @@ require_once("includes/auth.php");
                 </h1>
 
                 <p class="text-muted mb-0">
-                    Paiement immédiat pour la commande #<?= $commandeId ?>.
+                    Paiement immédiat pour la commande <?= $commandeId ?>.
                 </p>
 
             </div>
@@ -465,7 +467,7 @@ require_once("includes/auth.php");
 
                         <div class="d-flex justify-content-between mb-3">
                             <span class="text-muted">Commande</span>
-                            <strong>#<?= $commandeId ?></strong>
+                            <strong><?= $commandeId ?></strong>
                         </div>
 
 
@@ -522,6 +524,7 @@ require_once("includes/auth.php");
                         <?php if ((float) $info["reste_a_payer"] > 0): ?>
 
                             <form method="POST">
+                                <?= csrf_champ() ?>
 
                                 <div class="mb-4">
 

@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 
@@ -107,7 +108,6 @@ foreach ($commandes as $commande) {
 }
 
 
-require_once("includes/auth.php");
 
 ?>
 
@@ -175,10 +175,16 @@ require_once("includes/auth.php");
 
             </div>
 
-            <a href="clients.php" class="btn btn-outline-dark">
-                <i class="bi bi-arrow-left me-1"></i>
-                Retour aux clients
-            </a>
+            <div class="d-flex gap-2">
+                <a href="modifier-client.php?id=<?= (int) $client["id"] ?>" class="btn btn-warning">
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Modifier
+                </a>
+                <a href="clients.php" class="btn btn-outline-dark">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Retour aux clients
+                </a>
+            </div>
 
         </div>
 
@@ -422,7 +428,7 @@ require_once("includes/auth.php");
                                     <tr>
 
                                         <td>
-                                            <strong>#<?= $commande["id"] ?></strong>
+                                            <strong><?= $commande["id"] ?></strong>
                                         </td>
 
                                         <td>

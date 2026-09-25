@@ -2,6 +2,7 @@
 
 session_start();
 
+require_once("includes/auth.php");
 require_once "../config/database.php";
 
 /*
@@ -100,7 +101,6 @@ foreach ($credits as $credit) {
 
 <?php require_once "includes/sidebar.php"; ?>
 
-<?php require_once("includes/auth.php");?> 
 
 
 <!--
@@ -756,35 +756,38 @@ foreach ($credits as $credit) {
 
                                     <td class="text-center">
 
-                                        <!-- VOIR -->
+                                        <div class="d-inline-flex gap-2 justify-content-center">
 
-                                        <a
-                                            href="details-credit.php?id=<?= $credit["id"] ?>"
-                                            class="btn btn-sm btn-outline-dark"
-                                            title="Voir les détails"
-                                        >
-
-                                            <i class="bi bi-eye"></i>
-
-                                        </a>
-
-
-                                        <!-- PAIEMENT -->
-
-                                        <?php if ($credit["reste_a_payer"] > 0): ?>
+                                            <!-- VOIR -->
 
                                             <a
-                                                href="ajouter-paiement.php?id=<?= $credit["id"] ?>"
-                                                class="btn btn-sm btn-outline-success"
-                                                title="Enregistrer un paiement"
+                                                href="details-credit.php?id=<?= $credit["id"] ?>"
+                                                class="btn btn-sm btn-outline-dark"
+                                                title="Voir les détails"
                                             >
 
-                                                <i class="bi bi-cash"></i>
+                                                <i class="bi bi-eye"></i>
 
                                             </a>
 
-                                        <?php endif; ?>
 
+                                            <!-- PAIEMENT -->
+
+                                            <?php if ($credit["reste_a_payer"] > 0): ?>
+
+                                                <a
+                                                    href="ajouter-paiement.php?id=<?= $credit["id"] ?>"
+                                                    class="btn btn-sm btn-outline-success"
+                                                    title="Enregistrer un paiement"
+                                                >
+
+                                                    <i class="bi bi-cash"></i>
+
+                                                </a>
+
+                                            <?php endif; ?>
+
+                                        </div>
 
                                     </td>
 

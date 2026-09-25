@@ -84,7 +84,7 @@ if (!$produit) {
         </div>
 
 
-        <div class="row g-5 align-items-center">
+        <div class="row g-4 g-lg-5 align-items-center">
 
 
             <!-- =========================

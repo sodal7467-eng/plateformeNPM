@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -51,6 +52,8 @@ function genererNumeroFacture($pdo)
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $commandeId = isset($_POST["commande_id"])
         ? (int) $_POST["commande_id"]
@@ -312,7 +315,6 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
 
 
     <?php require_once("includes/sidebar.php"); ?>
-    <?php require_once("includes/auth.php");?> 
 
 
     <main class="admin-content">
@@ -467,6 +469,7 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
                                 method="POST"
                                 action=""
                             >
+                                <?= csrf_champ() ?>
 
 
                                 <div class="mb-4">

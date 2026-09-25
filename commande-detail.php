@@ -143,7 +143,7 @@ $statutCommande = $commande["statut"];
     >
 
     <title>
-        Commande #<?= $commande["id"] ?> - Quincaillerie NPM
+        Commande <?= $commande["id"] ?> - Quincaillerie NPM
     </title>
 
 
@@ -198,7 +198,7 @@ $statutCommande = $commande["statut"];
 
             <i class="bi bi-bag-check me-2"></i>
 
-            Commande #<?= $commande["id"] ?>
+            Commande <?= $commande["id"] ?>
 
         </h1>
 

@@ -1,0 +1,26 @@
+# Fichier d'environnement (contient des identifiants)
+.env
+
+# Flag d'installation (créé après l'assistant)
+.installed
+
+# Uploads utilisateur
+uploads/*
+!uploads/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Sauvegardes DB
+*.sql.gz
+backups/
+
+# OS / éditeurs
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Sortie Claude
+Claude outputs/

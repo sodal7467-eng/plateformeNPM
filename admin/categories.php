@@ -1,5 +1,10 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once("includes/auth.php");
 require_once "../config/database.php";
 
 $message = "";
@@ -118,8 +123,6 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
 
 <body>
-
-    <?php require_once("includes/auth.php");?> 
 
     <!-- NAVBAR ADMIN -->
 
@@ -512,15 +515,32 @@ $categories = $requete->fetchAll(PDO::FETCH_ASSOC);
 
                                                             <!-- SUPPRIMER -->
 
-                                                            <a
-                                                                href="supprimer-categorie.php?id=<?= $categorie["id"] ?>"
-                                                                class="btn btn-sm btn-outline-danger"
-                                                                title="Supprimer"
-                                                                onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
+                                                            <form
+                                                                method="POST"
+                                                                action="supprimer-categorie.php"
+                                                                class="d-inline"
+                                                                onsubmit="return confirm('Voulez-vous vraiment supprimer cette catégorie ?');">
 
-                                                                <i class="bi bi-trash"></i>
+                                                                <input
+                                                                    type="hidden"
+                                                                    name="csrf_token"
+                                                                    value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>">
 
-                                                            </a>
+                                                                <input
+                                                                    type="hidden"
+                                                                    name="id"
+                                                                    value="<?= (int) $categorie["id"] ?>">
+
+                                                                <button
+                                                                    type="submit"
+                                                                    class="btn btn-sm btn-outline-danger"
+                                                                    title="Supprimer">
+
+                                                                    <i class="bi bi-trash"></i>
+
+                                                                </button>
+
+                                                            </form>
 
                                                         </div>
 

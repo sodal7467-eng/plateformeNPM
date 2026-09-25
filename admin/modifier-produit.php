@@ -1,5 +1,6 @@
 <?php
 
+require_once("includes/auth.php");
 require_once "../config/database.php";
 
 /*
@@ -83,6 +84,8 @@ $categorie = $produit["categorie"];
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $nom = trim($_POST["nom"] ?? "");
     $description = trim($_POST["description"] ?? "");
@@ -491,7 +494,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
 
         <?php endif; ?>
-        <?php require_once("includes/auth.php");?> 
 
 
 
@@ -521,6 +523,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     method="POST"
                     enctype="multipart/form-data"
                 >
+                    <?= csrf_champ() ?>
 
 
                     <div class="row">

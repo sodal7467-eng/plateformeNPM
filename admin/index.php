@@ -175,6 +175,26 @@ $produitsStockFaible = $requete->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
 
+            <!-- BANNIÈRE ALERTE STOCK FAIBLE -->
+
+            <?php if ($stockFaible > 0): ?>
+                <div class="alert alert-danger d-flex align-items-center gap-3 shadow-sm border-0 mb-4">
+                    <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    <div class="flex-grow-1">
+                        <strong>Attention — <?= (int) $stockFaible ?> produit(s) en stock faible</strong>
+                        <div class="small">
+                            Ces produits sont proches de la rupture (stock ≤ 5).
+                            Pensez à les réapprovisionner rapidement.
+                        </div>
+                    </div>
+                    <a href="stocks.php" class="btn btn-light btn-sm fw-bold">
+                        <i class="bi bi-eye me-1"></i>
+                        Voir les stocks
+                    </a>
+                </div>
+            <?php endif; ?>
+
+
             <!-- CARTES STATISTIQUES -->
 
             <div class="row g-4 mb-4">

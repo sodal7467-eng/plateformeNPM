@@ -1,0 +1,256 @@
+/* ==========================================================
+   Widget d'accessibilité (malvoyants, daltoniens, seniors)
+   ========================================================== */
+
+/* Bouton flottant */
+.a11y-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 9998;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.a11y-button:hover,
+.a11y-button:focus {
+    background: #0b5ed7;
+    transform: scale(1.08);
+    outline: 3px solid #ffc107;
+    outline-offset: 2px;
+}
+
+.a11y-button i {
+    line-height: 1;
+}
+
+/* Panneau */
+.a11y-panel {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 280px;
+    max-width: calc(100vw - 40px);
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    padding: 16px;
+    z-index: 9999;
+    display: none;
+    color: #0d1b2a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.a11y-panel.open {
+    display: block;
+}
+
+.a11y-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.a11y-panel-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0;
+    color: #0d1b2a;
+}
+
+.a11y-panel-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: #666;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.a11y-panel-close:hover {
+    color: #000;
+}
+
+.a11y-group {
+    margin-bottom: 10px;
+}
+
+.a11y-group-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.a11y-btn-row {
+    display: flex;
+    gap: 6px;
+}
+
+.a11y-btn {
+    flex: 1;
+    padding: 10px 8px;
+    background: #f4f6fa;
+    border: 1px solid #dfe3ea;
+    border-radius: 6px;
+    color: #0d1b2a;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.a11y-btn:hover,
+.a11y-btn:focus {
+    background: #e9ecef;
+    border-color: #0d6efd;
+    outline: 2px solid #0d6efd;
+    outline-offset: 1px;
+}
+
+.a11y-btn.active {
+    background: #0d6efd;
+    color: #fff;
+    border-color: #0d6efd;
+}
+
+.a11y-reset {
+    background: #fff3cd;
+    border-color: #ffc107;
+    color: #664d03;
+    width: 100%;
+    margin-top: 4px;
+}
+
+.a11y-reset:hover {
+    background: #ffe69c;
+}
+
+/* ==========================================================
+   Modes appliqués au body
+   ========================================================== */
+
+/* Contraste éleve : bleu marine profond + ivoire chaud (cohérent avec la marque NPM) */
+body.a11y-contrast,
+body.a11y-contrast * {
+    background-color: #0d1b2a !important;   /* bleu marine NPM */
+    color: #f5f0e1 !important;              /* ivoire chaud, doux */
+    border-color: #ffb84d !important;
+}
+
+/* Titres en jaune doré chaleureux */
+body.a11y-contrast h1,
+body.a11y-contrast h2,
+body.a11y-contrast h3,
+body.a11y-contrast h4,
+body.a11y-contrast h5,
+body.a11y-contrast h6,
+body.a11y-contrast .fw-bold,
+body.a11y-contrast strong,
+body.a11y-contrast b {
+    color: #ffcf70 !important;
+}
+
+/* Liens en orange NPM, soulignés */
+body.a11y-contrast a,
+body.a11y-contrast a * {
+    color: #ffb84d !important;
+    text-decoration: underline !important;
+}
+
+body.a11y-contrast a:hover,
+body.a11y-contrast a:focus {
+    color: #ffdda3 !important;
+    background-color: rgba(255, 184, 77, 0.15) !important;
+}
+
+/* Boutons : contour orange, fond marine, contraste inversé au survol */
+body.a11y-contrast button,
+body.a11y-contrast .btn {
+    background-color: #16324a !important;
+    color: #ffb84d !important;
+    border: 2px solid #ffb84d !important;
+}
+
+body.a11y-contrast button:hover,
+body.a11y-contrast .btn:hover {
+    background-color: #ffb84d !important;
+    color: #0d1b2a !important;
+}
+
+/* Champs de formulaire : bien lisibles */
+body.a11y-contrast input,
+body.a11y-contrast textarea,
+body.a11y-contrast select {
+    background-color: #16324a !important;
+    color: #f5f0e1 !important;
+    border: 2px solid #ffb84d !important;
+}
+
+body.a11y-contrast input::placeholder,
+body.a11y-contrast textarea::placeholder {
+    color: #a8a49a !important;
+}
+
+/* Images : leger renforcement du contraste sans les denaturer */
+body.a11y-contrast img {
+    filter: contrast(1.15) brightness(1.05);
+}
+
+/* Le widget d'accessibilite lui-meme */
+body.a11y-contrast .a11y-panel,
+body.a11y-contrast .a11y-panel * {
+    background-color: #16324a !important;
+    color: #f5f0e1 !important;
+    border-color: #ffb84d !important;
+}
+
+body.a11y-contrast .a11y-panel-title,
+body.a11y-contrast .a11y-group-label {
+    color: #ffcf70 !important;
+}
+
+body.a11y-contrast .a11y-button {
+    background-color: #ffb84d !important;
+    color: #0d1b2a !important;
+    border: 2px solid #ffcf70 !important;
+}
+
+body.a11y-contrast .a11y-btn.active {
+    background-color: #ffb84d !important;
+    color: #0d1b2a !important;
+}
+
+/* Niveaux de gris (daltoniens) */
+body.a11y-grayscale {
+    filter: grayscale(100%);
+}
+
+/* Élément en cours de lecture (text-to-speech) */
+.a11y-speaking {
+    background: #fff3cd !important;
+    outline: 2px solid #ffc107 !important;
+    outline-offset: 2px;
+}

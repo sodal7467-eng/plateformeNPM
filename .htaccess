@@ -1,0 +1,14 @@
+# Bloquer l'accès direct aux fichiers sensibles
+<FilesMatch "^\.env|composer\.(json|lock)$|\.sql$|\.md$|\.example$">
+    Require all denied
+</FilesMatch>
+
+# Encoding par défaut
+AddDefaultCharset UTF-8
+
+# Sécurité HTTP basique
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

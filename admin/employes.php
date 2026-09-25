@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -86,7 +87,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 
-require_once("includes/auth.php");
 
 
 /*

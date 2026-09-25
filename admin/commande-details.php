@@ -1,6 +1,74 @@
 <?php
 
+require_once("includes/auth.php");
 require_once "../config/database.php";
+require_once "../includes/parametres.php";
+
+
+/*
+|--------------------------------------------------------------------------
+| Helpers WhatsApp
+|--------------------------------------------------------------------------
+*/
+
+function whatsappNumero(?string $numero): ?string
+{
+    if (empty($numero)) return null;
+    $chiffres = preg_replace('/\D/', '', $numero);
+    if ($chiffres === '') return null;
+    if (strlen($chiffres) === 9) $chiffres = '221' . $chiffres;
+    if (strlen($chiffres) === 10 && $chiffres[0] === '0') {
+        $chiffres = '221' . substr($chiffres, 1);
+    }
+    return $chiffres;
+}
+
+function whatsappLienFacture(
+    ?string $telephoneClient,
+    string $nomClient,
+    array $facture,
+    array $lignes,
+    array $params,
+    string $dateCommande
+): ?string {
+    $num = whatsappNumero($telephoneClient);
+    if (!$num) return null;
+
+    $nomBoutique = $params["nom_boutique"] ?? "Notre boutique";
+    $devise      = $params["devise"] ?? "FCFA";
+
+    // URL publique de la facture (avec token, non modifiable, imprimable en PDF)
+    $scheme = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ? "https" : "http";
+    $host   = $_SERVER["HTTP_HOST"] ?? "localhost";
+    // On remonte d'un dossier depuis /admin/
+    $basePath = rtrim(dirname($_SERVER["PHP_SELF"] ?? "/"), "/\\");
+    $basePath = preg_replace('#/admin/?$#', '', $basePath);
+    $urlPubliqueFacture = $scheme . "://" . $host . $basePath . "/facture-publique.php?token="
+                        . ($facture["token_public"] ?? "");
+
+    /*
+     * Message court, SANS aucun montant, pour eviter qu'un client
+     * malveillant copie le message, modifie les chiffres et l'envoie
+     * a un tiers en pretendant que ce sont les prix de la boutique.
+     * Seul le lien officiel (servi par notre serveur) fait foi.
+     */
+    $texte  = "Bonjour " . $nomClient . ",\n\n";
+    $texte .= "Votre facture officielle *" . $nomBoutique . "* "
+           .  "(N. " . ($facture["numero_facture"] ?? "-") . ") est disponible ici :\n\n";
+    $texte .= $urlPubliqueFacture . "\n\n";
+    $texte .= "Cliquez sur le lien pour consulter les montants exacts "
+           .  "et telecharger votre facture au format PDF.\n\n";
+    $texte .= "Nous vous remercions pour votre confiance.\n\n";
+    $texte .= "_" . $nomBoutique . "_";
+    if (!empty($params["telephone"])) {
+        $texte .= "\n" . $params["telephone"];
+    }
+    if (!empty($params["adresse"])) {
+        $texte .= "\n" . $params["adresse"];
+    }
+
+    return "https://wa.me/" . $num . "?text=" . rawurlencode($texte);
+}
 
 
 /*
@@ -27,6 +95,8 @@ $commandeId = (int) $_GET["id"];
 $erreurPaiement = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && ($_POST["action"] ?? "") === "enregistrer_paiement") {
+
+    csrf_verifier();
 
     $montant = $_POST["montant"] ?? "";
     $commentaire = trim($_POST["commentaire"] ?? "");
@@ -294,6 +364,7 @@ $requeteFacture = $pdo->prepare("
     SELECT
         id,
         numero_facture,
+        token_public,
         montant_total,
         montant_paye,
         reste_a_payer,
@@ -423,6 +494,26 @@ if ($statut === "En attente") {
     $iconeStatut = "bi-question-circle";
 }
 
+
+/*
+|--------------------------------------------------------------------------
+| Preparer le lien WhatsApp pour envoyer la facture
+|--------------------------------------------------------------------------
+*/
+
+$lienWhatsappFacture = null;
+
+if ($facture) {
+    $lienWhatsappFacture = whatsappLienFacture(
+        $commande["client_telephone"] ?? null,
+        $commande["client_nom"] ?? "client",
+        $facture,
+        $details,
+        parametresTous($pdo),
+        $commande["date_commande"] ?? date("Y-m-d")
+    );
+}
+
 ?>
 
 
@@ -439,7 +530,7 @@ if ($statut === "En attente") {
     >
 
     <title>
-        Commande #<?= $commande["id"] ?> - NPM Admin
+        Commande <?= $commande["id"] ?> - NPM Admin
     </title>
 
 
@@ -485,7 +576,6 @@ if ($statut === "En attente") {
 
 <?php require_once("includes/sidebar.php"); ?>
 
-<?php require_once("includes/auth.php");?> 
 
 <!-- =========================================================
      CONTENU
@@ -514,7 +604,7 @@ if ($statut === "En attente") {
 
                 <h1 class="fw-bold mb-2">
 
-                    Commande #<?= $commande["id"] ?>
+                    Commande <?= $commande["id"] ?>
 
                 </h1>
 
@@ -562,6 +652,31 @@ if ($statut === "En attente") {
                 <?= htmlspecialchars($erreurPaiement) ?>
             </div>
 
+        <?php endif; ?>
+
+
+        <?php if (($_GET["erreur"] ?? "") === "credit_actif"): ?>
+            <div class="alert alert-warning">
+                <i class="bi bi-shield-exclamation me-2"></i>
+                Impossible de supprimer : cette commande a un crédit client encore
+                en cours. Réglez le solde restant avant de supprimer.
+            </div>
+        <?php elseif (($_GET["erreur"] ?? "") === "commande_verrouillee"): ?>
+            <div class="alert alert-success">
+                <i class="bi bi-shield-lock-fill me-2"></i>
+                Cette commande est <strong>Livrée</strong> et donc verrouillée :
+                elle ne peut plus être ni modifiée ni supprimée.
+            </div>
+        <?php elseif (($_GET["erreur"] ?? "") === "commande_suppr"): ?>
+            <div class="alert alert-danger">
+                <i class="bi bi-x-circle me-2"></i>
+                Une erreur est survenue lors de la suppression. L'action a été annulée.
+            </div>
+        <?php elseif (($_GET["paiement_supprime"] ?? "") === "1"): ?>
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                Le paiement a été annulé et les soldes ont été recalculés.
+            </div>
         <?php endif; ?>
 
 
@@ -866,6 +981,29 @@ if ($statut === "En attente") {
                                 <i class="bi bi-receipt me-1"></i>
                                 Voir la facture
                             </a>
+
+                            <?php if ($lienWhatsappFacture): ?>
+                                <a
+                                    href="<?= htmlspecialchars($lienWhatsappFacture) ?>"
+                                    class="btn btn-sm btn-success"
+                                    target="_blank"
+                                    rel="noopener"
+                                    title="Envoyer la facture au client sur WhatsApp"
+                                >
+                                    <i class="bi bi-whatsapp me-1"></i>
+                                    Envoyer par WhatsApp
+                                </a>
+                            <?php else: ?>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    disabled
+                                    title="Aucun numero de telephone enregistre pour ce client"
+                                >
+                                    <i class="bi bi-whatsapp me-1"></i>
+                                    WhatsApp indisponible
+                                </button>
+                            <?php endif; ?>
 
                             <?php if ((float) $facture["reste_a_payer"] > 0): ?>
 
@@ -1231,6 +1369,7 @@ if ($statut === "En attente") {
         </div>
 
 
+
     </div>
 
 </main>
@@ -1252,6 +1391,7 @@ if ($statut === "En attente") {
 
                 <form method="POST" action="commande-details.php?id=<?= $commande["id"] ?>">
 
+                    <?= csrf_champ() ?>
                     <input type="hidden" name="action" value="enregistrer_paiement">
 
                     <div class="modal-header">

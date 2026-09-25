@@ -9,6 +9,7 @@
 require_once("includes/auth.php");
 
 require_once("../config/database.php");
+require_once("../includes/log_admin.php");
 
 
 /*
@@ -103,6 +104,9 @@ $requete = $pdo->prepare("
 ");
 
 $requete->execute([$id]);
+
+
+logAdmin($pdo, "produit.supprimer", "produit", $id);
 
 
 /*

@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 
@@ -138,7 +139,6 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
 <?php require_once("includes/sidebar.php"); ?>
 
-<?php require_once("includes/auth.php");?> 
 
 
 <main class="admin-content">
@@ -160,7 +160,7 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
                 <p class="text-muted mb-0">
 
-                    Crédit #<?= $credit["id"] ?>
+                    Crédit <?= $credit["id"] ?>
 
                 </p>
 
@@ -391,7 +391,7 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
                             <?php if (!empty($credit["commande_id"])): ?>
 
-                                Commande #<?= $credit["commande_id"] ?>
+                                Commande <?= $credit["commande_id"] ?>
 
                             <?php else: ?>
 
@@ -521,6 +521,8 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
                                     <th>Date</th>
 
+                                    <th class="text-end">Action</th>
+
                                 </tr>
 
                             </thead>
@@ -576,6 +578,41 @@ if ((float) $credit["reste_a_payer"] <= 0) {
                                             "d/m/Y à H:i",
                                             strtotime($paiement["date_paiement"])
                                         ) ?>
+
+                                    </td>
+
+
+                                    <td class="text-end">
+
+                                        <form
+                                            method="POST"
+                                            action="supprimer-paiement.php"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Annuler ce paiement de <?= number_format($paiement['montant'], 0, ',', ' ') ?> FCFA ? Les soldes seront recalculés.');"
+                                        >
+                                            <input
+                                                type="hidden"
+                                                name="csrf_token"
+                                                value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '') ?>"
+                                            >
+                                            <input
+                                                type="hidden"
+                                                name="id"
+                                                value="<?= (int) $paiement['id'] ?>"
+                                            >
+                                            <input
+                                                type="hidden"
+                                                name="retour"
+                                                value="details-credit.php?id=<?= (int) $id ?>"
+                                            >
+                                            <button
+                                                type="submit"
+                                                class="btn btn-sm btn-outline-danger"
+                                                title="Annuler ce paiement"
+                                            >
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
 
                                     </td>
 

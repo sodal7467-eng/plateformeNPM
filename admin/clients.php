@@ -1,5 +1,10 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once("includes/auth.php");
 require_once "../config/database.php";
 
 
@@ -34,7 +39,6 @@ $utilisateurs = $requete->fetchAll(PDO::FETCH_ASSOC);
 $totalUtilisateurs = count($utilisateurs);
 
 ?>
-<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -415,17 +419,25 @@ $totalUtilisateurs = count($utilisateurs);
 
                                             <td class="text-center">
 
-                                                <a
-                                                    href="details-client.php?id=<?= $utilisateur["id"] ?>"
-                                                    class="btn btn-sm btn-outline-dark"
-                                                    title="Voir le profil"
-                                                >
+                                                <div class="d-inline-flex gap-2">
 
-                                                    <i class="bi bi-eye"></i>
+                                                    <a
+                                                        href="details-client.php?id=<?= $utilisateur["id"] ?>"
+                                                        class="btn btn-sm btn-outline-dark"
+                                                        title="Voir le profil"
+                                                    >
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
 
-                                                    Voir
+                                                    <a
+                                                        href="modifier-client.php?id=<?= $utilisateur["id"] ?>"
+                                                        class="btn btn-sm btn-outline-warning"
+                                                        title="Modifier le client"
+                                                    >
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
 
-                                                </a>
+                                                </div>
 
                                             </td>
 

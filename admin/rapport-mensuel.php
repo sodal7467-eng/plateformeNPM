@@ -150,10 +150,21 @@ $moisEnCours = end($mois);
                 </p>
             </div>
 
-            <a href="depenses.php" class="btn btn-outline-dark">
-                <i class="bi bi-wallet2 me-2"></i>
-                Gérer les dépenses
-            </a>
+            <div class="d-flex gap-2 flex-wrap">
+                <a
+                    href="rapport-mensuel-export.php"
+                    class="btn btn-success"
+                    title="Télécharger le rapport en fichier Excel / CSV"
+                >
+                    <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                    Exporter en Excel
+                </a>
+
+                <a href="depenses.php" class="btn btn-outline-dark">
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Gérer les dépenses
+                </a>
+            </div>
 
         </div>
 

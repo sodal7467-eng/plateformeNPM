@@ -39,8 +39,10 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
 |--------------------------------------------------------------------------
 */
 
-if (!isset($_SESSION["csrf_token"])) {
+/*
+|--------------------------------------------------------------------------
+| Helpers CSRF (partagés avec le site public)
+|--------------------------------------------------------------------------
+*/
 
-    $_SESSION["csrf_token"] = bin2hex(random_bytes(32));
-
-}
+require_once __DIR__ . "/../../includes/csrf.php";

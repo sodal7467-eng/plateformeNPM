@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $erreur = "";
@@ -63,6 +64,8 @@ $commande_id = $_GET["commande_id"] ?? "";
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $utilisateur_id = $_POST["utilisateur_id"] ?? "";
     $commande_id = $_POST["commande_id"] ?? "";
@@ -217,7 +220,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 
-require_once("includes/auth.php");
 ?>
 
 <!DOCTYPE html>
@@ -357,6 +359,7 @@ require_once("includes/auth.php");
             <div class="card-body p-4">
 
                 <form method="POST">
+                    <?= csrf_champ() ?>
 
 
                     <div class="row g-4">
@@ -434,7 +437,7 @@ require_once("includes/auth.php");
                                         <?= isset($commande_id) && $commande_id == $commande["id"] ? "selected" : "" ?>
                                     >
 
-                                        Commande #<?= $commande["id"] ?>
+                                        Commande <?= $commande["id"] ?>
 
                                         —
                                         <?= htmlspecialchars($commande["nom"]) ?>

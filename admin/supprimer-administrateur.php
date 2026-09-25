@@ -13,6 +13,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once("includes/auth.php");
 
 require_once "../config/database.php";
+require_once "../includes/log_admin.php";
 
 
 /*
@@ -116,6 +117,9 @@ $requete = $pdo->prepare("
 ");
 
 $requete->execute([$id]);
+
+
+logAdmin($pdo, "admin.supprimer", "utilisateur", $id, "Suppression d'un administrateur.");
 
 
 /*

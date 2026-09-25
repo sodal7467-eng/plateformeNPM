@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once("includes/auth.php");
 require_once "../config/database.php";
 
 
@@ -49,7 +50,6 @@ if (!$employe) {
 }
 
 
-require_once("includes/auth.php");
 
 ?>
 

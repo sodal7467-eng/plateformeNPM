@@ -1,9 +1,11 @@
 <?php
 
-$host = "localhost";
-$dbname = "quincaillerie_npm";
-$username = "root";
-$password = "";
+require_once __DIR__ . "/env.php";
+
+$host = env("DB_HOST", "localhost");
+$dbname = env("DB_NAME", "quincaillerie_npm");
+$username = env("DB_USER", "root");
+$password = env("DB_PASSWORD", "");
 
 try {
 
@@ -25,6 +27,15 @@ try {
 
 } catch (PDOException $e) {
 
-    die("Erreur de connexion à la base de données : " . $e->getMessage());
+    // Détails uniquement dans les logs serveur, jamais à l'écran.
+    error_log("Erreur PDO : " . $e->getMessage());
+
+    http_response_code(503);
+
+    if (env("APP_DEBUG", false)) {
+        die("Erreur DB (mode debug) : " . htmlspecialchars($e->getMessage()));
+    }
+
+    die("Le service est momentanément indisponible. Merci de réessayer plus tard.");
 
 }

@@ -2,6 +2,7 @@
 
 session_start();
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
 
 $message = "";
@@ -35,6 +36,8 @@ $categories = $requeteCategories->fetchAll(PDO::FETCH_ASSOC);
 // =====================================================
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     // Récupérer les données
 
@@ -346,7 +349,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 ====================================================== -->
 
 <?php require_once("includes/sidebar.php"); ?>
-<?php require_once("includes/auth.php");?> 
 
 
 <!-- =====================================================
@@ -456,6 +458,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             method="POST"
                             enctype="multipart/form-data"
                         >
+                            <?= csrf_champ() ?>
 
 
                             <!-- =================================================

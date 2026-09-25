@@ -35,6 +35,8 @@ $categoriesProposees = [
 */
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    csrf_verifier();
+
 
     $description = trim($_POST["description"] ?? "");
     $categorie = trim($_POST["categorie"] ?? "");
@@ -157,6 +159,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="card-body p-4">
 
                 <form method="POST">
+                    <?= csrf_champ() ?>
 
                     <div class="row g-4">
 

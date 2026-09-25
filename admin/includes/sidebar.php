@@ -4,6 +4,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+/*
+|--------------------------------------------------------------------------
+| Compte les produits en stock faible (seuil <= 5)
+| pour afficher un badge rouge sur le lien "Stocks".
+|--------------------------------------------------------------------------
+*/
+$stockFaibleCount = 0;
+if (isset($pdo) && $pdo instanceof PDO) {
+    try {
+        $q = $pdo->query("SELECT COUNT(*) FROM produits WHERE stock <= 5");
+        $stockFaibleCount = (int) $q->fetchColumn();
+    } catch (Throwable $e) {
+        $stockFaibleCount = 0;
+    }
+}
+
 ?>
 
 <aside class="admin-sidebar">
@@ -185,6 +201,15 @@ if (session_status() === PHP_SESSION_NONE) {
                 Stocks
             </span>
 
+            <?php if ($stockFaibleCount > 0): ?>
+                <span
+                    class="sidebar-badge-alert"
+                    title="<?= (int) $stockFaibleCount ?> produit(s) en stock faible"
+                >
+                    <?= (int) $stockFaibleCount ?>
+                </span>
+            <?php endif; ?>
+
         </a>
 
 
@@ -234,6 +259,43 @@ if (session_status() === PHP_SESSION_NONE) {
 
             <span>
                 Employés
+            </span>
+
+        </a>
+
+
+        <!-- SÉPARATION -->
+        <div class="sidebar-separator"></div>
+
+
+        <p class="sidebar-title">
+            CONFIGURATION
+        </p>
+
+
+        <!-- PARAMÈTRES -->
+        <a href="parametres.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                ⚙️
+            </span>
+
+            <span>
+                Paramètres
+            </span>
+
+        </a>
+
+
+        <!-- JOURNAL DES ACTIONS -->
+        <a href="logs.php" class="sidebar-link">
+
+            <span class="sidebar-icon">
+                📜
+            </span>
+
+            <span>
+                Journal
             </span>
 
         </a>

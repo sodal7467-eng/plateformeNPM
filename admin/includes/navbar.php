@@ -46,6 +46,46 @@ if (session_status() === PHP_SESSION_NONE) {
 
     <div class="admin-navbar-actions">
 
+        <!-- CLOCHE DE NOTIFICATIONS -->
+
+        <div class="admin-notif" id="adminNotifWrapper">
+
+            <button
+                type="button"
+                class="admin-notif-btn"
+                id="adminNotifBtn"
+                aria-label="Notifications"
+                title="Nouvelles commandes"
+            >
+                <i class="bi bi-bell-fill"></i>
+                <span
+                    class="admin-notif-badge"
+                    id="adminNotifBadge"
+                    style="display:none;"
+                >0</span>
+            </button>
+
+            <div
+                class="admin-notif-panel"
+                id="adminNotifPanel"
+                role="dialog"
+                aria-label="Nouvelles commandes"
+            >
+                <div class="admin-notif-header">
+                    <strong>Nouvelles commandes</strong>
+                    <span class="admin-notif-count" id="adminNotifHeaderCount"></span>
+                </div>
+                <div class="admin-notif-body" id="adminNotifBody">
+                    <div class="admin-notif-loading">Chargement…</div>
+                </div>
+                <div class="admin-notif-footer">
+                    <a href="commandes.php">Voir toutes les commandes →</a>
+                </div>
+            </div>
+
+        </div>
+
+
         <a
             href="../index.php"
             class="admin-btn admin-btn-site"
@@ -297,3 +337,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 </script>
+
+
+<!-- Widget de notifications (cloche) -->
+<script src="../assets/js/admin-notifications.js" defer></script>

@@ -1,8 +1,12 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
+require_once("includes/auth.php");
 require_once("../config/database.php");
+
 
 /*
 |--------------------------------------------------------------------------
@@ -55,7 +59,6 @@ function formaterNumeroWhatsapp(?string $numero): ?string
 }
 
 ?>
-<?php require_once("includes/auth.php");?> 
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -232,48 +235,72 @@ function formaterNumeroWhatsapp(?string $numero): ?string
 
                                             ?>
 
-                                            <?php if ($numeroWhatsapp): ?>
+                                            <div class="d-inline-flex gap-2">
+
+                                                <?php if ($numeroWhatsapp): ?>
+
+                                                    <a
+                                                        href="https://wa.me/<?= $numeroWhatsapp ?>?text=<?= rawurlencode(
+                                                            'Bonjour ' . $message['nom'] . ",\n\nSuite à votre message :\n\"" . $message['message'] . "\"\n\n"
+                                                        ) ?>"
+                                                        class="btn btn-sm btn-success"
+                                                        target="_blank"
+                                                        rel="noopener"
+                                                        title="Répondre sur WhatsApp"
+                                                    >
+
+                                                        <i class="bi bi-whatsapp"></i>
+
+                                                    </a>
+
+                                                <?php endif; ?>
+
 
                                                 <a
-                                                    href="https://wa.me/<?= $numeroWhatsapp ?>?text=<?= rawurlencode(
-                                                        'Bonjour ' . $message['nom'] . ",\n\nSuite à votre message :\n\"" . $message['message'] . "\"\n\n"
-                                                    ) ?>"
-                                                    class="btn btn-sm btn-success"
-                                                    target="_blank"
-                                                    rel="noopener"
-                                                    title="Répondre sur WhatsApp"
+                                                    href="details-message.php?id=<?= $message['id'] ?>"
+                                                    class="btn btn-sm btn-primary"
                                                 >
 
-                                                    <i class="bi bi-whatsapp"></i>
+                                                    <i class="bi bi-eye"></i>
+
+                                                    Voir
 
                                                 </a>
 
-                                            <?php endif; ?>
 
+                                                <form
+                                                    method="POST"
+                                                    action="supprimer-message.php"
+                                                    class="d-inline"
+                                                    onsubmit="return confirm('Voulez-vous vraiment supprimer ce message ?');"
+                                                >
 
-                                            <a
-                                                href="details-message.php?id=<?= $message['id'] ?>"
-                                                class="btn btn-sm btn-primary"
-                                            >
+                                                    <input
+                                                        type="hidden"
+                                                        name="csrf_token"
+                                                        value="<?= htmlspecialchars($_SESSION['csrf_token']) ?>"
+                                                    >
 
-                                                <i class="bi bi-eye"></i>
+                                                    <input
+                                                        type="hidden"
+                                                        name="id"
+                                                        value="<?= (int) $message['id'] ?>"
+                                                    >
 
-                                                Voir
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-sm btn-danger"
+                                                    >
 
-                                            </a>
+                                                        <i class="bi bi-trash"></i>
 
+                                                        Supprimer
 
-                                            <a
-                                                href="supprimer-message.php?id=<?= $message['id'] ?>"
-                                                class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Voulez-vous vraiment supprimer ce message ?');"
-                                            >
+                                                    </button>
 
-                                                <i class="bi bi-trash"></i>
+                                                </form>
 
-                                                Supprimer
-
-                                            </a>
+                                            </div>
 
                                         </td>
 

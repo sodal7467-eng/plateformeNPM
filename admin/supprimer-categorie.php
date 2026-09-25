@@ -1,21 +1,63 @@
 <?php
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once("includes/auth.php");
 require_once "../config/database.php";
- require_once("includes/auth.php");
+require_once "../includes/log_admin.php";
 
 
-// Vérifier que l'ID existe
-if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
+/*
+|--------------------------------------------------------------------------
+| MÉTHODE POST OBLIGATOIRE
+|--------------------------------------------------------------------------
+*/
+
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: categories.php");
     exit;
 }
 
-$id = (int) $_GET["id"];
+
+/*
+|--------------------------------------------------------------------------
+| VÉRIFIER LE TOKEN CSRF
+|--------------------------------------------------------------------------
+*/
+
+if (
+    !isset($_POST["csrf_token"]) ||
+    !isset($_SESSION["csrf_token"]) ||
+    !hash_equals($_SESSION["csrf_token"], $_POST["csrf_token"])
+) {
+    die("Erreur de sécurité : requête invalide.");
+}
 
 
-// Vérifier que la catégorie existe
+/*
+|--------------------------------------------------------------------------
+| VÉRIFIER L'ID
+|--------------------------------------------------------------------------
+*/
+
+if (!isset($_POST["id"]) || !is_numeric($_POST["id"])) {
+    header("Location: categories.php");
+    exit;
+}
+
+$id = (int) $_POST["id"];
+
+
+/*
+|--------------------------------------------------------------------------
+| VÉRIFIER QUE LA CATÉGORIE EXISTE
+|--------------------------------------------------------------------------
+*/
+
 $requete = $pdo->prepare("
-    SELECT *
+    SELECT id
     FROM categories
     WHERE id = ?
 ");
@@ -24,15 +66,18 @@ $requete->execute([$id]);
 
 $categorie = $requete->fetch(PDO::FETCH_ASSOC);
 
-
-// Si la catégorie n'existe pas
 if (!$categorie) {
     header("Location: categories.php");
     exit;
 }
 
 
-// Vérifier si des produits utilisent cette catégorie
+/*
+|--------------------------------------------------------------------------
+| BLOQUER SI DES PRODUITS UTILISENT ENCORE CETTE CATÉGORIE
+|--------------------------------------------------------------------------
+*/
+
 $requeteProduits = $pdo->prepare("
     SELECT COUNT(*) AS total
     FROM produits
@@ -41,20 +86,20 @@ $requeteProduits = $pdo->prepare("
 
 $requeteProduits->execute([$id]);
 
-$resultat = $requeteProduits->fetch(PDO::FETCH_ASSOC);
+$totalProduits = (int) $requeteProduits->fetch(PDO::FETCH_ASSOC)["total"];
 
-$totalProduits = (int) $resultat["total"];
-
-
-// Si des produits utilisent encore cette catégorie
 if ($totalProduits > 0) {
-
     header("Location: categories.php?erreur=produits");
     exit;
 }
 
 
-// Supprimer la catégorie
+/*
+|--------------------------------------------------------------------------
+| SUPPRIMER LA CATÉGORIE
+|--------------------------------------------------------------------------
+*/
+
 $requeteSuppression = $pdo->prepare("
     DELETE FROM categories
     WHERE id = ?
@@ -63,6 +108,8 @@ $requeteSuppression = $pdo->prepare("
 $requeteSuppression->execute([$id]);
 
 
-// Retourner vers la liste
+logAdmin($pdo, "categorie.supprimer", "categorie", $id);
+
+
 header("Location: categories.php?supprime=1");
 exit;
