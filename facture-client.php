@@ -626,6 +626,18 @@ $dateCommande = date(
 
             <button
                 type="button"
+                id="btnTelechargerFacture"
+                class="btn btn-warning"
+            >
+
+                <i class="bi bi-download me-2"></i>
+
+                Télécharger PDF
+
+            </button>
+
+            <button
+                type="button"
                 onclick="window.print()"
                 class="btn btn-dark"
             >
@@ -1064,6 +1076,44 @@ $dateCommande = date(
 
 <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+<!-- Génération PDF de la facture -->
+
+<script
+    src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js">
+</script>
+
+<script>
+    function telechargerFacture() {
+        const facture = document.querySelector(".facture-card");
+
+        if (!facture || typeof html2pdf === "undefined") {
+            window.print();
+            return;
+        }
+
+        html2pdf()
+            .set({
+                margin: 10,
+                filename: <?= json_encode("facture-" . $facture["numero_facture"] . ".pdf") ?>,
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+            })
+            .from(facture)
+            .save();
+    }
+
+    document
+        .getElementById("btnTelechargerFacture")
+        .addEventListener("click", telechargerFacture);
+
+    // Téléchargement automatique depuis le menu du compte client
+    if (new URLSearchParams(window.location.search).get("telecharger") === "1") {
+        window.addEventListener("load", telechargerFacture);
+    }
 </script>
 
 

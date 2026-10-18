@@ -8,6 +8,25 @@ if (isset($pdo) && $pdo instanceof PDO) {
     require_once __DIR__ . "/parametres.php";
     $navbarLogo = parametre($pdo, "logo_texte", "NPM");
     $navbarSousLogo = parametre($pdo, "logo_soustitre", "QUINCAILLERIE");
+
+    // Dernières factures du client connecté (menu déroulant)
+    $navbarFactures = [];
+    if (isset($_SESSION["id"])) {
+        try {
+            $reqFactures = $pdo->prepare("
+                SELECT f.numero_facture, f.commande_id
+                FROM factures f
+                INNER JOIN commandes c ON f.commande_id = c.id
+                WHERE c.utilisateur_id = ?
+                ORDER BY f.id DESC
+                LIMIT 5
+            ");
+            $reqFactures->execute([(int) $_SESSION["id"]]);
+            $navbarFactures = $reqFactures->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            $navbarFactures = [];
+        }
+    }
 } else {
     $navbarLogo = "NPM";
     $navbarSousLogo = "QUINCAILLERIE";
@@ -115,6 +134,22 @@ if (isset($pdo) && $pdo instanceof PDO) {
                                     Ma commande
                                 </a>
                             </li>
+
+                            <?php if (!empty($navbarFactures)): ?>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li><h6 class="dropdown-header">Télécharger ma facture</h6></li>
+
+                                <?php foreach ($navbarFactures as $navFacture): ?>
+                                    <li>
+                                        <a class="dropdown-item" href="facture-client.php?id=<?= (int) $navFacture["commande_id"] ?>&amp;telecharger=1">
+                                            📄 <?= htmlspecialchars($navFacture["numero_facture"]) ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+
+                            <?php endif; ?>
 
                             <?php if (($_SESSION["role"] ?? "") === "admin"): ?>
 
