@@ -99,7 +99,7 @@ if (session_status() === PHP_SESSION_NONE) {
 
 
         <a
-            href="../deconnexion.php"
+            href="deconnexion.php"
             class="admin-btn admin-btn-logout"
         >
 
@@ -260,7 +260,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <!-- Déconnexion -->
 
         <a
-            href="../deconnexion.php"
+            href="deconnexion.php"
             class="mobile-logout-link"
         >
 

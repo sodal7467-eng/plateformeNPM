@@ -93,6 +93,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 // Enregistrer la tentative réussie
                 loginEnregistrerTentative($pdo, $identifiant, true);
 
+                // Un admin est connecté dans la session admin (cookie
+                // NPM_ADMIN), pas dans la session client de la boutique.
+                if ($utilisateur["role"] === "admin") {
+
+                    session_write_close();
+
+                    session_name("NPM_ADMIN");
+                    session_id(session_create_id());
+                    session_start();
+                }
+
                 // Connexion réussie
                 session_regenerate_id(true);
 

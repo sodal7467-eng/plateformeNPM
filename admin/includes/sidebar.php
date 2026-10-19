@@ -326,7 +326,7 @@ if (isset($pdo) && $pdo instanceof PDO) {
 
         <!-- DÉCONNEXION -->
         <a
-            href="../deconnexion.php"
+            href="deconnexion.php"
             class="sidebar-link sidebar-logout"
         >
 

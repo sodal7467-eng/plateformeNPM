@@ -1,0 +1,8 @@
+# Session admin séparée de la session client de la boutique
+# (cookie différent : se connecter à l'admin ne connecte pas la boutique)
+<IfModule mod_php.c>
+    php_value session.name NPM_ADMIN
+</IfModule>
+<IfModule php_module>
+    php_value session.name NPM_ADMIN
+</IfModule>
