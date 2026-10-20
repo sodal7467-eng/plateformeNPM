@@ -365,7 +365,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </small>
 
                             <div class="fw-bold">
-                                #<?= $commande["id"] ?>
+                                <?= $commande["id"] ?>
                             </div>
 
                         </div>

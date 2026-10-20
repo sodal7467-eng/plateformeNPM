@@ -608,7 +608,7 @@ foreach ($credits as $credit) {
 
                                             <span class="fw-semibold">
 
-                                                #<?= $credit["commande_id"] ?>
+                                                <?= $credit["commande_id"] ?>
 
                                             </span>
 

@@ -582,7 +582,7 @@ foreach ($factures as $facture) {
 
                                         <span class="badge bg-secondary">
 
-                                            #<?= (int) $facture["commande_id"] ?>
+                                            <?= (int) $facture["commande_id"] ?>
 
                                         </span>
 

@@ -244,7 +244,7 @@ if (!$utilisateur) {
 
                     <h5 class="mb-0 mt-1">
 
-                        #<?= htmlspecialchars(
+                        <?= htmlspecialchars(
                             $utilisateur["id"]
                         ) ?>
 

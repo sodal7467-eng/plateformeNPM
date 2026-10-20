@@ -412,7 +412,7 @@ foreach ($commandes as $commande) {
 
                     <h5 class="mb-0 mt-1">
 
-                        #<?= htmlspecialchars(
+                        <?= htmlspecialchars(
                             $utilisateur["id"]
                         ) ?>
 
@@ -575,7 +575,7 @@ foreach ($commandes as $commande) {
 
                                 <strong>
 
-                                    #<?= $commande["id"] ?>
+                                    <?= $commande["id"] ?>
 
                                 </strong>
 

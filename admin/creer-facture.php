@@ -507,7 +507,7 @@ $commandes = $requeteCommandes->fetchAll(PDO::FETCH_ASSOC);
                                             >
 
                                                 Commande
-                                                #<?= (int) $commande["id"] ?>
+                                                <?= (int) $commande["id"] ?>
 
                                                 -
                                                 <?= htmlspecialchars(

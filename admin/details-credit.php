@@ -374,7 +374,7 @@ if ((float) $credit["reste_a_payer"] <= 0) {
 
                         <div class="fw-semibold">
 
-                            #<?= $credit["id"] ?>
+                            <?= $credit["id"] ?>
 
                         </div>
 

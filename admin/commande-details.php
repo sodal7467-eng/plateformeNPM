@@ -719,7 +719,7 @@ if ($facture) {
                                 </small>
 
                                 <strong>
-                                    #<?= $commande["id"] ?>
+                                    <?= $commande["id"] ?>
                                 </strong>
 
                             </div>
@@ -930,7 +930,7 @@ if ($facture) {
                             </small>
 
                             <strong>
-                                #<?= $commande["utilisateur_id"] ?>
+                                <?= $commande["utilisateur_id"] ?>
                             </strong>
 
                         </div>

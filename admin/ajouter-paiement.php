@@ -561,7 +561,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             </span>
 
                             <strong>
-                                #<?= $credit["id"] ?>
+                                <?= $credit["id"] ?>
                             </strong>
 
                         </div>
@@ -578,7 +578,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 </span>
 
                                 <strong>
-                                    #<?= $credit["commande_id"] ?>
+                                    <?= $credit["commande_id"] ?>
                                 </strong>
 
                             </div>

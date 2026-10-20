@@ -473,7 +473,7 @@ $client = $requeteClient->fetch(PDO::FETCH_ASSOC);
                                     Numéro de commande :
                                 </strong>
 
-                                #<?= htmlspecialchars($commandeId) ?>
+                                <?= htmlspecialchars($commandeId) ?>
 
                             </div>
 

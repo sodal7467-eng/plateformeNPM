@@ -764,7 +764,7 @@ $dateCommande = date(
 
                         <strong>Commande :</strong>
 
-                        #<?= (int) $facture["commande_id"] ?>
+                        <?= (int) $facture["commande_id"] ?>
 
                     </p>
 
