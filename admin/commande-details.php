@@ -3,6 +3,7 @@
 require_once("includes/auth.php");
 require_once "../config/database.php";
 require_once "../includes/parametres.php";
+require_once "../includes/facture_publique.php";
 
 
 /*
@@ -37,14 +38,8 @@ function whatsappLienFacture(
     $nomBoutique = $params["nom_boutique"] ?? "Notre boutique";
     $devise      = $params["devise"] ?? "FCFA";
 
-    // URL publique de la facture (avec token, non modifiable, imprimable en PDF)
-    $scheme = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ? "https" : "http";
-    $host   = $_SERVER["HTTP_HOST"] ?? "localhost";
-    // On remonte d'un dossier depuis /admin/
-    $basePath = rtrim(dirname($_SERVER["PHP_SELF"] ?? "/"), "/\\");
-    $basePath = preg_replace('#/admin/?$#', '', $basePath);
-    $urlPubliqueFacture = $scheme . "://" . $host . $basePath . "/facture-publique.php?token="
-                        . ($facture["token_public"] ?? "");
+    // URL publique de la facture (avec token, non modifiable, téléchargeable en PDF)
+    $urlPubliqueFacture = factureUrlPublique($facture["token_public"] ?? "");
 
     /*
      * Message court, SANS aucun montant, pour eviter qu'un client
@@ -504,6 +499,12 @@ if ($statut === "En attente") {
 $lienWhatsappFacture = null;
 
 if ($facture) {
+    $facture["token_public"] = factureTokenPublic(
+        $pdo,
+        (int) $facture["id"],
+        $facture["token_public"] ?? null
+    );
+
     $lienWhatsappFacture = whatsappLienFacture(
         $commande["client_telephone"] ?? null,
         $commande["client_nom"] ?? "client",

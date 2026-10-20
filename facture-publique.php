@@ -339,9 +339,16 @@ function pageErreur(string $message): string {
     <button
         type="button"
         class="btn btn-primary"
+        id="btnTelechargerFacture"
+    >
+        📥 Télécharger la facture (PDF)
+    </button>
+    <button
+        type="button"
+        class="btn"
         onclick="window.print()"
     >
-        📄 Télécharger / Imprimer PDF
+        🖨️ Imprimer
     </button>
 </div>
 
@@ -445,6 +452,38 @@ function pageErreur(string $message): string {
     </footer>
 
 </article>
+
+<!-- Téléchargement direct en PDF (fonctionne aussi sur téléphone) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    function telechargerFacture() {
+        const facture = document.querySelector(".invoice");
+
+        if (!facture || typeof html2pdf === "undefined") {
+            window.print();
+            return;
+        }
+
+        html2pdf()
+            .set({
+                margin: 8,
+                filename: <?= json_encode("facture-" . $facture["numero_facture"] . ".pdf") ?>,
+                image: { type: "jpeg", quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+            })
+            .from(facture)
+            .save();
+    }
+
+    document
+        .getElementById("btnTelechargerFacture")
+        .addEventListener("click", telechargerFacture);
+
+    if (new URLSearchParams(window.location.search).get("telecharger") === "1") {
+        window.addEventListener("load", telechargerFacture);
+    }
+</script>
 
 </body>
 </html>

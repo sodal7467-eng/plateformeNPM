@@ -7,6 +7,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once("includes/auth.php");
 require_once("../config/database.php");
 require_once("../includes/parametres.php");
+require_once("../includes/facture_publique.php");
 
 
 /*
@@ -256,12 +257,13 @@ $dateCommande = date(
 |--------------------------------------------------------------------------
 */
 
-$scheme = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ? "https" : "http";
-$host   = $_SERVER["HTTP_HOST"] ?? "localhost";
-$basePath = rtrim(dirname($_SERVER["PHP_SELF"] ?? "/"), "/\\");
-$basePath = preg_replace('#/admin/?$#', '', $basePath);
-$urlPubliqueFacture = $scheme . "://" . $host . $basePath . "/facture-publique.php?token="
-                    . ($facture["token_public"] ?? "");
+$facture["token_public"] = factureTokenPublic(
+    $pdo,
+    (int) $facture["facture_id"],
+    $facture["token_public"] ?? null
+);
+
+$urlPubliqueFacture = factureUrlPublique($facture["token_public"]);
 
 $lienWhatsappFacture = waLienFacture(
     $facture["client_telephone"] ?? null,
