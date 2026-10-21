@@ -245,4 +245,20 @@ CREATE TABLE IF NOT EXISTS logs_admin (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 
+-- =========================================================
+-- 15) NOTIFICATIONS CLIENT (cloche du site)
+-- =========================================================
+CREATE TABLE IF NOT EXISTS notifications_clients (
+    id               INT PRIMARY KEY AUTO_INCREMENT,
+    utilisateur_id   INT NOT NULL,
+    message          VARCHAR(255) NOT NULL,
+    lien             VARCHAR(255) DEFAULT NULL,
+    lu               TINYINT(1) NOT NULL DEFAULT 0,
+    date_creation    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_utilisateur_lu (utilisateur_id, lu),
+    CONSTRAINT fk_notification_utilisateur FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 SET FOREIGN_KEY_CHECKS = 1;

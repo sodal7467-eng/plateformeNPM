@@ -26,6 +26,14 @@ if (isset($pdo) && $pdo instanceof PDO) {
         } catch (PDOException $e) {
             $navbarFactures = [];
         }
+
+        // Notifications du client (cloche)
+        require_once __DIR__ . "/notifications.php";
+        try {
+            $navbarNotifications = notificationsClient($pdo, (int) $_SESSION["id"]);
+        } catch (PDOException $e) {
+            $navbarNotifications = ["liste" => [], "nonLues" => 0];
+        }
     }
 } else {
     $navbarLogo = "NPM";
@@ -100,6 +108,61 @@ if (isset($pdo) && $pdo instanceof PDO) {
                 <a href="panier.php" class="btn btn-outline-light position-relative">
                     🛒 Panier
                 </a>
+
+                <?php if (isset($_SESSION["id"]) && isset($navbarNotifications)): ?>
+
+                    <div class="dropdown">
+
+                        <button
+                            class="btn btn-outline-light position-relative"
+                            type="button"
+                            id="menuNotificationsNPM"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            aria-label="Notifications"
+                        >
+                            🔔
+                            <?php if ($navbarNotifications["nonLues"] > 0): ?>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    <?= (int) $navbarNotifications["nonLues"] ?>
+                                </span>
+                            <?php endif; ?>
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="menuNotificationsNPM" style="width: 320px; max-width: 90vw;">
+
+                            <li class="d-flex justify-content-between align-items-center px-3 py-1">
+                                <strong>Notifications</strong>
+                                <?php if ($navbarNotifications["nonLues"] > 0): ?>
+                                    <a href="notification.php?action=tout-lu" class="small text-decoration-none">Tout marquer lu</a>
+                                <?php endif; ?>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <?php if (empty($navbarNotifications["liste"])): ?>
+                                <li><span class="dropdown-item-text text-muted small">Aucune notification pour le moment.</span></li>
+                            <?php endif; ?>
+
+                            <?php foreach ($navbarNotifications["liste"] as $notif): ?>
+                                <li>
+                                    <a
+                                        class="dropdown-item small text-wrap <?= $notif["lu"] ? "text-muted" : "fw-semibold" ?>"
+                                        href="notification.php?id=<?= (int) $notif["id"] ?>"
+                                    >
+                                        <?= $notif["lu"] ? "" : "🟠 " ?><?= htmlspecialchars($notif["message"]) ?>
+                                        <span class="d-block text-muted" style="font-size: 11px;">
+                                            <?= date("d/m/Y H:i", strtotime($notif["date_creation"])) ?>
+                                        </span>
+                                    </a>
+                                </li>
+                            <?php endforeach; ?>
+
+                        </ul>
+
+                    </div>
+
+                <?php endif; ?>
 
                 <?php if (isset($_SESSION["id"])): ?>
 

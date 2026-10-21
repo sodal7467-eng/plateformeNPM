@@ -2,6 +2,7 @@
 
 require_once("includes/auth.php");
 require_once "../config/database.php";
+require_once "../includes/notifications.php";
 
 
 // Vérifier l'ID
@@ -108,6 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $pdo->beginTransaction();
 
                 // 1. UPDATE du statut de commande
+                $ancienStatut = $commande["statut"];
                 $up = $pdo->prepare("UPDATE commandes SET statut = ? WHERE id = ?");
                 $up->execute([$statut, $id]);
                 $commande["statut"] = $statut;
@@ -210,6 +212,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
 
                 $pdo->commit();
+
+                // Prévenir le client si l'état a changé (après le commit :
+                // un échec d'envoi n'annule pas la modification)
+                if ($statut !== $ancienStatut) {
+                    try {
+                        $canaux = notifierChangementStatutCommande($pdo, $id, $statut);
+                    } catch (Throwable $e) {
+                        error_log("Notification commande $id : " . $e->getMessage());
+                        $canaux = [];
+                    }
+
+                    if (in_array("email", $canaux, true)) {
+                        $message .= " Le client a été prévenu par email et sur le site.";
+                    } elseif (in_array("site", $canaux, true)) {
+                        $message .= " Le client a été prévenu sur le site (email non envoyé).";
+                    }
+                }
 
                 // Recharger le contexte (facture, credit)
                 $ctx = chargerContexteCommande($pdo, $id);
