@@ -7,6 +7,30 @@ rapport mensuel, gestion d'équipe).
 
 ---
 
+## 🔑 Comptes de test
+
+Ces comptes sont créés en important `database/comptes_test.sql`
+(après `schema.sql`) :
+
+```bash
+mysql -uroot quincaillerie_npm < database/comptes_test.sql
+```
+
+| Rôle | Email | Téléphone | Mot de passe | Accès après connexion |
+|------|-------|-----------|--------------|-----------------------|
+| **Administrateur** | `admin@npm-test.com` | `770000001` | `Admin@2026` | Back-office `admin/` (produits, ventes, factures, crédits, dépenses, rapports, équipe, paramètres) |
+| **Employé** | `employe@npm-test.com` | `770000002` | `Employe@2026` | Boutique (compte membre de l'équipe, visible dans Admin → Employés) |
+| **Client** | `client@npm-test.com` | `770000003` | `Client@2026` | Boutique : panier, commandes, factures, notifications, profil |
+
+**Se connecter :** page `connexion.php`, choisir *Email* ou *Téléphone*
+puis saisir l'identifiant et le mot de passe ci-dessus.
+L'administrateur est redirigé automatiquement vers `admin/index.php`.
+
+> ⚠️ Comptes réservés à l'évaluation / démonstration — à supprimer
+> avant une mise en production réelle.
+
+---
+
 ## 1. Prérequis
 
 - **PHP 8.0+**
@@ -46,6 +70,7 @@ Accès ensuite :
 ```bash
 mysql -uroot -e "CREATE DATABASE quincaillerie_npm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -uroot quincaillerie_npm < database/schema.sql
+mysql -uroot quincaillerie_npm < database/comptes_test.sql   # comptes de test
 cp .env.example .env
 # Éditer .env (DB_USER, DB_PASSWORD, APP_URL)
 ```
