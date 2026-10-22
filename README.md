@@ -10,11 +10,20 @@ rapport mensuel, gestion d'équipe).
 ## 🔑 Comptes de test
 
 Ces comptes sont créés en important `database/comptes_test.sql`
-(après `schema.sql`) :
+(après `schema.sql`). Le fichier `database/catalogue_demo.sql` ajoute
+un catalogue de démonstration (6 catégories, 59 produits avec leurs
+images, déjà présentes dans `uploads/`) :
 
 ```bash
+mysql -uroot -e "CREATE DATABASE quincaillerie_npm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -uroot quincaillerie_npm < database/schema.sql
 mysql -uroot quincaillerie_npm < database/comptes_test.sql
+mysql -uroot quincaillerie_npm < database/catalogue_demo.sql
 ```
+
+Sans fichier `.env`, l'application utilise par défaut la base
+`quincaillerie_npm` sur `localhost` avec l'utilisateur `root` sans mot
+de passe (configuration XAMPP standard).
 
 | Rôle | Email | Téléphone | Mot de passe | Accès après connexion |
 |------|-------|-----------|--------------|-----------------------|
@@ -71,6 +80,7 @@ Accès ensuite :
 mysql -uroot -e "CREATE DATABASE quincaillerie_npm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 mysql -uroot quincaillerie_npm < database/schema.sql
 mysql -uroot quincaillerie_npm < database/comptes_test.sql   # comptes de test
+mysql -uroot quincaillerie_npm < database/catalogue_demo.sql # catalogue + images
 cp .env.example .env
 # Éditer .env (DB_USER, DB_PASSWORD, APP_URL)
 ```
